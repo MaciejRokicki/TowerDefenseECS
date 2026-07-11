@@ -1,6 +1,5 @@
 using TD.Logic.ECS.Components;
 using Unity.Entities;
-using Unity.Mathematics;
 using UnityEngine;
 
 namespace TD.Logic.ECS.Authorings
@@ -9,8 +8,8 @@ namespace TD.Logic.ECS.Authorings
     {
         public GameObject Prefab;
         public int Amount;
-        public float3 Min;
-        public float3 Max;
+        public float MinSpawnRadius;
+        public float MaxSpawnRadius;
 
         class UnitSpawnerBaker : Baker<UnitSpawnerAuthoring>
         {
@@ -21,8 +20,8 @@ namespace TD.Logic.ECS.Authorings
                 {
                     Prefab = GetEntity(authoring.Prefab, TransformUsageFlags.Dynamic),
                     Amount = authoring.Amount,
-                    Min = authoring.Min,
-                    Max = authoring.Max
+                    MinSpawnRadius = authoring.MinSpawnRadius,
+                    MaxSpawnRadius = authoring.MaxSpawnRadius
                 });
             }
         }

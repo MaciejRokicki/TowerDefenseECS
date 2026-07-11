@@ -58,7 +58,10 @@ namespace TD.Logic.ECS.Authorings
                     }
                 }
 
-                AddComponent<SpriteCurrentAnimationSelected>(entity);
+                AddComponent(entity, new SpriteCurrentAnimationSelected()
+                {
+                    AnimationIndex = 2
+                });
             }
         }
     }

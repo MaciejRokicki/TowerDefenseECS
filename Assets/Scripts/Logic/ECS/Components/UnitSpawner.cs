@@ -1,5 +1,4 @@
 using Unity.Entities;
-using Unity.Mathematics;
 
 namespace TD.Logic.ECS.Components
 {
@@ -7,7 +6,7 @@ namespace TD.Logic.ECS.Components
     {
         public Entity Prefab;
         public int Amount;
-        public float3 Min;
-        public float3 Max;
+        public float MinSpawnRadius;
+        public float MaxSpawnRadius;
     }
 }

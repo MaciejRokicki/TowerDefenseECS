@@ -1,6 +1,7 @@
 using TD.Logic.ECS.Components;
 using Unity.Burst;
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Transforms;
 
 namespace TD.Logic.ECS.Systems
@@ -11,7 +12,7 @@ namespace TD.Logic.ECS.Systems
         public void OnUpdate(ref SystemState state)
         {
             var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
-            var rng = new Unity.Mathematics.Random(92354145);
+            var rng = new Random(92354145);
 
             foreach (var (spawner, entity) in SystemAPI.Query<RefRO<UnitSpawner>>().WithEntityAccess())
             {
@@ -20,12 +21,20 @@ namespace TD.Logic.ECS.Systems
                     var unitEntity = state.EntityManager.Instantiate(spawner.ValueRO.Prefab);
                     state.EntityManager.SetComponentData(unitEntity,
                         LocalTransform.FromPosition(
-                            rng.NextFloat3(
-                                new Unity.Mathematics.float3(spawner.ValueRO.Min),
-                                new Unity.Mathematics.float3(spawner.ValueRO.Max)
-                            )
+                            new float3(rng.NextFloat2Direction() * rng.NextFloat(spawner.ValueRO.MinSpawnRadius, spawner.ValueRO.MaxSpawnRadius), 0.0f)
                         )
                     );
+
+                    var pos = state.EntityManager.GetComponentData<LocalTransform>(unitEntity).Position;
+                    var matrix = new float4x4();
+                    matrix.c0[0] = pos.x > 0.0f ? -1.0f : 1.0f;
+                    matrix.c1[1] = 1.0f;
+                    matrix.c2[2] = 1.0f;
+                    matrix.c3[3] = 1.0f;
+                    ecb.AddComponent(unitEntity, new PostTransformMatrix()
+                    {
+                        Value = matrix
+                    });
                 }
 
                 ecb.RemoveComponent<UnitSpawner>(entity);
