@@ -1,5 +1,5 @@
 using System;
-using TD.Logic.Components;
+using TD.Logic.Components.SpriteAnimation;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -7,12 +7,12 @@ using UnityEngine;
 namespace TD.Logic.Authorings
 {
     [Serializable]
-    public struct AnimationCollection
+    public struct SpriteAnimationClipFrames
     {
         public Sprite[] spriteFrames;
     }
 
-    public class AnimatedSpriteAuthoring : MonoBehaviour
+    public class SpriteAnimatorAuthoring : MonoBehaviour
     {
         [SerializeField]
         private Texture2D spriteSheetTexture;
@@ -20,11 +20,11 @@ namespace TD.Logic.Authorings
         [SerializeField]
         private int gridPixelSize;
         [SerializeField]
-        private AnimationCollection[] animations;
+        private SpriteAnimationClipFrames[] animations;
 
-        class Baker : Baker<AnimatedSpriteAuthoring>
+        class Baker : Baker<SpriteAnimatorAuthoring>
         {
-            public override void Bake(AnimatedSpriteAuthoring authoring)
+            public override void Bake(SpriteAnimatorAuthoring authoring)
             {
                 Vector2 texelSize = DependsOn(authoring.spriteSheetTexture).texelSize;
 
@@ -41,7 +41,7 @@ namespace TD.Logic.Authorings
                 var frameElements = AddBuffer<SpriteFrameElement>(entity);
                 var animationClips = AddBuffer<SpriteAnimationClip>(entity);
 
-                foreach (AnimationCollection animation in authoring.animations)
+                foreach (SpriteAnimationClipFrames animation in authoring.animations)
                 {
                     animationClips.Add(new SpriteAnimationClip()
                     {

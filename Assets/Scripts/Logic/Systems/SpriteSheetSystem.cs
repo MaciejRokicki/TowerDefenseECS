@@ -1,4 +1,4 @@
-using TD.Logic.Components;
+using TD.Logic.Components.SpriteAnimation;
 using Unity.Burst;
 using Unity.Entities;
 
