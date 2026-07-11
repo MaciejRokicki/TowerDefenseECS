@@ -238,7 +238,7 @@ namespace TD.Common.InputManager
                 {
                     ""name"": ""negative"",
                     ""id"": ""aff2874f-ad29-447f-b36a-5eeb3dd4b6e1"",
-                    ""path"": ""<Mouse>/scroll/down"",
+                    ""path"": ""<Mouse>/scroll/up"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -249,7 +249,7 @@ namespace TD.Common.InputManager
                 {
                     ""name"": ""positive"",
                     ""id"": ""b0eafd8c-1d1a-482d-ab93-79710c3e82c7"",
-                    ""path"": ""<Mouse>/scroll/up"",
+                    ""path"": ""<Mouse>/scroll/down"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -271,7 +271,7 @@ namespace TD.Common.InputManager
                 {
                     ""name"": ""negative"",
                     ""id"": ""ab368778-2166-4a19-8a68-b8f4b7bdf56c"",
-                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -282,7 +282,7 @@ namespace TD.Common.InputManager
                 {
                     ""name"": ""positive"",
                     ""id"": ""1a6fff29-c145-48e4-812d-e145b3a72f0f"",
-                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",

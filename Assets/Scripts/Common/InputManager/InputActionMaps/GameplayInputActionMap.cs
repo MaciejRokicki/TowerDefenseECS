@@ -5,7 +5,7 @@ namespace TD.Common.InputManager.InputActionMaps
 {
     public class GameplayInputActionMap : BaseInputActionMap, InputSystem_Actions.IGameplayActions
     {
-        public static Vector2 Movement;
+        public static Vector3 Movement;
         public static float Zoom;
 
         private void Start()
