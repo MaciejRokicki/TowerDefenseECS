@@ -8,6 +8,7 @@ public class Bootstrap : MonoBehaviour
     {
         await SceneManager.LoadSceneAsync(Scenes.COMMON_SCENE_ID, LoadSceneMode.Additive);
         await SceneManager.LoadSceneAsync(Scenes.LOGIC_SCENE_ID, LoadSceneMode.Additive);
+        await SceneManager.LoadSceneAsync(Scenes.ENVIRONMENT_SCENE_ID, LoadSceneMode.Additive);
         await SceneManager.UnloadSceneAsync(Scenes.BOOTSTRAP_SCENE_ID);
     }
 }

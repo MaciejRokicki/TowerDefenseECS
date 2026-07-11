@@ -8,8 +8,6 @@ namespace TD.Logic
         [Header("References")]
         [SerializeField]
         private Camera camera;
-        [SerializeField]
-        private Transform targetTransform;
 
         [Header("Settings")]
         [SerializeField]
@@ -21,16 +19,18 @@ namespace TD.Logic
         [SerializeField]
         private float maxZoom;
 
+        private Vector3 targetPosition;
         private float targetCameraSize;
 
         private void Update()
         {
-            targetTransform.position += GameplayInputActionMap.Movement * movementSpeed * Time.deltaTime;
+            targetPosition += GameplayInputActionMap.Movement * movementSpeed * Time.deltaTime;
+            targetPosition.z = -10.0f;
 
             targetCameraSize += GameplayInputActionMap.Zoom;
             targetCameraSize = Mathf.Clamp(targetCameraSize, minZoom, maxZoom);
 
-            camera.transform.position = Vector3.Lerp(camera.transform.position, targetTransform.position, movementSpeed * Time.deltaTime);
+            camera.transform.position = Vector3.Lerp(camera.transform.position, targetPosition, movementSpeed * Time.deltaTime);
             camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, targetCameraSize, zoomSpeed * Time.deltaTime);
         }
     }

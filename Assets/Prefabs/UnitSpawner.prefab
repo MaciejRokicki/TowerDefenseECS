@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitSpawnerAuthoring
   Prefab: {fileID: 2659537409737172801, guid: b651e2c5e56d91440807f2869fc82906, type: 3}
-  Amount: 1000000
+  Amount: 100000
   Min:
     x: -426.66666
     y: -240

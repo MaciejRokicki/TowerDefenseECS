@@ -20,6 +20,7 @@ namespace TD.Logic.ECS.Systems
                 ref DynamicBuffer<SpriteAnimationClip> animationClips)
             {
                 var frameIndex = time % animationClips[animationSelected.AnimationIndex].count;
+
                 var frame = spriteFrames[animationClips[animationSelected.AnimationIndex].startIndex + frameIndex];
                 materialOverride = new MaterialOverrideOffsetScale
                 {
@@ -39,5 +40,5 @@ namespace TD.Logic.ECS.Systems
                 time = time,
             }.ScheduleParallel();
         }
-    } 
+    }
 }
