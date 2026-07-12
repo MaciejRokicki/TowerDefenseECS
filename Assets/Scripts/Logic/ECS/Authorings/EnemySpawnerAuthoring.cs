@@ -4,16 +4,16 @@ using UnityEngine;
 
 namespace TD.Logic.ECS.Authorings
 {
-    public class UnitSpawnerAuthoring : MonoBehaviour
+    public class EnemySpawnerAuthoring : MonoBehaviour
     {
         public GameObject Prefab;
         public int Amount;
         public float MinSpawnRadius;
         public float MaxSpawnRadius;
 
-        class UnitSpawnerBaker : Baker<UnitSpawnerAuthoring>
+        class UnitSpawnerBaker : Baker<EnemySpawnerAuthoring>
         {
-            public override void Bake(UnitSpawnerAuthoring authoring)
+            public override void Bake(EnemySpawnerAuthoring authoring)
             {
                 Entity entity = GetEntity(authoring, TransformUsageFlags.Dynamic);
                 AddComponent(entity, new UnitSpawner()

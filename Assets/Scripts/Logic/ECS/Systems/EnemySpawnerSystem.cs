@@ -6,7 +6,7 @@ using Unity.Transforms;
 
 namespace TD.Logic.ECS.Systems
 {
-    public partial struct UnitSpawnerSystem : ISystem
+    public partial struct EnemySpawnerSystem : ISystem
     {
         [BurstCompile]
         public void OnUpdate(ref SystemState state)

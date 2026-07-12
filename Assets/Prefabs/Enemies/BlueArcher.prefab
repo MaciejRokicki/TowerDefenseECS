@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7019617692166194761}
+  - component: {fileID: 1468350737090045586}
   - component: {fileID: 7796194639302553024}
   - component: {fileID: -3656806216569617439}
   - component: {fileID: 9164278781343519240}
@@ -34,6 +35,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1468350737090045586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2659537409737172801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f6d71de5d1905d4692580bcafac04fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TD.Logic::TD.Logic.ECS.Authorings.EnemyAuthoring
+  MovementSpeed: 1
 --- !u!114 &7796194639302553024
 MonoBehaviour:
   m_ObjectHideFlags: 0
