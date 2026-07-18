@@ -148,19 +148,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d468d60096861d4b95aedb30d6a56d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Boot
-  logicSubscene:
-    Id:
-      GlobalId:
-        SceneObjectIdentifier0: 102900000
-        SceneObjectIdentifier1: 0
-        AssetGUID:
-          Value:
-            x: 2768141920
-            y: 1232542549
-            z: 739188136
-            w: 431884031
-        IdentifierType: 1
-      GenerationType: 4
 --- !u!4 &992193516
 Transform:
   m_ObjectHideFlags: 0
