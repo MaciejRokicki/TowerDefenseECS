@@ -18,7 +18,8 @@ namespace TD.Logic.ECS.Systems
             ref LocalTransform transform)
         {
             var position = transform.Position;
-            var direction = math.normalize(TargetPosition - transform.Position);
+            position.z = 0.0f;
+            var direction = math.normalize(TargetPosition - position);
             position += direction * movementSpeed.Speed * Time;
             position.z = position.y;
             transform.Position = position;
@@ -44,6 +45,7 @@ namespace TD.Logic.ECS.Systems
         {
             state.RequireForUpdate<BaseTag>();
             basePosition = state.EntityManager.GetComponentData<LocalTransform>(SystemAPI.GetSingletonEntity<BaseTag>()).Position;
+            basePosition.z = 0.0f;
         }
 
         [BurstCompile]

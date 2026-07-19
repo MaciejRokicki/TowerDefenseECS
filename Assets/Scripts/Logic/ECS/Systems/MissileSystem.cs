@@ -77,13 +77,19 @@ namespace TD.Logic.ECS.Systems
             var enemy = enemies[index];
             for (int i = 0; i < missiles.Length; i++)
             {
-                var distance = math.distance(enemy.LocalTransform.Position, missiles[i].LocalTransform.Position);
+                var missile = missiles[i];
+                var enemyPosition = enemy.LocalTransform.Position;
+                enemyPosition.z = 0.0f;
+                var missilePosition = missile.LocalTransform.Position;
+                missilePosition.z = 0.0f;
+
+                var distance = math.distance(enemyPosition, missilePosition);
 
                 if (distance < 0.5f)
                 {
                     hits.Add(new Hit()
                     {
-                        Missile = missiles[i].Entity,
+                        Missile = missile.Entity,
                         Enemy = enemy.Entity
                     });
                 }
@@ -91,7 +97,7 @@ namespace TD.Logic.ECS.Systems
         }
     }
 
-    [DisableAutoCreation]
+    //[DisableAutoCreation]
     public partial struct MissileSystem : ISystem
     {
         private EntityQuery missileQuery;
