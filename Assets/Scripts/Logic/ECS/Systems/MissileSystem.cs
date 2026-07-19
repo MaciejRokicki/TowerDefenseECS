@@ -91,6 +91,7 @@ namespace TD.Logic.ECS.Systems
         }
     }
 
+    [DisableAutoCreation]
     public partial struct MissileSystem : ISystem
     {
         private EntityQuery missileQuery;

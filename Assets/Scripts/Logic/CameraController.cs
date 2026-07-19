@@ -25,7 +25,7 @@ namespace TD.Logic
         private void Update()
         {
             targetPosition += GameplayInputActionMap.Movement * movementSpeed * Time.deltaTime;
-            targetPosition.z = -10.0f;
+            targetPosition.z = -100.0f;
 
             targetCameraSize += GameplayInputActionMap.Zoom;
             targetCameraSize = Mathf.Clamp(targetCameraSize, minZoom, maxZoom);

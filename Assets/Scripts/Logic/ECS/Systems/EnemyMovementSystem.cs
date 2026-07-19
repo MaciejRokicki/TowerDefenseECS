@@ -20,6 +20,7 @@ namespace TD.Logic.ECS.Systems
             var position = transform.Position;
             var direction = math.normalize(TargetPosition - transform.Position);
             position += direction * movementSpeed.Speed * Time;
+            position.z = position.y;
             transform.Position = position;
         }
     }
