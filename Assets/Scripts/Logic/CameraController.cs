@@ -13,6 +13,8 @@ namespace TD.Logic
         [SerializeField]
         private float movementSpeed;
         [SerializeField]
+        private float swipeMovementSpeed;
+        [SerializeField]
         private float zoomSpeed;
         [SerializeField]
         private float minZoom;
@@ -24,7 +26,15 @@ namespace TD.Logic
 
         private void Update()
         {
-            targetPosition += GameplayInputActionMap.Movement * movementSpeed * Time.deltaTime;
+            if (GameplayInputActionMap.IsSwiping)
+            {
+                targetPosition += GameplayInputActionMap.SwipeMovement * swipeMovementSpeed * Time.deltaTime;
+            }
+            else
+            {
+                targetPosition += GameplayInputActionMap.Movement * movementSpeed * Time.deltaTime;
+            }
+
             targetPosition.z = -100.0f;
 
             targetCameraSize += GameplayInputActionMap.Zoom;

@@ -111,6 +111,24 @@ namespace TD.Common.InputManager
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""SwipeInvoke"",
+                    ""type"": ""Button"",
+                    ""id"": ""b2e7cc9b-6afb-4a0c-a689-d524a1b30d44"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Swipe"",
+                    ""type"": ""Value"",
+                    ""id"": ""b43a3777-00fc-4194-a6c3-47ef683da8bb"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -289,6 +307,28 @@ namespace TD.Common.InputManager
                     ""action"": ""Zoom"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d650c625-18d3-4262-9dc0-bd69fb30cca7"",
+                    ""path"": ""<Mouse>/delta"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Swipe"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""33ce4e7e-76be-4b3e-a3f6-a2d937e5dd2f"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SwipeInvoke"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -876,6 +916,8 @@ namespace TD.Common.InputManager
             m_Gameplay = asset.FindActionMap("Gameplay", throwIfNotFound: true);
             m_Gameplay_Movement = m_Gameplay.FindAction("Movement", throwIfNotFound: true);
             m_Gameplay_Zoom = m_Gameplay.FindAction("Zoom", throwIfNotFound: true);
+            m_Gameplay_SwipeInvoke = m_Gameplay.FindAction("SwipeInvoke", throwIfNotFound: true);
+            m_Gameplay_Swipe = m_Gameplay.FindAction("Swipe", throwIfNotFound: true);
             // UI
             m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
             m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -971,6 +1013,8 @@ namespace TD.Common.InputManager
         private List<IGameplayActions> m_GameplayActionsCallbackInterfaces = new List<IGameplayActions>();
         private readonly InputAction m_Gameplay_Movement;
         private readonly InputAction m_Gameplay_Zoom;
+        private readonly InputAction m_Gameplay_SwipeInvoke;
+        private readonly InputAction m_Gameplay_Swipe;
         /// <summary>
         /// Provides access to input actions defined in input action map "Gameplay".
         /// </summary>
@@ -990,6 +1034,14 @@ namespace TD.Common.InputManager
             /// Provides access to the underlying input action "Gameplay/Zoom".
             /// </summary>
             public InputAction @Zoom => m_Wrapper.m_Gameplay_Zoom;
+            /// <summary>
+            /// Provides access to the underlying input action "Gameplay/SwipeInvoke".
+            /// </summary>
+            public InputAction @SwipeInvoke => m_Wrapper.m_Gameplay_SwipeInvoke;
+            /// <summary>
+            /// Provides access to the underlying input action "Gameplay/Swipe".
+            /// </summary>
+            public InputAction @Swipe => m_Wrapper.m_Gameplay_Swipe;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
@@ -1022,6 +1074,12 @@ namespace TD.Common.InputManager
                 @Zoom.started += instance.OnZoom;
                 @Zoom.performed += instance.OnZoom;
                 @Zoom.canceled += instance.OnZoom;
+                @SwipeInvoke.started += instance.OnSwipeInvoke;
+                @SwipeInvoke.performed += instance.OnSwipeInvoke;
+                @SwipeInvoke.canceled += instance.OnSwipeInvoke;
+                @Swipe.started += instance.OnSwipe;
+                @Swipe.performed += instance.OnSwipe;
+                @Swipe.canceled += instance.OnSwipe;
             }
 
             /// <summary>
@@ -1039,6 +1097,12 @@ namespace TD.Common.InputManager
                 @Zoom.started -= instance.OnZoom;
                 @Zoom.performed -= instance.OnZoom;
                 @Zoom.canceled -= instance.OnZoom;
+                @SwipeInvoke.started -= instance.OnSwipeInvoke;
+                @SwipeInvoke.performed -= instance.OnSwipeInvoke;
+                @SwipeInvoke.canceled -= instance.OnSwipeInvoke;
+                @Swipe.started -= instance.OnSwipe;
+                @Swipe.performed -= instance.OnSwipe;
+                @Swipe.canceled -= instance.OnSwipe;
             }
 
             /// <summary>
@@ -1353,6 +1417,20 @@ namespace TD.Common.InputManager
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnZoom(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "SwipeInvoke" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnSwipeInvoke(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "Swipe" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnSwipe(InputAction.CallbackContext context);
         }
         /// <summary>
         /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

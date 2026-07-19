@@ -6,6 +6,8 @@ namespace TD.Common.InputManager.InputActionMaps
     public class GameplayInputActionMap : BaseInputActionMap, InputSystem_Actions.IGameplayActions
     {
         public static Vector3 Movement;
+        public static bool IsSwiping;
+        public static Vector3 SwipeMovement;
         public static float Zoom;
 
         private void Start()
@@ -44,6 +46,30 @@ namespace TD.Common.InputManager.InputActionMaps
             {
                 Zoom = 0.0f;
             }
+        }
+
+        public void OnSwipeInvoke(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                IsSwiping = true;
+            }
+            else if (context.canceled)
+            {
+                IsSwiping = false;
+            }
+        }
+
+        public void OnSwipe(InputAction.CallbackContext context)
+        {
+            if (!IsSwiping)
+            {
+                SwipeMovement = Vector3.zero;
+                return;
+            }
+
+            var v = context.ReadValue<Vector2>();
+            SwipeMovement = new Vector3(v.x, v.y, 0.0f);
         }
     }
 }

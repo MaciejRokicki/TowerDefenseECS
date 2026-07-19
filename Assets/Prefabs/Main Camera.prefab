@@ -152,6 +152,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: TD.Logic::TD.Logic.CameraController
   camera: {fileID: 663171683188716414}
   movementSpeed: 10
+  swipeMovementSpeed: -1
   zoomSpeed: 3
   minZoom: 3
-  maxZoom: 240
+  maxZoom: 16
