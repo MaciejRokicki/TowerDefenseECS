@@ -1,0 +1,16 @@
+{
+    "name": "TD.MainMenu",
+    "rootNamespace": "TD.MainMenu",
+    "references": [
+        "GUID:ab812d2885523414aab412d483ca525f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

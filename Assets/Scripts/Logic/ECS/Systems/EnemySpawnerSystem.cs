@@ -1,5 +1,6 @@
 using TD.Logic.ECS.Components;
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -9,9 +10,15 @@ namespace TD.Logic.ECS.Systems
     public partial struct EnemySpawnerSystem : ISystem
     {
         [BurstCompile]
+        public void OnCreate(ref SystemState state)
+        {
+            state.RequireForUpdate<UnitSpawner>();
+        }
+
+        [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
+            var ecb = new EntityCommandBuffer(Allocator.Temp);
             var rng = new Random(92354145);
 
             foreach (var (spawner, entity) in SystemAPI.Query<RefRO<UnitSpawner>>().WithEntityAccess())
