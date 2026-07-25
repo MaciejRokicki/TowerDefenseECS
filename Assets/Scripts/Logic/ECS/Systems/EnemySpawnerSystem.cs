@@ -13,6 +13,7 @@ namespace TD.Logic.ECS.Systems
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<UnitSpawner>();
+            state.RequireForUpdate<EnemyStatisticsSingleton>();
         }
 
         [BurstCompile]
@@ -42,6 +43,9 @@ namespace TD.Logic.ECS.Systems
                     {
                         Value = matrix
                     });
+
+                    var totalEnemiesCountEventEntity = ecb.CreateEntity();
+                    ecb.AddComponent(totalEnemiesCountEventEntity, new TotalEnemiesCountEvent());
                 }
 
                 ecb.RemoveComponent<UnitSpawner>(entity);

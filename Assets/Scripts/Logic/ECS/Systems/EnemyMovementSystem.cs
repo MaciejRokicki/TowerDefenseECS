@@ -43,8 +43,8 @@ namespace TD.Logic.ECS.Systems
         [BurstCompile]
         public void OnStartRunning(ref SystemState state)
         {
-            state.RequireForUpdate<BaseTag>();
-            basePosition = state.EntityManager.GetComponentData<LocalTransform>(SystemAPI.GetSingletonEntity<BaseTag>()).Position;
+            state.RequireForUpdate<BaseSingleton>();
+            basePosition = state.EntityManager.GetComponentData<LocalTransform>(SystemAPI.GetSingletonEntity<BaseSingleton>()).Position;
             basePosition.z = 0.0f;
         }
 

@@ -147,6 +147,8 @@ namespace TD.Logic.ECS.Systems
 
             for (int i = 0; i < hits.Length; i++)
             {
+                var entity = ecb.CreateEntity();
+                ecb.AddComponent<KilledEnemiesCountEvent>(entity);
                 ecb.DestroyEntity(hits[i].Enemy);
             }
 

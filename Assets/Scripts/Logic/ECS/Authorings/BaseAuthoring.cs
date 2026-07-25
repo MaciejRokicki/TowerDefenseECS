@@ -11,7 +11,7 @@ namespace TD.Logic.ECS.Authorings
             public override void Bake(BaseAuthoring authoring)
             {
                 Entity entity = GetEntity(TransformUsageFlags.Renderable);
-                AddComponent(entity, new BaseTag());
+                AddComponent(entity, new BaseSingleton());
             }
         }
     }
