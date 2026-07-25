@@ -129,6 +129,15 @@ namespace TD.Common.InputManager
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""PauseMenu"",
+                    ""type"": ""Button"",
+                    ""id"": ""203e7a4a-1bef-4e33-82dc-8ef90aef25cf"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -327,6 +336,28 @@ namespace TD.Common.InputManager
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""SwipeInvoke"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b41fc4a2-bee6-48c2-bca9-2d3ca7c32b95"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""PauseMenu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""130fd9e8-6ef1-4fe8-b5f9-5e272ab87902"",
+                    ""path"": ""<Gamepad>/select"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""PauseMenu"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -918,6 +949,7 @@ namespace TD.Common.InputManager
             m_Gameplay_Zoom = m_Gameplay.FindAction("Zoom", throwIfNotFound: true);
             m_Gameplay_SwipeInvoke = m_Gameplay.FindAction("SwipeInvoke", throwIfNotFound: true);
             m_Gameplay_Swipe = m_Gameplay.FindAction("Swipe", throwIfNotFound: true);
+            m_Gameplay_PauseMenu = m_Gameplay.FindAction("PauseMenu", throwIfNotFound: true);
             // UI
             m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
             m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1015,6 +1047,7 @@ namespace TD.Common.InputManager
         private readonly InputAction m_Gameplay_Zoom;
         private readonly InputAction m_Gameplay_SwipeInvoke;
         private readonly InputAction m_Gameplay_Swipe;
+        private readonly InputAction m_Gameplay_PauseMenu;
         /// <summary>
         /// Provides access to input actions defined in input action map "Gameplay".
         /// </summary>
@@ -1042,6 +1075,10 @@ namespace TD.Common.InputManager
             /// Provides access to the underlying input action "Gameplay/Swipe".
             /// </summary>
             public InputAction @Swipe => m_Wrapper.m_Gameplay_Swipe;
+            /// <summary>
+            /// Provides access to the underlying input action "Gameplay/PauseMenu".
+            /// </summary>
+            public InputAction @PauseMenu => m_Wrapper.m_Gameplay_PauseMenu;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
@@ -1080,6 +1117,9 @@ namespace TD.Common.InputManager
                 @Swipe.started += instance.OnSwipe;
                 @Swipe.performed += instance.OnSwipe;
                 @Swipe.canceled += instance.OnSwipe;
+                @PauseMenu.started += instance.OnPauseMenu;
+                @PauseMenu.performed += instance.OnPauseMenu;
+                @PauseMenu.canceled += instance.OnPauseMenu;
             }
 
             /// <summary>
@@ -1103,6 +1143,9 @@ namespace TD.Common.InputManager
                 @Swipe.started -= instance.OnSwipe;
                 @Swipe.performed -= instance.OnSwipe;
                 @Swipe.canceled -= instance.OnSwipe;
+                @PauseMenu.started -= instance.OnPauseMenu;
+                @PauseMenu.performed -= instance.OnPauseMenu;
+                @PauseMenu.canceled -= instance.OnPauseMenu;
             }
 
             /// <summary>
@@ -1431,6 +1474,13 @@ namespace TD.Common.InputManager
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnSwipe(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "PauseMenu" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnPauseMenu(InputAction.CallbackContext context);
         }
         /// <summary>
         /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

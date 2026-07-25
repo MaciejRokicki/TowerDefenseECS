@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -5,10 +6,21 @@ namespace TD.Common.InputManager.InputActionMaps
 {
     public class GameplayInputActionMap : BaseInputActionMap, InputSystem_Actions.IGameplayActions
     {
+        public static GameplayInputActionMap Instance { get; private set; }
+
         public static Vector3 Movement;
         public static bool IsSwiping;
         public static Vector3 SwipeMovement;
         public static float Zoom;
+
+        public static event Action OnPauseMenuPressed;
+
+        private void Awake()
+        {
+            Instance = this;
+
+            OnPauseMenuPressed = delegate { };
+        }
 
         private void Start()
         {
@@ -70,6 +82,14 @@ namespace TD.Common.InputManager.InputActionMaps
 
             var v = context.ReadValue<Vector2>();
             SwipeMovement = new Vector3(v.x, v.y, 0.0f);
+        }
+
+        public void OnPauseMenu(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                OnPauseMenuPressed();
+            }
         }
     }
 }

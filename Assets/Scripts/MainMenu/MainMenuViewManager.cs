@@ -1,4 +1,6 @@
 using TD.Common;
+using TD.Common.InputManager;
+using TD.Common.InputManager.InputActionMaps;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -28,7 +30,10 @@ namespace TD.MainMenu
         {
             await SceneManager.UnloadSceneAsync(Scenes.MAIN_MENU_ID);
             await SceneManager.LoadSceneAsync(Scenes.LOGIC_SCENE_ID, LoadSceneMode.Additive);
+            await SceneManager.LoadSceneAsync(Scenes.VIEW_ID, LoadSceneMode.Additive);
             await SceneManager.LoadSceneAsync(Scenes.ENVIRONMENT_SCENE_ID, LoadSceneMode.Additive);
+
+            InputManager.EnableActionMap(GameplayInputActionMap.Instance);
         }
 
         private void ExitButton_OnClicked()
