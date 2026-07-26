@@ -2,10 +2,13 @@
     "name": "TD.View",
     "rootNamespace": "TD.View",
     "references": [
-        "GUID:ab812d2885523414aab412d483ca525f",
-        "GUID:4d8ba8cef4d92c242906e72005957968",
         "GUID:75469ad4d38634e559750d17036d5f7c",
-        "GUID:6055be8ebefd69e48b49212b09b47b2f"
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:f51ebe6a0ceec4240a699833d6309b23",
+        "GUID:77221876cc6b8244180b96e320b1bcd4",
+        "GUID:80ecb87cae9c44d19824e70ea7229748",
+        "GUID:ab812d2885523414aab412d483ca525f",
+        "GUID:4d8ba8cef4d92c242906e72005957968"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

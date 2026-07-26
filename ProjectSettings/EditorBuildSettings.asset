@@ -24,4 +24,6 @@ EditorBuildSettings:
     path: Assets/Scenes/TD.Environment.unity
     guid: 2a8cc6828e736f34489db417441d5dc7
   m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: bdbbcd67092ccdb4795e42383b7218ec, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+    com.unity.localization.settings: {fileID: 11400000, guid: 04080843d4ff05942a7b0d5f5aa1b7fe, type: 2}

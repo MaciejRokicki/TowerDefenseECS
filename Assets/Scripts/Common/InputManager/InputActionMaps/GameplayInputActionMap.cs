@@ -1,4 +1,4 @@
-using System;
+using R3;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,13 +13,13 @@ namespace TD.Common.InputManager.InputActionMaps
         public static Vector3 SwipeMovement;
         public static float Zoom;
 
-        public static event Action OnPauseMenuPressed;
+        public static Subject<Unit> OnPauseMenuPressed;
 
         private void Awake()
         {
             Instance = this;
 
-            OnPauseMenuPressed = delegate { };
+            OnPauseMenuPressed = new Subject<Unit>();
         }
 
         private void Start()
@@ -34,6 +34,8 @@ namespace TD.Common.InputManager.InputActionMaps
         private void OnDestroy()
         {
             InputManager.InputActionAsset.Gameplay.RemoveCallbacks(this);
+
+            OnPauseMenuPressed.Dispose();
         }
 
         public void OnMovement(InputAction.CallbackContext context)
@@ -88,7 +90,7 @@ namespace TD.Common.InputManager.InputActionMaps
         {
             if (context.performed)
             {
-                OnPauseMenuPressed();
+                OnPauseMenuPressed.OnNext(Unit.Default);
             }
         }
     }

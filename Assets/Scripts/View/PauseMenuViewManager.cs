@@ -1,3 +1,4 @@
+using R3;
 using TD.Common;
 using TD.Common.InputManager;
 using TD.Common.InputManager.InputActionMaps;
@@ -27,13 +28,11 @@ namespace TD.View
 
         private void Start()
         {
-            GameplayInputActionMap.OnPauseMenuPressed += GameplayInputActionMap_OnPauseMenuPressed;
+            GameplayInputActionMap.OnPauseMenuPressed.Subscribe(GameplayInputActionMap_OnPauseMenuPressed);
         }
 
         private void OnDestroy()
         {
-            GameplayInputActionMap.OnPauseMenuPressed -= GameplayInputActionMap_OnPauseMenuPressed;
-
             resumeButton.onClick.RemoveAllListeners();
             mainMenuButton.onClick.RemoveAllListeners();
             exitButton.onClick.RemoveAllListeners();
@@ -53,7 +52,7 @@ namespace TD.View
             InputManager.EnableActionMap(GameplayInputActionMap.Instance);
         }
 
-        private void GameplayInputActionMap_OnPauseMenuPressed()
+        private void GameplayInputActionMap_OnPauseMenuPressed(Unit unit)
         {
             Show();
         }

@@ -1,3 +1,4 @@
+using R3;
 using TD.Logic.ECS.Systems;
 using TMPro;
 using UnityEngine;
@@ -15,31 +16,24 @@ namespace TD.View
 
         private void Start()
         {
-            EnemyStatisticsSystem.OnKilledEnemiesCountChanged += EnemyStatisticsSystem_OnKilledEnemiesCountChanged;
-            EnemyStatisticsSystem.OnEnemiesCountChanged += EnemyStatisticsSystem_OnEnemiesCountChanged;
-            EnemyStatisticsSystem.OnTotalEnemiesCountChanged += EnemyStatisticsSystem_OnTotalEnemiesCountChanged;
+            EnemyStatisticsSystem.OnKilledEnemiesCountChanged.Subscribe(EnemyStatisticsSystem_OnKilledEnemiesCountChanged);
+            EnemyStatisticsSystem.OnEnemiesCountChanged.Subscribe(EnemyStatisticsSystem_OnEnemiesCountChanged);
+            EnemyStatisticsSystem.OnTotalEnemiesCountChanged.Subscribe(EnemyStatisticsSystem_OnTotalEnemiesCountChanged);
         }
 
-        private void OnDestroy()
+        private void EnemyStatisticsSystem_OnKilledEnemiesCountChanged((int previousValue, int currentValue) tuple)
         {
-            EnemyStatisticsSystem.OnKilledEnemiesCountChanged -= EnemyStatisticsSystem_OnKilledEnemiesCountChanged;
-            EnemyStatisticsSystem.OnEnemiesCountChanged -= EnemyStatisticsSystem_OnEnemiesCountChanged;
-            EnemyStatisticsSystem.OnTotalEnemiesCountChanged -= EnemyStatisticsSystem_OnTotalEnemiesCountChanged;
+            killedEnemiesCountText.text = tuple.currentValue.ToString();
         }
 
-        private void EnemyStatisticsSystem_OnKilledEnemiesCountChanged(int previousValue, int currentValue)
+        private void EnemyStatisticsSystem_OnEnemiesCountChanged((int previousValue, int currentValue) tuple)
         {
-            killedEnemiesCountText.text = currentValue.ToString();
+            enemiesCountText.text = tuple.currentValue.ToString();
         }
 
-        private void EnemyStatisticsSystem_OnEnemiesCountChanged(int previousValue, int currentValue)
+        private void EnemyStatisticsSystem_OnTotalEnemiesCountChanged((int previousValue, int currentValue) tuple)
         {
-            enemiesCountText.text = currentValue.ToString();
-        }
-
-        private void EnemyStatisticsSystem_OnTotalEnemiesCountChanged(int previousValue, int currentValue)
-        {
-            totalEnemiesCountText.text = currentValue.ToString();
+            totalEnemiesCountText.text = tuple.currentValue.ToString();
         }
     }
 }
