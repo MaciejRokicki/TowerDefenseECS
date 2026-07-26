@@ -1,5 +1,6 @@
 using R3;
 using TD.Logic.ECS.Components;
+using TD.Logic.ECS.Components.Events;
 using Unity.Entities;
 
 namespace TD.Logic.ECS.Systems

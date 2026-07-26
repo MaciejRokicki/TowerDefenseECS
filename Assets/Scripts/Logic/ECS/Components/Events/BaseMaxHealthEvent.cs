@@ -2,7 +2,7 @@ using Unity.Entities;
 
 namespace TD.Logic.ECS.Components.Events
 {
-    public struct TotalEnemiesCountEvent : IComponentData
+    public struct BaseMaxHealthEvent : IComponentData
     {
 
     }

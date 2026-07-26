@@ -45,6 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ba0b984f9daa144da5942b041bea8b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: TD.Logic::TD.Logic.ECS.Authorings.BaseAuthoring
+  BaseHealth: 10000
+  MaxHealth: 10000
 --- !u!212 &7727769720062448856
 SpriteRenderer:
   serializedVersion: 3

@@ -34,6 +34,8 @@ namespace TD.Logic.ECS.Systems
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
+            state.RequireForUpdate<BaseSingleton>();
+
             enemyQuery = SystemAPI
                 .QueryBuilder()
                 .WithAll<EnemyTag, MovementSpeed, LocalTransform>()
@@ -43,7 +45,6 @@ namespace TD.Logic.ECS.Systems
         [BurstCompile]
         public void OnStartRunning(ref SystemState state)
         {
-            state.RequireForUpdate<BaseSingleton>();
             basePosition = state.EntityManager.GetComponentData<LocalTransform>(SystemAPI.GetSingletonEntity<BaseSingleton>()).Position;
             basePosition.z = 0.0f;
         }

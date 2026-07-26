@@ -1,5 +1,6 @@
 using TD.Logic.ECS.Components;
 using TD.Logic.ECS.Components.Enemy;
+using TD.Logic.ECS.Components.Events;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -83,9 +84,9 @@ namespace TD.Logic.ECS.Systems
                 var missilePosition = missile.LocalTransform.Position;
                 missilePosition.z = 0.0f;
 
-                var distance = math.distance(enemyPosition, missilePosition);
+                var distance = math.lengthsq(enemyPosition - missilePosition);
 
-                if (distance < 0.5f)
+                if (distance < 1.0f)
                 {
                     hits.Add(new Hit()
                     {
