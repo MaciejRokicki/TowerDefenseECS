@@ -150,6 +150,11 @@ namespace TD.Logic.ECS.Systems
             {
                 var entity = ecb.CreateEntity();
                 ecb.AddComponent<KilledEnemiesCountEvent>(entity);
+                entity = ecb.CreateEntity();
+                ecb.AddComponent(entity, new ExperienceEvent()
+                {
+                    Value = 1
+                });
                 ecb.DestroyEntity(hits[i].Enemy);
             }
 

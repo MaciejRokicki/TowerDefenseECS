@@ -21,6 +21,9 @@ namespace TD.View
         [SerializeField]
         private TextMeshProUGUI totalEnemiesCountText;
 
+        [SerializeField]
+        private Slider experienceSlider;
+
         private IDisposable disposable;
 
         private void Start()
@@ -30,7 +33,8 @@ namespace TD.View
                 BaseHealthSystem.OnMaxHealthChanged.Subscribe(BaseHealthSystem_OnMaxHealthChanged),
                 EnemyStatisticsSystem.OnKilledEnemiesCountChanged.Subscribe(EnemyStatisticsSystem_OnKilledEnemiesCountChanged),
                 EnemyStatisticsSystem.OnEnemiesCountChanged.Subscribe(EnemyStatisticsSystem_OnEnemiesCountChanged),
-                EnemyStatisticsSystem.OnTotalEnemiesCountChanged.Subscribe(EnemyStatisticsSystem_OnTotalEnemiesCountChanged)
+                EnemyStatisticsSystem.OnTotalEnemiesCountChanged.Subscribe(EnemyStatisticsSystem_OnTotalEnemiesCountChanged),
+                ExperienceSystem.OnExperienceChanged.Subscribe(ExperienceSystem_OnExperienceChanged)
             );
         }
 
@@ -64,6 +68,12 @@ namespace TD.View
         private void EnemyStatisticsSystem_OnTotalEnemiesCountChanged((int previousValue, int currentValue) tuple)
         {
             totalEnemiesCountText.text = tuple.currentValue.ToString();
+        }
+
+        private void ExperienceSystem_OnExperienceChanged((int previousValue, int currentValue) tuple)
+        {
+            experienceSlider.maxValue = ExperienceSystem.MaxExperience;
+            experienceSlider.value = tuple.currentValue;
         }
     }
 }
