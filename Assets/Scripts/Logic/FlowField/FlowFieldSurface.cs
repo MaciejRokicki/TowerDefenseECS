@@ -131,20 +131,16 @@ namespace TD.Logic.FlowField
         private void BakeData()
         {
             var modifiers = GameObject.FindObjectsByType<FlowFieldModifier>(FindObjectsInactive.Exclude);
+            bool isDataNull = data == null;
 
-            //bool isDataNull = data == false;
-            UnityEditor.SerializedObject so = null;
+            if (!isDataNull)
+            {
+                DestroyImmediate(data, true);
+            }
 
-            //if (isDataNull)
-            //{
             data = ScriptableObject.CreateInstance<FlowFieldData>();
-            so = new UnityEditor.SerializedObject(data);
-            //}
-            //else
-            //{
-            //so = new UnityEditor.SerializedObject(data);
-            //}
 
+            UnityEditor.SerializedObject so = new UnityEditor.SerializedObject(data);
             so.Update();
             so.FindProperty("cellSize").floatValue = cellSize;
             so.FindProperty("size").vector2IntValue = size;
@@ -158,19 +154,22 @@ namespace TD.Logic.FlowField
 
             for (int i = 0; i < modifiers.Length; i++)
             {
-                so.FindProperty("modifiers").GetArrayElementAtIndex(i).FindPropertyRelative("Cost").uintValue = modifiers[i].Cost;
-                so.FindProperty("modifiers").GetArrayElementAtIndex(i).FindPropertyRelative("Position").vector3Value = modifiers[i].transform.position;
-                so.FindProperty("modifiers").GetArrayElementAtIndex(i).FindPropertyRelative("Size").vector2IntValue = modifiers[i].Size;
+                var modifier = so.FindProperty("modifiers").GetArrayElementAtIndex(i);
+                modifier.FindPropertyRelative("Cost").uintValue = modifiers[i].Cost;
+                modifier.FindPropertyRelative("Position").vector3Value = modifiers[i].transform.position;
+                modifier.FindPropertyRelative("Size").vector2IntValue = modifiers[i].Size;
             }
 
             so.ApplyModifiedProperties();
 
-            //if (isDataNull)
-            //{
-            UnityEditor.AssetDatabase.CreateAsset(data, "Assets/Settings/Test.asset");
-            //}
+            if (isDataNull)
+            {
+                var path = string.Concat("Assets/Settings/", gameObject.scene.name, ".asset");
+                UnityEditor.AssetDatabase.CreateAsset(data, UnityEditor.AssetDatabase.GenerateUniqueAssetPath(path));
+            }
 
             data.Calculate();
+
             UnityEditor.EditorUtility.SetDirty(data);
             UnityEditor.EditorUtility.SetDirty(this);
         }
