@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace TD.Logic.FlowField
@@ -26,6 +27,7 @@ namespace TD.Logic.FlowField
         [SerializeField]
         private Vector2Int testerPos;
 
+        [NonSerialized]
         private GUIStyle debugStyle;
 
         private void OnDrawGizmos()
@@ -121,8 +123,8 @@ namespace TD.Logic.FlowField
         public static Vector2Int ToGridPosition(Vector3 gridPosition, float cellSize, Vector3 worldPosition)
         {
             return new Vector2Int(
-                Mathf.RoundToInt((worldPosition.x - gridPosition.x - cellSize / 2.0f) / cellSize),
-                Mathf.RoundToInt((worldPosition.z - gridPosition.z - cellSize / 2.0f) / cellSize)
+                (int)Math.Round((worldPosition.x - gridPosition.x - cellSize / 2.0f) / cellSize, MidpointRounding.AwayFromZero),
+                (int)Math.Round((worldPosition.z - gridPosition.z - cellSize / 2.0f) / cellSize, MidpointRounding.AwayFromZero)
             );
         }
 
@@ -131,14 +133,16 @@ namespace TD.Logic.FlowField
         private void BakeData()
         {
             var modifiers = GameObject.FindObjectsByType<FlowFieldModifier>(FindObjectsInactive.Exclude);
-            bool isDataNull = data == null;
+            var currentPath = UnityEditor.AssetDatabase.GetAssetPath(this.data);
+
+            bool isDataNull = string.IsNullOrEmpty(currentPath);
 
             if (!isDataNull)
             {
-                DestroyImmediate(data, true);
+                UnityEditor.AssetDatabase.DeleteAsset(currentPath);
             }
 
-            data = ScriptableObject.CreateInstance<FlowFieldData>();
+            var data = ScriptableObject.CreateInstance<FlowFieldData>();
 
             UnityEditor.SerializedObject so = new UnityEditor.SerializedObject(data);
             so.Update();
@@ -162,16 +166,16 @@ namespace TD.Logic.FlowField
 
             so.ApplyModifiedProperties();
 
-            if (isDataNull)
-            {
-                var path = string.Concat("Assets/Settings/", gameObject.scene.name, ".asset");
-                UnityEditor.AssetDatabase.CreateAsset(data, UnityEditor.AssetDatabase.GenerateUniqueAssetPath(path));
-            }
-
             data.Calculate();
 
+            var newPath = string.Concat("Assets/Settings/", gameObject.scene.name, ".asset");
+            UnityEditor.AssetDatabase.CreateAsset(data, UnityEditor.AssetDatabase.GenerateUniqueAssetPath(newPath));
+
             UnityEditor.EditorUtility.SetDirty(data);
-            UnityEditor.EditorUtility.SetDirty(this);
+            this.data = data;
+            UnityEditor.EditorUtility.SetDirty(gameObject);
+
+            UnityEditor.AssetDatabase.SaveAssets();
         }
 #endif
     }
