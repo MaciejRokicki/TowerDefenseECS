@@ -1,6 +1,8 @@
 using TD.Logic.ECS.Components;
 using TD.Logic.ECS.Components.Enemy;
+using TD.Logic.FlowField.ECS;
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -12,6 +14,8 @@ namespace TD.Logic.ECS.Systems
     {
         public float3 TargetPosition;
         public float Time;
+        [ReadOnly]
+        public FlowFieldSurfaceData FlowFieldSurfaceData;
 
         void Execute(
             in MovementSpeed movementSpeed,
@@ -19,10 +23,21 @@ namespace TD.Logic.ECS.Systems
         {
             var position = transform.Position;
             position.z = 0.0f;
-            var direction = math.normalize(TargetPosition - position);
+
+            var gridPosition = ToGridPosition(FlowFieldSurfaceData.Position, FlowFieldSurfaceData.CellSize, transform.Position);
+            var direction = new float3(FlowFieldSurfaceData.Directions[gridPosition.x * FlowFieldSurfaceData.Size.y + gridPosition.y], 0.0f);
+
             position += direction * movementSpeed.Speed * Time;
             position.z = position.y;
             transform.Position = position;
+        }
+
+        private int2 ToGridPosition(float3 gridPosition, float cellSize, float3 worldPosition)
+        {
+            return new int2(
+                (int)math.round((worldPosition.x - gridPosition.x - cellSize / 2.0f) / cellSize),
+                (int)math.round((worldPosition.y - gridPosition.y - cellSize / 2.0f) / cellSize)
+            );
         }
     }
 
@@ -35,6 +50,7 @@ namespace TD.Logic.ECS.Systems
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<BaseSingleton>();
+            state.RequireForUpdate<FlowFieldSurfaceData>();
 
             enemyQuery = SystemAPI
                 .QueryBuilder()
@@ -52,10 +68,13 @@ namespace TD.Logic.ECS.Systems
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
+            var flowFieldSurfaceData = SystemAPI.GetSingleton<FlowFieldSurfaceData>();
+
             new MoveJob()
             {
                 TargetPosition = basePosition,
                 Time = SystemAPI.Time.DeltaTime,
+                FlowFieldSurfaceData = flowFieldSurfaceData
             }.ScheduleParallel(enemyQuery);
         }
     }

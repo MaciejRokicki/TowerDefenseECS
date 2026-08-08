@@ -5,6 +5,8 @@ namespace TD.Logic.FlowField
 {
     public class FlowFieldSurface : MonoBehaviour
     {
+        public static FlowFieldSurface Instance { get; private set; }
+
         [Header("Settings")]
         [SerializeField]
         private float cellSize;
@@ -30,6 +32,13 @@ namespace TD.Logic.FlowField
         [NonSerialized]
         private GUIStyle debugStyle;
 
+        public FlowFieldData Data => data;
+
+        private void Awake()
+        {
+            Instance = this;
+        }
+
         private void OnDrawGizmos()
         {
             void DrawGrid(Vector3 position, float cellSize, Vector2Int size)
@@ -39,18 +48,18 @@ namespace TD.Logic.FlowField
                 for (int i = 0; i < size.x; i++)
                 {
                     pos = position + Vector3.right * i * cellSize;
-                    Gizmos.DrawLine(pos, pos + Vector3.forward * size.y * cellSize);
+                    Gizmos.DrawLine(pos, pos + Vector3.up * size.y * cellSize);
 
                     for (int j = 0; j < size.y; j++)
                     {
-                        pos = position + Vector3.forward * j * cellSize;
+                        pos = position + Vector3.up * j * cellSize;
                         Gizmos.DrawLine(pos, pos + Vector3.right * size.x * cellSize);
                     }
                 }
 
                 pos = position + Vector3.right * size.x * cellSize;
-                Gizmos.DrawLine(pos, pos + Vector3.forward * size.y * cellSize);
-                pos = position + Vector3.forward * size.y * cellSize;
+                Gizmos.DrawLine(pos, pos + Vector3.up * size.y * cellSize);
+                pos = position + Vector3.up * size.y * cellSize;
                 Gizmos.DrawLine(pos, pos + Vector3.right * size.x * cellSize);
             }
 
@@ -60,9 +69,9 @@ namespace TD.Logic.FlowField
                 {
                     for (int j = 0; j < data.Size.y; j++)
                     {
-                        var pos = data.Position + new Vector3(i * data.CellSize, 0.0f, j * data.CellSize) + new Vector3(data.CellSize / 2.0f, 0.0f, data.CellSize / 2.0f);
-                        pos.z += 0.25f;
-                        UnityEditor.Handles.Label(pos, data.GetValue(i, j).Cost.ToString(), debugStyle);
+                        var pos = data.Position + new Vector3(i * data.CellSize, j * data.CellSize, 0.0f) + new Vector3(data.CellSize / 2.0f, data.CellSize / 2.0f, 0.0f);
+                        pos.y += 0.25f;
+                        UnityEditor.Handles.Label(pos, string.Concat(data.GetValue(i, j).Cost, " (", i, ", ", j, ")"), debugStyle);
                     }
                 }
             }
@@ -73,8 +82,8 @@ namespace TD.Logic.FlowField
                 {
                     for (int j = 0; j < data.Size.y; j++)
                     {
-                        var pos = data.Position + new Vector3(i * data.CellSize, 0.0f, j * data.CellSize) + new Vector3(data.CellSize / 2.0f, 0.0f, data.CellSize / 2.0f);
-                        pos.z -= 0.25f;
+                        var pos = data.Position + new Vector3(i * data.CellSize, j * data.CellSize, 0.0f) + new Vector3(data.CellSize / 2.0f, data.CellSize / 2.0f, 0.0f);
+                        pos.y -= 0.25f;
                         UnityEditor.Handles.Label(pos, data.GetValue(i, j).Direction.ToString(), debugStyle);
                     }
                 }
@@ -124,7 +133,7 @@ namespace TD.Logic.FlowField
         {
             return new Vector2Int(
                 (int)Math.Round((worldPosition.x - gridPosition.x - cellSize / 2.0f) / cellSize, MidpointRounding.AwayFromZero),
-                (int)Math.Round((worldPosition.z - gridPosition.z - cellSize / 2.0f) / cellSize, MidpointRounding.AwayFromZero)
+                (int)Math.Round((worldPosition.y - gridPosition.y - cellSize / 2.0f) / cellSize, MidpointRounding.AwayFromZero)
             );
         }
 

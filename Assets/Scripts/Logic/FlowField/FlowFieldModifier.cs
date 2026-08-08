@@ -10,7 +10,7 @@ namespace TD.Logic.FlowField
         private void OnDrawGizmos()
         {
             Gizmos.color = new Color(1.0f, 1.0f, 1.0f, 0.25f);
-            Gizmos.DrawCube(transform.position + new Vector3(Size.x, 0.0f, Size.y) / 2.0f, new Vector3(Size.x, 1.0f, Size.y));
+            Gizmos.DrawCube(transform.position + new Vector3(Size.x, Size.y, 0.0f) / 2.0f, new Vector3(Size.x, Size.y, 1.0f));
         }
     }
 }

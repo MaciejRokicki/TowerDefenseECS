@@ -158,7 +158,7 @@ namespace TD.Logic.FlowField
 
                     if (minNeighbour != null)
                     {
-                        cell.Direction = new Vector3(minNeighbour.GridPosition.x - cell.GridPosition.x, 0.0f, minNeighbour.GridPosition.y - cell.GridPosition.y);
+                        cell.Direction = new Vector3(minNeighbour.GridPosition.x - cell.GridPosition.x, minNeighbour.GridPosition.y - cell.GridPosition.y, 0.0f);
                         cell.Direction.Normalize();
                     }
                 }
