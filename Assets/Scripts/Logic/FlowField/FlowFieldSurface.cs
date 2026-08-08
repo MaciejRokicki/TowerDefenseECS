@@ -39,6 +39,15 @@ namespace TD.Logic.FlowField
             Instance = this;
         }
 
+        public static Vector2Int ToGridPosition(Vector3 gridPosition, float cellSize, Vector3 worldPosition)
+        {
+            return new Vector2Int(
+                (int)Math.Round((worldPosition.x - gridPosition.x - cellSize / 2.0f) / cellSize, MidpointRounding.AwayFromZero),
+                (int)Math.Round((worldPosition.y - gridPosition.y - cellSize / 2.0f) / cellSize, MidpointRounding.AwayFromZero)
+            );
+        }
+
+#if UNITY_EDITOR
         private void OnDrawGizmos()
         {
             void DrawGrid(Vector3 position, float cellSize, Vector2Int size)
@@ -129,15 +138,6 @@ namespace TD.Logic.FlowField
             }
         }
 
-        public static Vector2Int ToGridPosition(Vector3 gridPosition, float cellSize, Vector3 worldPosition)
-        {
-            return new Vector2Int(
-                (int)Math.Round((worldPosition.x - gridPosition.x - cellSize / 2.0f) / cellSize, MidpointRounding.AwayFromZero),
-                (int)Math.Round((worldPosition.y - gridPosition.y - cellSize / 2.0f) / cellSize, MidpointRounding.AwayFromZero)
-            );
-        }
-
-#if UNITY_EDITOR
         [ContextMenu("Bake")]
         private void BakeData()
         {
