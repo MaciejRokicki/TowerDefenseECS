@@ -31,6 +31,8 @@ namespace TD.Logic.FlowField
         public float CellSize => cellSize;
         public Vector2Int Size => size;
         public Vector3 Position => position;
+        public Vector3 TargetWorldPosition => targetWorldPosition;
+        public Vector2Int TargetPosition => targetPosition;
         public IReadOnlyList<FlowFieldCell> Cells => cells;
 
         public FlowFieldCell GetValue(int x, int y)

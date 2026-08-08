@@ -86,7 +86,7 @@ namespace TD.Logic.ECS.Systems
 
                 var distance = math.lengthsq(enemyPosition - missilePosition);
 
-                if (distance < 1.0f)
+                if (distance < 0.4f)
                 {
                     hits.Add(new Hit()
                     {

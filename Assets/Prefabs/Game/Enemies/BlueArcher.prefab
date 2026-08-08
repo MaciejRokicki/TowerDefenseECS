@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f6d71de5d1905d4692580bcafac04fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: TD.Logic::TD.Logic.ECS.Authorings.EnemyAuthoring
-  MovementSpeed: 1
+  MovementSpeed: 2
 --- !u!114 &7796194639302553024
 MonoBehaviour:
   m_ObjectHideFlags: 0

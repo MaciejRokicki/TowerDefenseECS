@@ -1,6 +1,6 @@
-using TD.Logic.ECS.Components;
 using TD.Logic.ECS.Components.Enemy;
 using TD.Logic.ECS.Components.Events;
+using TD.Logic.FlowField.ECS;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -32,13 +32,12 @@ namespace TD.Logic.ECS.Systems
 
     public partial struct BaseDamageSystem : ISystem
     {
-        private float3 basePosition;
         private EntityQuery enemyQuery;
 
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<BaseSingleton>();
+            state.RequireForUpdate<FlowFieldSurfaceData>();
 
             enemyQuery = SystemAPI
                 .QueryBuilder()
@@ -47,15 +46,9 @@ namespace TD.Logic.ECS.Systems
         }
 
         [BurstCompile]
-        public void OnStartRunning(ref SystemState state)
-        {
-            basePosition = SystemAPI.GetComponent<LocalTransform>(SystemAPI.GetSingletonEntity<BaseSingleton>()).Position;
-            basePosition.z = 0.0f;
-        }
-
-        [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
+            float3 basePosition = SystemAPI.GetSingleton<FlowFieldSurfaceData>().TargetWorldPosition;
             NativeReference<float> dmg = new NativeReference<float>(0.0f, Allocator.TempJob);
             var ecb = new EntityCommandBuffer(Allocator.TempJob);
 
@@ -67,11 +60,14 @@ namespace TD.Logic.ECS.Systems
             }.Schedule(enemyQuery, state.Dependency);
             handle.Complete();
 
-            var e = ecb.CreateEntity();
-            ecb.AddComponent(e, new BaseCurrentHealthEvent()
+            if (dmg.Value != 0.0f)
             {
-                Value = -dmg.Value
-            });
+                var e = ecb.CreateEntity();
+                ecb.AddComponent(e, new BaseCurrentHealthEvent()
+                {
+                    Value = -dmg.Value
+                });
+            }
 
             ecb.Playback(state.EntityManager);
             ecb.Dispose();
