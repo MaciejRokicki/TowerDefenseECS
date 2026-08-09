@@ -19,15 +19,16 @@ namespace TD.Logic.ECS.Systems
 
         void Execute(
             in MovementSpeed movementSpeed,
+            ref Velocity velocity,
             ref LocalTransform transform)
         {
             var position = transform.Position;
             position.z = 0.0f;
 
             var gridPosition = ToGridPosition(FlowFieldSurfaceData.Position, FlowFieldSurfaceData.CellSize, transform.Position);
-            var direction = new float3(FlowFieldSurfaceData.Directions[gridPosition.x * FlowFieldSurfaceData.Size.y + gridPosition.y], 0.0f);
-
-            position += direction * movementSpeed.Speed * Time;
+            velocity.Target = new float3(FlowFieldSurfaceData.Directions[gridPosition.x * FlowFieldSurfaceData.Size.y + gridPosition.y] * movementSpeed.Speed * Time, 0.0f);
+            velocity.Current = math.lerp(velocity.Current, velocity.Target, Time * 1.0f);
+            position += velocity.Current;
             position.z = position.y;
             transform.Position = position;
         }
@@ -54,7 +55,7 @@ namespace TD.Logic.ECS.Systems
 
             enemyQuery = SystemAPI
                 .QueryBuilder()
-                .WithAll<EnemyTag, MovementSpeed, LocalTransform>()
+                .WithAll<EnemyTag, Velocity, MovementSpeed, LocalTransform>()
                 .Build();
         }
 

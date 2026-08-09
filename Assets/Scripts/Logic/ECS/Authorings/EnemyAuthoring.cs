@@ -15,6 +15,7 @@ namespace TD.Logic.ECS.Authorings
             {
                 var entity = GetEntity(authoring, TransformUsageFlags.Dynamic);
                 AddComponent<EnemyTag>(entity);
+                AddComponent<Velocity>(entity);
                 AddComponent(entity, new MovementSpeed()
                 {
                     Speed = authoring.MovementSpeed
