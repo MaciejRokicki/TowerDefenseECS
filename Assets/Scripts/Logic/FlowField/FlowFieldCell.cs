@@ -8,7 +8,7 @@ namespace TD.Logic.FlowField
     {
         public Vector2Int GridPosition;
         public bool Modified;
-        public uint Cost;
+        public float Cost;
         public Vector3 Direction;
     }
 }

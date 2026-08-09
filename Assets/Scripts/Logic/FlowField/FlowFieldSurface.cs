@@ -19,9 +19,13 @@ namespace TD.Logic.FlowField
 
         [Header("Debug")]
         [SerializeField]
+        private bool debug;
+        [SerializeField]
         private bool drawData;
         [SerializeField]
         private bool drawCost;
+        [SerializeField]
+        private bool drawHeatmap;
         [SerializeField]
         private bool drawDirection;
         [SerializeField]
@@ -80,7 +84,23 @@ namespace TD.Logic.FlowField
                     {
                         var pos = data.Position + new Vector3(i * data.CellSize, j * data.CellSize, 0.0f) + new Vector3(data.CellSize / 2.0f, data.CellSize / 2.0f, 0.0f);
                         pos.y += 0.25f;
-                        UnityEditor.Handles.Label(pos, string.Concat(data.GetValue(i, j).Cost, " (", i, ", ", j, ")"), debugStyle);
+                        UnityEditor.Handles.Label(pos, string.Concat(data.GetValue(i, j).Cost.ToString("0.0"), " (", i, ", ", j, ")"), debugStyle);
+                    }
+                }
+            }
+
+            void DrawHeatmap(FlowFieldData data)
+            {
+                for (int i = 0; i < data.Size.x; i++)
+                {
+                    for (int j = 0; j < data.Size.y; j++)
+                    {
+                        var pos = data.Position + new Vector3(i * data.CellSize, j * data.CellSize, 0.0f) + new Vector3(data.CellSize / 2.0f, data.CellSize / 2.0f, 0.0f);
+                        Gizmos.color = Color.Lerp(Color.green, Color.red, data.GetValue(i, j).Cost / data.MaxCostValue);
+                        var c = Gizmos.color;
+                        c.a = 0.75f;
+                        Gizmos.color = c;
+                        Gizmos.DrawCube(pos, Vector3.one * cellSize);
                     }
                 }
             }
@@ -92,8 +112,7 @@ namespace TD.Logic.FlowField
                     for (int j = 0; j < data.Size.y; j++)
                     {
                         var pos = data.Position + new Vector3(i * data.CellSize, j * data.CellSize, 0.0f) + new Vector3(data.CellSize / 2.0f, data.CellSize / 2.0f, 0.0f);
-                        pos.y -= 0.25f;
-                        UnityEditor.Handles.Label(pos, data.GetValue(i, j).Direction.ToString(), debugStyle);
+                        UnityEditor.Handles.DrawLine(pos, pos + data.GetValue(i, j).Direction / 2.0f, 2.0f);
                     }
                 }
             }
@@ -103,6 +122,9 @@ namespace TD.Logic.FlowField
                 Gizmos.DrawCube(tester.position, Vector3.one * cellSize);
                 testerPos = ToGridPosition(position, cellSize, tester.position);
             }
+
+            if (!debug)
+                return;
 
             if (drawData)
             {
@@ -123,6 +145,9 @@ namespace TD.Logic.FlowField
 
                 if (drawCost)
                     DrawCosts(data);
+
+                if (drawHeatmap)
+                    DrawHeatmap(data);
 
                 if (drawDirection)
                     DrawDirections(data);
@@ -168,7 +193,7 @@ namespace TD.Logic.FlowField
             for (int i = 0; i < modifiers.Length; i++)
             {
                 var modifier = so.FindProperty("modifiers").GetArrayElementAtIndex(i);
-                modifier.FindPropertyRelative("Cost").uintValue = modifiers[i].Cost;
+                modifier.FindPropertyRelative("Cost").floatValue = modifiers[i].Cost;
                 modifier.FindPropertyRelative("Position").vector3Value = modifiers[i].transform.position;
                 modifier.FindPropertyRelative("Size").vector2IntValue = modifiers[i].Size;
             }

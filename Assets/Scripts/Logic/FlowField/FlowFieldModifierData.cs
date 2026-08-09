@@ -6,7 +6,7 @@ namespace TD.Logic.FlowField
     [Serializable]
     public record FlowFieldModifierData
     {
-        public uint Cost;
+        public float Cost;
         public Vector3 Position;
         public Vector2Int Size;
     }

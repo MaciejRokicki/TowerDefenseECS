@@ -24,6 +24,8 @@ namespace TD.Logic.FlowField
         [SerializeField]
         private Vector2Int targetPosition;
         [SerializeField]
+        private float maxCostValue;
+        [SerializeField]
         private FlowFieldCell[] cells;
         [SerializeField]
         private FlowFieldModifierData[] modifiers;
@@ -33,6 +35,7 @@ namespace TD.Logic.FlowField
         public Vector3 Position => position;
         public Vector3 TargetWorldPosition => targetWorldPosition;
         public Vector2Int TargetPosition => targetPosition;
+        public float MaxCostValue => maxCostValue;
         public IReadOnlyList<FlowFieldCell> Cells => cells;
 
         public FlowFieldCell GetValue(int x, int y)
@@ -84,6 +87,9 @@ namespace TD.Logic.FlowField
             {
                 current = queue.Dequeue();
 
+                if (maxCostValue < current.Cost)
+                    maxCostValue = current.Cost;
+
                 if (current.Modified)
                     continue;
 
@@ -99,24 +105,24 @@ namespace TD.Logic.FlowField
                     if (neighbour.Modified)
                         continue;
 
-                    uint cost = 2;
+                    float cost = 1.41f;
 
                     Vector2Int dir = current.GridPosition - neighbour.GridPosition;
 
                     if (dir.x == 0 || dir.y == 0)
                     {
-                        cost = 1;
+                        cost = 1.0f;
                     }
 
                     if (neighbour.GridPosition == targetPosition)
                     {
-                        neighbour.Cost = 0;
+                        neighbour.Cost = 0.0f;
                     }
                     else
                     {
-                        uint newCost = current.Cost + cost;
+                        float newCost = current.Cost + cost;
 
-                        if (neighbour.Cost == 0 || neighbour.Cost > newCost)
+                        if (neighbour.Cost == 0.0f || neighbour.Cost > newCost)
                         {
                             neighbour.Cost = newCost;
                             queue.Enqueue(neighbour);
@@ -141,7 +147,7 @@ namespace TD.Logic.FlowField
                         continue;
 
                     GetNeighbours(i, j, ref neighbourArray);
-                    uint minCost = uint.MaxValue;
+                    float minCost = float.MaxValue;
                     FlowFieldCell minNeighbour = null;
 
                     for (int k = 0; k < neighbourArray.Length; k++)

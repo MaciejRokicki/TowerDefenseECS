@@ -904,8 +904,10 @@ MonoBehaviour:
   size: {x: 102, y: 74}
   targetPosition: {x: 0.5, y: 0.5, z: 0}
   data: {fileID: 11400000, guid: 57638d162b9acce46aa92aac142f9f48, type: 2}
+  debug: 0
   drawData: 1
   drawCost: 0
+  drawHeatmap: 0
   drawDirection: 0
   tester: {fileID: 1685612534}
   testerPos: {x: 51, y: 37}
