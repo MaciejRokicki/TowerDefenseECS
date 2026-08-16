@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace TD.Logic.FlowField
@@ -7,7 +8,9 @@ namespace TD.Logic.FlowField
     [CreateAssetMenu(fileName = "DefaultFlowFieldData", menuName = "FlowField/Data")]
     public class FlowFieldData : ScriptableObject
     {
-        private static FlowFieldCell[] neighbourArray;
+        private static FlowFieldCell[] neighbourArray8;
+        private static FlowFieldCell[] neighbourArray4;
+        private static float sqrtOfTwo = Mathf.Sqrt(2);
 
         [SerializeField]
         private float cellSize;
@@ -41,10 +44,14 @@ namespace TD.Logic.FlowField
         public FlowFieldCell GetValue(int x, int y)
         {
             if (x < 0 || x >= size.x)
-                throw new ArgumentOutOfRangeException("x");
+            {
+                return null;
+            }
 
             if (y < 0 || y >= size.y)
-                throw new ArgumentOutOfRangeException("y");
+            {
+                return null;
+            }
 
             return cells[x * size.y + y];
         }
@@ -86,6 +93,7 @@ namespace TD.Logic.FlowField
             while (queue.Count > 0)
             {
                 current = queue.Dequeue();
+                current.Eikonal = float.PositiveInfinity;
 
                 if (maxCostValue < current.Cost)
                     maxCostValue = current.Cost;
@@ -93,11 +101,11 @@ namespace TD.Logic.FlowField
                 if (current.Modified)
                     continue;
 
-                GetNeighbours(current.GridPosition.x, current.GridPosition.y, ref neighbourArray);
+                GetNeighbours8(current.GridPosition.x, current.GridPosition.y, ref neighbourArray8);
 
-                for (int i = 0; i < neighbourArray.Length; i++)
+                for (int i = 0; i < neighbourArray8.Length; i++)
                 {
-                    var neighbour = neighbourArray[i];
+                    var neighbour = neighbourArray8[i];
 
                     if (neighbour == null)
                         continue;
@@ -105,7 +113,7 @@ namespace TD.Logic.FlowField
                     if (neighbour.Modified)
                         continue;
 
-                    float cost = 1.41f;
+                    float cost = sqrtOfTwo;
 
                     Vector2Int dir = current.GridPosition - neighbour.GridPosition;
 
@@ -132,6 +140,67 @@ namespace TD.Logic.FlowField
             }
 
             queue.Clear();
+            visited.Clear();
+
+            var sortedList = new List<FlowFieldCell>();
+            current = GetValue(targetPosition.x, targetPosition.y);
+            sortedList.Add(current);
+            visited.Add(current);
+            int c = 0;
+
+            current.Eikonal = 0.0f;
+
+            while (sortedList.Count > 0)
+            {
+                c++;
+                sortedList = sortedList.OrderBy(x => x.Cost).ToList();
+                current = sortedList[0];
+                sortedList.RemoveAt(0);
+
+                if (c == 300_000)
+                {
+                    Debug.Log("C");
+                    break;
+                }
+
+                if (current.Modified)
+                    continue;
+
+                if (current.GridPosition == targetPosition)
+                {
+                    current.Eikonal = 0.0f;
+                }
+                else
+                {
+                    var x1 = GetNeighbourForEikonalCalculation(current.GridPosition.x - 1, current.GridPosition.y);
+                    var x2 = GetNeighbourForEikonalCalculation(current.GridPosition.x + 1, current.GridPosition.y);
+                    var y1 = GetNeighbourForEikonalCalculation(current.GridPosition.x, current.GridPosition.y - 1);
+                    var y2 = GetNeighbourForEikonalCalculation(current.GridPosition.x, current.GridPosition.y + 1);
+
+                    current.Eikonal = SolveEikonal(Mathf.Min(x1, x2), Mathf.Min(y1, y2), 1.0f);
+                }
+
+                GetNeighbours4(current.GridPosition.x, current.GridPosition.y, ref neighbourArray4);
+
+                for (int i = 0; i < neighbourArray4.Length; i++)
+                {
+                    var neighbour = neighbourArray4[i];
+
+                    if (neighbour == null)
+                        continue;
+
+                    if (visited.Contains(neighbour))
+                        continue;
+
+                    if (neighbour.Modified)
+                        continue;
+
+                    visited.Add(neighbour);
+                    sortedList.Add(neighbour);
+                }
+            }
+
+            queue.Clear();
             queue = null;
             visited.Clear();
             visited = null;
@@ -146,29 +215,18 @@ namespace TD.Logic.FlowField
                     if (cell.GridPosition == targetPosition)
                         continue;
 
-                    GetNeighbours(i, j, ref neighbourArray);
-                    float minCost = float.MaxValue;
-                    FlowFieldCell minNeighbour = null;
+                    var x1 = GetValue(i - 1, j);
+                    var x2 = GetValue(i + 1, j);
+                    var y1 = GetValue(i, j - 1);
+                    var y2 = GetValue(i, j + 1);
 
-                    for (int k = 0; k < neighbourArray.Length; k++)
-                    {
-                        var neighbour = neighbourArray[k];
+                    var x = Mathf.Min(x1 != null ? x1.Eikonal : float.PositiveInfinity, x2 != null ? x2.Eikonal : float.PositiveInfinity);
+                    var y = Mathf.Min(y1 != null ? y1.Eikonal : float.PositiveInfinity, y2 != null ? y2.Eikonal : float.PositiveInfinity);
 
-                        if (neighbour == null)
-                            continue;
-
-                        if (neighbour.Cost < minCost)
-                        {
-                            minCost = neighbour.Cost;
-                            minNeighbour = neighbour;
-                        }
-                    }
-
-                    if (minNeighbour != null)
-                    {
-                        cell.Direction = new Vector3(minNeighbour.GridPosition.x - cell.GridPosition.x, minNeighbour.GridPosition.y - cell.GridPosition.y, 0.0f);
-                        cell.Direction.Normalize();
-                    }
+                    cell.Direction = new Vector3(
+                        CalculateDirectionField(cell.Eikonal, x1 == null ? cell.Eikonal : x1.Eikonal, x2 == null ? cell.Eikonal : x2.Eikonal),
+                        CalculateDirectionField(cell.Eikonal, y1 == null ? cell.Eikonal : y1.Eikonal, y2 == null ? cell.Eikonal : y2.Eikonal)
+                    );
                 }
             }
         }
@@ -182,7 +240,25 @@ namespace TD.Logic.FlowField
             return true;
         }
 
-        private void GetNeighbours(int x, int y, ref FlowFieldCell[] neighbourArray)
+        private void GetNeighbours4(int x, int y, ref FlowFieldCell[] neighbourArray)
+        {
+            if (neighbourArray == null)
+                neighbourArray = new FlowFieldCell[4];
+
+            Vector2Int neighbourPosition = new Vector2Int(x, y + 1);
+            neighbourArray[0] = ValidatePosition(neighbourPosition) ? GetValue(neighbourPosition.x, neighbourPosition.y) : null;
+
+            neighbourPosition = new Vector2Int(x + 1, y);
+            neighbourArray[1] = ValidatePosition(neighbourPosition) ? GetValue(neighbourPosition.x, neighbourPosition.y) : null;
+
+            neighbourPosition = new Vector2Int(x, y - 1);
+            neighbourArray[2] = ValidatePosition(neighbourPosition) ? GetValue(neighbourPosition.x, neighbourPosition.y) : null;
+
+            neighbourPosition = new Vector2Int(x - 1, y);
+            neighbourArray[3] = ValidatePosition(neighbourPosition) ? GetValue(neighbourPosition.x, neighbourPosition.y) : null;
+        }
+
+        private void GetNeighbours8(int x, int y, ref FlowFieldCell[] neighbourArray)
         {
             if (neighbourArray == null)
                 neighbourArray = new FlowFieldCell[8];
@@ -210,6 +286,47 @@ namespace TD.Logic.FlowField
 
             neighbourPosition = new Vector2Int(x - 1, y + 1);
             neighbourArray[7] = ValidatePosition(neighbourPosition) ? GetValue(neighbourPosition.x, neighbourPosition.y) : null;
+        }
+
+        private float GetNeighbourForEikonalCalculation(int x, int y)
+        {
+            var res = GetValue(x, y);
+
+            if (res == null)
+                return float.PositiveInfinity;
+
+            return res.Eikonal;
+        }
+
+        private float SolveEikonal(float tx, float ty, float cost)
+        {
+            if (float.IsPositiveInfinity(tx) || tx == float.MaxValue) return ty + cost;
+            if (float.IsPositiveInfinity(ty) || ty == float.MaxValue) return tx + cost;
+
+            float delta = 2f * (cost * cost) - (tx - ty) * (tx - ty);
+
+            if (delta >= 0f)
+            {
+                float t = (tx + ty + (float)Math.Sqrt(delta)) / 2f;
+
+                if (t > tx && t > ty)
+                {
+                    return t;
+                }
+            }
+
+            return Math.Min(tx, ty) + cost;
+        }
+
+        private float CalculateDirectionField(float current, float left, float right)
+        {
+            if (right < current)
+                return current - right;
+
+            if (left < current)
+                return -(current - left);
+
+            return 0.0f;
         }
     }
 }

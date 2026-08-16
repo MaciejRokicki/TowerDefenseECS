@@ -25,6 +25,8 @@ namespace TD.Logic.FlowField
         [SerializeField]
         private bool drawCost;
         [SerializeField]
+        private bool drawEikonal;
+        [SerializeField]
         private bool drawHeatmap;
         [SerializeField]
         private bool drawDirection;
@@ -84,7 +86,20 @@ namespace TD.Logic.FlowField
                     {
                         var pos = data.Position + new Vector3(i * data.CellSize, j * data.CellSize, 0.0f) + new Vector3(data.CellSize / 2.0f, data.CellSize / 2.0f, 0.0f);
                         pos.y += 0.25f;
-                        UnityEditor.Handles.Label(pos, string.Concat(data.GetValue(i, j).Cost.ToString("0.0"), " (", i, ", ", j, ")"), debugStyle);
+                        UnityEditor.Handles.Label(pos, string.Concat(data.GetValue(i, j).Cost.ToString("0.00"), " (", i, ", ", j, ")"), debugStyle);
+                    }
+                }
+            }
+
+            void DrawEikonal(FlowFieldData data)
+            {
+                for (int i = 0; i < data.Size.x; i++)
+                {
+                    for (int j = 0; j < data.Size.y; j++)
+                    {
+                        var pos = data.Position + new Vector3(i * data.CellSize, j * data.CellSize, 0.0f) + new Vector3(data.CellSize / 2.0f, data.CellSize / 2.0f, 0.0f);
+                        pos.y -= 0.25f;
+                        UnityEditor.Handles.Label(pos, data.GetValue(i, j).Eikonal.ToString("0.00"), debugStyle);
                     }
                 }
             }
@@ -119,6 +134,9 @@ namespace TD.Logic.FlowField
 
             void DrawTester(Vector3 position, float cellSize, Vector2Int size)
             {
+                if (tester == null)
+                    return;
+
                 Gizmos.DrawCube(tester.position, Vector3.one * cellSize);
                 testerPos = ToGridPosition(position, cellSize, tester.position);
             }
@@ -145,6 +163,9 @@ namespace TD.Logic.FlowField
 
                 if (drawCost)
                     DrawCosts(data);
+
+                if (drawEikonal)
+                    DrawEikonal(data);
 
                 if (drawHeatmap)
                     DrawHeatmap(data);

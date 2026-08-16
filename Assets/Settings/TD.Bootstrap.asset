@@ -1,0 +1,149 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aca4b1bc8310aa94495d916d139350de, type: 3}
+  m_Name: TD.Bootstrap
+  m_EditorClassIdentifier: TD.Logic::TD.Logic.FlowField.FlowFieldData
+  cellSize: 1
+  size: {x: 5, y: 5}
+  position: {x: 0, y: 0, z: -10}
+  min: {x: -2.5, y: 0, z: -12.5}
+  max: {x: 2.5, y: 0, z: -7.5}
+  targetWorldPosition: {x: 2, y: 2, z: 0}
+  targetPosition: {x: 2, y: 2}
+  maxCostValue: 2.828427
+  cells:
+  - GridPosition: {x: 0, y: 0}
+    Modified: 0
+    Cost: 2.828427
+    Eikonal: 3.2524357
+    Direction: {x: 0.7071068, y: 0.7071068, z: 0}
+  - GridPosition: {x: 0, y: 1}
+    Modified: 0
+    Cost: 2.4142137
+    Eikonal: 2.5453289
+    Direction: {x: 0.838222, y: 0.54532886, z: 0}
+  - GridPosition: {x: 0, y: 2}
+    Modified: 0
+    Cost: 2
+    Eikonal: 2
+    Direction: {x: 1, y: 0, z: 0}
+  - GridPosition: {x: 0, y: 3}
+    Modified: 0
+    Cost: 2.4142137
+    Eikonal: 2.5453289
+    Direction: {x: 0.838222, y: -0.54532886, z: 0}
+  - GridPosition: {x: 0, y: 4}
+    Modified: 0
+    Cost: 2.828427
+    Eikonal: 3.2524357
+    Direction: {x: 0.7071068, y: -0.7071068, z: 0}
+  - GridPosition: {x: 1, y: 0}
+    Modified: 0
+    Cost: 2.4142137
+    Eikonal: 2.5453289
+    Direction: {x: 0.54532886, y: 0.838222, z: 0}
+  - GridPosition: {x: 1, y: 1}
+    Modified: 0
+    Cost: 1.4142135
+    Eikonal: 1.7071068
+    Direction: {x: 0.7071068, y: 0.7071068, z: 0}
+  - GridPosition: {x: 1, y: 2}
+    Modified: 0
+    Cost: 1
+    Eikonal: 1
+    Direction: {x: 1, y: 0, z: 0}
+  - GridPosition: {x: 1, y: 3}
+    Modified: 0
+    Cost: 1.4142135
+    Eikonal: 1.7071068
+    Direction: {x: 0.7071068, y: -0.7071068, z: 0}
+  - GridPosition: {x: 1, y: 4}
+    Modified: 0
+    Cost: 2.4142137
+    Eikonal: 2.5453289
+    Direction: {x: 0.54532886, y: -0.838222, z: 0}
+  - GridPosition: {x: 2, y: 0}
+    Modified: 0
+    Cost: 2
+    Eikonal: 2
+    Direction: {x: 0, y: 1, z: 0}
+  - GridPosition: {x: 2, y: 1}
+    Modified: 0
+    Cost: 1
+    Eikonal: 1
+    Direction: {x: 0, y: 1, z: 0}
+  - GridPosition: {x: 2, y: 2}
+    Modified: 0
+    Cost: 0
+    Eikonal: 0
+    Direction: {x: 0, y: 0, z: 0}
+  - GridPosition: {x: 2, y: 3}
+    Modified: 0
+    Cost: 1
+    Eikonal: 1
+    Direction: {x: 0, y: -1, z: 0}
+  - GridPosition: {x: 2, y: 4}
+    Modified: 0
+    Cost: 2
+    Eikonal: 2
+    Direction: {x: 0, y: -1, z: 0}
+  - GridPosition: {x: 3, y: 0}
+    Modified: 0
+    Cost: 2.4142137
+    Eikonal: 2.5453289
+    Direction: {x: -0.54532886, y: 0.838222, z: 0}
+  - GridPosition: {x: 3, y: 1}
+    Modified: 0
+    Cost: 1.4142135
+    Eikonal: 1.7071068
+    Direction: {x: -0.7071068, y: 0.7071068, z: 0}
+  - GridPosition: {x: 3, y: 2}
+    Modified: 0
+    Cost: 1
+    Eikonal: 1
+    Direction: {x: -1, y: 0, z: 0}
+  - GridPosition: {x: 3, y: 3}
+    Modified: 0
+    Cost: 1.4142135
+    Eikonal: 1.7071068
+    Direction: {x: -0.7071068, y: -0.7071068, z: 0}
+  - GridPosition: {x: 3, y: 4}
+    Modified: 0
+    Cost: 2.4142137
+    Eikonal: 2.5453289
+    Direction: {x: -0.54532886, y: -0.838222, z: 0}
+  - GridPosition: {x: 4, y: 0}
+    Modified: 0
+    Cost: 2.828427
+    Eikonal: 3.2524357
+    Direction: {x: -0.7071068, y: 0.7071068, z: 0}
+  - GridPosition: {x: 4, y: 1}
+    Modified: 0
+    Cost: 2.4142137
+    Eikonal: 2.5453289
+    Direction: {x: -0.838222, y: 0.54532886, z: 0}
+  - GridPosition: {x: 4, y: 2}
+    Modified: 0
+    Cost: 2
+    Eikonal: 2
+    Direction: {x: -1, y: 0, z: 0}
+  - GridPosition: {x: 4, y: 3}
+    Modified: 0
+    Cost: 2.4142137
+    Eikonal: 2.5453289
+    Direction: {x: -0.838222, y: -0.54532886, z: 0}
+  - GridPosition: {x: 4, y: 4}
+    Modified: 0
+    Cost: 2.828427
+    Eikonal: 3.2524357
+    Direction: {x: -0.7071068, y: -0.7071068, z: 0}
+  modifiers: []
