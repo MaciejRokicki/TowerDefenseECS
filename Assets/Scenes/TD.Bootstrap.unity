@@ -129,7 +129,6 @@ GameObject:
   m_Component:
   - component: {fileID: 992193516}
   - component: {fileID: 992193515}
-  - component: {fileID: 992193517}
   m_Layer: 0
   m_Name: Bootstrap
   m_TagString: Untagged
@@ -164,30 +163,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &992193517
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 992193514}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22c5faf7693346f41ac0f4dc036184d5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: TD.Logic::TD.Logic.FlowField.FlowFieldSurface
-  cellSize: 1
-  size: {x: 5, y: 5}
-  targetPosition: {x: 2, y: 2, z: 0}
-  data: {fileID: 11400000, guid: 7c8b3875bf7ef2149aaa8004726968fa, type: 2}
-  debug: 1
-  drawData: 1
-  drawCost: 1
-  drawEikonal: 1
-  drawHeatmap: 0
-  drawDirection: 1
-  tester: {fileID: 0}
-  testerPos: {x: 0, y: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

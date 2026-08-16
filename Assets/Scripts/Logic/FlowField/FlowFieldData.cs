@@ -79,6 +79,8 @@ namespace TD.Logic.FlowField
                     {
                         var cell = GetValue(gridPosition.x + j, gridPosition.y + k);
                         cell.Cost = modifier.Cost;
+                        cell.Eikonal = float.PositiveInfinity;
+                        cell.Direction = Vector2.Normalize(targetPosition - cell.GridPosition);
                         cell.Modified = true;
                     }
                 }
@@ -211,6 +213,9 @@ namespace TD.Logic.FlowField
                 for (int j = 0; j < size.y; j++)
                 {
                     var cell = GetValue(i, j);
+
+                    if (cell.Modified)
+                        continue;
 
                     if (cell.GridPosition == targetPosition)
                         continue;
