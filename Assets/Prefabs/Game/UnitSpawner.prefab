@@ -46,5 +46,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitSpawnerAuthoring
   Prefab: {fileID: 2659537409737172801, guid: b651e2c5e56d91440807f2869fc82906, type: 3}
   Amount: 100000
-  MinSpawnRadius: 15
-  MaxSpawnRadius: 50
+  MinSpawnRadius: 60
+  MaxSpawnRadius: 60

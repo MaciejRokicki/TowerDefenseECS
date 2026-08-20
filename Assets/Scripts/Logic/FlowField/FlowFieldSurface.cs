@@ -47,10 +47,15 @@ namespace TD.Logic.FlowField
 
         public static Vector2Int ToGridPosition(Vector3 gridPosition, float cellSize, Vector3 worldPosition)
         {
-            return new Vector2Int(
+            var res = new Vector2Int(
                 (int)Math.Round((worldPosition.x - gridPosition.x - cellSize / 2.0f) / cellSize, MidpointRounding.AwayFromZero),
                 (int)Math.Round((worldPosition.y - gridPosition.y - cellSize / 2.0f) / cellSize, MidpointRounding.AwayFromZero)
             );
+
+            res.x = Mathf.Clamp(res.x, 0, res.x);
+            res.y = Mathf.Clamp(res.y, 0, res.y);
+
+            return res;
         }
 
 #if UNITY_EDITOR

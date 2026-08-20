@@ -23,12 +23,16 @@ namespace TD.Logic.ECS.Systems
             ref LocalTransform transform)
         {
             var position = transform.Position;
-            position.z = 0.0f;
+            //position.z = 0.0f;
 
             var gridPosition = ToGridPosition(FlowFieldSurfaceData.Position, FlowFieldSurfaceData.CellSize, transform.Position);
+
+            //position += new float3(FlowFieldSurfaceData.Directions[gridPosition.x * FlowFieldSurfaceData.Size.y + gridPosition.y] * movementSpeed.Speed * Time, 0.0f);
+
             velocity.Target = new float3(FlowFieldSurfaceData.Directions[gridPosition.x * FlowFieldSurfaceData.Size.y + gridPosition.y] * movementSpeed.Speed * Time, 0.0f);
-            velocity.Current = math.lerp(velocity.Current, velocity.Target, Time * 1.0f);
+            velocity.Current = math.lerp(velocity.Current, velocity.Target, Time / 2.0f);
             position += velocity.Current;
+
             position.z = position.y;
             transform.Position = position;
         }
