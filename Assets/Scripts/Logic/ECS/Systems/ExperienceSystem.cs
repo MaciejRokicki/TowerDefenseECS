@@ -1,15 +1,19 @@
 using R3;
 using TD.Logic.ECS.Components.Events;
 using Unity.Entities;
+using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 
 namespace TD.Logic.ECS.Systems
 {
     public partial class ExperienceSystem : SystemBase
     {
+        [AutoStaticsCleanup]
         public static int Experience { get; private set; }
+        [AutoStaticsCleanup]
         public static int MaxExperience { get; private set; }
 
+        [AutoStaticsCleanup]
         public static Subject<(int previousValue, int currentValue)> OnExperienceChanged;
 
         protected override void OnCreate()

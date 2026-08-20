@@ -2,15 +2,18 @@ using R3;
 using TD.Logic.ECS.Components;
 using TD.Logic.ECS.Components.Events;
 using Unity.Entities;
-using UnityEngine;
+using Unity.Scripting.LifecycleManagement;
 
 namespace TD.Logic.ECS.Systems
 {
     public partial class BaseHealthSystem : SystemBase
     {
+        [AutoStaticsCleanup] 
         public static Health Health { get; private set; }
 
+        [AutoStaticsCleanup] 
         public static Subject<(float previousValue, float currentValue)> OnHealthChanged;
+        [AutoStaticsCleanup] 
         public static Subject<(float previousValue, float currentValue)> OnMaxHealthChanged;
 
         protected override void OnCreate()

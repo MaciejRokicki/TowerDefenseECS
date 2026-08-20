@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 
 namespace TD.Logic.FlowField
@@ -8,8 +9,11 @@ namespace TD.Logic.FlowField
     [CreateAssetMenu(fileName = "DefaultFlowFieldData", menuName = "FlowField/Data")]
     public class FlowFieldData : ScriptableObject
     {
+        [AutoStaticsCleanup] 
         private static FlowFieldCell[] neighbourArray8;
+        [AutoStaticsCleanup] 
         private static FlowFieldCell[] neighbourArray4;
+        [AutoStaticsCleanup] 
         private static float sqrtOfTwo = Mathf.Sqrt(2);
 
         [SerializeField]

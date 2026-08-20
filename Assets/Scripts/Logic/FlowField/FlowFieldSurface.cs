@@ -1,10 +1,12 @@
 using System;
+using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 
 namespace TD.Logic.FlowField
 {
     public class FlowFieldSurface : MonoBehaviour
     {
+        [AutoStaticsCleanup] 
         public static FlowFieldSurface Instance { get; private set; }
 
         [Header("Settings")]

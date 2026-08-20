@@ -2,13 +2,17 @@ using R3;
 using TD.Logic.ECS.Components;
 using TD.Logic.ECS.Components.Events;
 using Unity.Entities;
+using Unity.Scripting.LifecycleManagement;
 
 namespace TD.Logic.ECS.Systems
 {
     public partial class EnemyStatisticsSystem : SystemBase
     {
+        [AutoStaticsCleanup]
         public static Subject<(int, int)> OnKilledEnemiesCountChanged;
+        [AutoStaticsCleanup]
         public static Subject<(int, int)> OnEnemiesCountChanged;
+        [AutoStaticsCleanup]
         public static Subject<(int, int)> OnTotalEnemiesCountChanged;
 
         protected override void OnCreate()
