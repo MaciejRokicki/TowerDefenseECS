@@ -3,27 +3,38 @@ using TD.Common.InputManager;
 using TD.Common.InputManager.InputActionMaps;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 namespace TD.MainMenu
 {
-    public class MainMenuViewManager : MonoBehaviour
+    public class MainMenuViewModel : MonoBehaviour
     {
         [SerializeField]
+        private PanelRenderer panelRenderer;
+
         private Button playButton;
-        [SerializeField]
         private Button exitButton;
 
         private void Awake()
         {
-            playButton.onClick.AddListener(PlayButton_OnClicked);
-            exitButton.onClick.AddListener(ExitButton_OnClicked);
+            panelRenderer.RegisterUIReloadCallback(PanelRenderer_OnUIReloaded);
         }
 
         private void OnDestroy()
         {
-            playButton.onClick.RemoveAllListeners();
-            exitButton.onClick.RemoveAllListeners();
+            panelRenderer.UnregisterUIReloadCallback(PanelRenderer_OnUIReloaded);
+
+            playButton.clicked -= PlayButton_OnClicked;
+            exitButton.clicked -= ExitButton_OnClicked;
+        }
+
+        private void PanelRenderer_OnUIReloaded(PanelRenderer panelRenderer, VisualElement rootElement, int version)
+        {
+            playButton = rootElement.Q<Button>("PlayButton");
+            exitButton = rootElement.Q<Button>("ExitButton");
+
+            playButton.clicked += PlayButton_OnClicked;
+            exitButton.clicked += ExitButton_OnClicked;
         }
 
         private async void PlayButton_OnClicked()
