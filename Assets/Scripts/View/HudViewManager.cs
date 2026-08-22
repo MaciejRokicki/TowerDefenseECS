@@ -1,5 +1,3 @@
-using R3;
-using System;
 using TD.Logic.ECS.Systems;
 using TMPro;
 using UnityEngine;
@@ -24,56 +22,47 @@ namespace TD.View
         [SerializeField]
         private Slider experienceSlider;
 
-        private IDisposable disposable;
-
         private void Start()
         {
-            disposable = Disposable.Combine(
-                BaseHealthSystem.OnHealthChanged.Subscribe(BaseHealthSystem_OnHealthChanged),
-                BaseHealthSystem.OnMaxHealthChanged.Subscribe(BaseHealthSystem_OnMaxHealthChanged),
-                EnemyStatisticsSystem.OnKilledEnemiesCountChanged.Subscribe(EnemyStatisticsSystem_OnKilledEnemiesCountChanged),
-                EnemyStatisticsSystem.OnEnemiesCountChanged.Subscribe(EnemyStatisticsSystem_OnEnemiesCountChanged),
-                EnemyStatisticsSystem.OnTotalEnemiesCountChanged.Subscribe(EnemyStatisticsSystem_OnTotalEnemiesCountChanged),
-                ExperienceSystem.OnExperienceChanged.Subscribe(ExperienceSystem_OnExperienceChanged)
-            );
+            BaseHealthSystem.OnHealthChanged += BaseHealthSystem_OnHealthChanged;
+            BaseHealthSystem.OnMaxHealthChanged += BaseHealthSystem_OnMaxHealthChanged;
+            EnemyStatisticsSystem.OnKilledEnemiesCountChanged += EnemyStatisticsSystem_OnKilledEnemiesCountChanged;
+            EnemyStatisticsSystem.OnEnemiesCountChanged += EnemyStatisticsSystem_OnEnemiesCountChanged;
+            EnemyStatisticsSystem.OnTotalEnemiesCountChanged += EnemyStatisticsSystem_OnTotalEnemiesCountChanged;
+            ExperienceSystem.OnExperienceChanged += ExperienceSystem_OnExperienceChanged;
         }
 
-        private void OnDestroy()
+        private void BaseHealthSystem_OnHealthChanged(float previousValue, float currentValue)
         {
-            disposable.Dispose();
+            healthSlider.value = currentValue;
+            healthText.text = string.Concat(currentValue, '/', BaseHealthSystem.Health.MaxValue);
         }
 
-        private void BaseHealthSystem_OnHealthChanged((float previousValue, float currentValue) tuple)
+        private void BaseHealthSystem_OnMaxHealthChanged(float previousValue, float currentValue)
         {
-            healthSlider.value = tuple.currentValue;
-            healthText.text = string.Concat(tuple.currentValue, '/', BaseHealthSystem.Health.MaxValue);
+            healthSlider.maxValue = currentValue;
+            healthText.text = string.Concat(currentValue, '/', BaseHealthSystem.Health.MaxValue);
         }
 
-        private void BaseHealthSystem_OnMaxHealthChanged((float previousValue, float currentValue) tuple)
+        private void EnemyStatisticsSystem_OnKilledEnemiesCountChanged(int previousValue, int currentValue)
         {
-            healthSlider.maxValue = tuple.currentValue;
-            healthText.text = string.Concat(tuple.currentValue, '/', BaseHealthSystem.Health.MaxValue);
+            killedEnemiesCountText.text = currentValue.ToString();
         }
 
-        private void EnemyStatisticsSystem_OnKilledEnemiesCountChanged((int previousValue, int currentValue) tuple)
+        private void EnemyStatisticsSystem_OnEnemiesCountChanged(int previousValue, int currentValue)
         {
-            killedEnemiesCountText.text = tuple.currentValue.ToString();
+            enemiesCountText.text = currentValue.ToString();
         }
 
-        private void EnemyStatisticsSystem_OnEnemiesCountChanged((int previousValue, int currentValue) tuple)
+        private void EnemyStatisticsSystem_OnTotalEnemiesCountChanged(int previousValue, int currentValue)
         {
-            enemiesCountText.text = tuple.currentValue.ToString();
+            totalEnemiesCountText.text = currentValue.ToString();
         }
 
-        private void EnemyStatisticsSystem_OnTotalEnemiesCountChanged((int previousValue, int currentValue) tuple)
-        {
-            totalEnemiesCountText.text = tuple.currentValue.ToString();
-        }
-
-        private void ExperienceSystem_OnExperienceChanged((int previousValue, int currentValue) tuple)
+        private void ExperienceSystem_OnExperienceChanged(int previousValue, int currentValue)
         {
             experienceSlider.maxValue = ExperienceSystem.MaxExperience;
-            experienceSlider.value = tuple.currentValue;
+            experienceSlider.value = currentValue;
         }
     }
 }

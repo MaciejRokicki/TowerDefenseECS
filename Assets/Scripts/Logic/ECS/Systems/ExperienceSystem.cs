@@ -1,4 +1,4 @@
-using R3;
+using System;
 using TD.Logic.ECS.Components.Events;
 using Unity.Entities;
 using Unity.Scripting.LifecycleManagement;
@@ -13,21 +13,21 @@ namespace TD.Logic.ECS.Systems
         [AutoStaticsCleanup]
         public static int MaxExperience { get; private set; }
 
-        [AutoStaticsCleanup]
-        public static Subject<(int previousValue, int currentValue)> OnExperienceChanged;
+        [NoAutoStaticsCleanup]
+        public static event Action<int, int> OnExperienceChanged;
 
         protected override void OnCreate()
         {
             RequireForUpdate<ExperienceEvent>();
 
-            OnExperienceChanged = new Subject<(int previousValue, int currentValue)>();
+            OnExperienceChanged = delegate { };
         }
 
         protected override void OnStartRunning()
         {
             MaxExperience = 1_000;
 
-            OnExperienceChanged.OnNext((0, Experience));
+            OnExperienceChanged(0, Experience);
         }
 
         protected override void OnUpdate()
@@ -53,7 +53,7 @@ namespace TD.Logic.ECS.Systems
                     newValue %= MaxExperience;
                 }
 
-                OnExperienceChanged.OnNext((Experience, newValue));
+                OnExperienceChanged(Experience, newValue);
                 Experience = newValue;
             }
 
@@ -63,7 +63,7 @@ namespace TD.Logic.ECS.Systems
 
         protected override void OnDestroy()
         {
-            OnExperienceChanged.Dispose();
+            OnExperienceChanged = null;
         }
     }
 }

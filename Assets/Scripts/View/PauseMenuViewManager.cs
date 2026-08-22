@@ -1,5 +1,3 @@
-using R3;
-using System;
 using TD.Common;
 using TD.Common.InputManager;
 using TD.Common.InputManager.InputActionMaps;
@@ -20,8 +18,6 @@ namespace TD.View
         [SerializeField]
         private Button exitButton;
 
-        private IDisposable disposable;
-
         private void Awake()
         {
             resumeButton.onClick.AddListener(ResumeButton_OnClicked);
@@ -31,7 +27,7 @@ namespace TD.View
 
         private void Start()
         {
-            disposable = GameplayInputActionMap.OnPauseMenuPressed.Subscribe(GameplayInputActionMap_OnPauseMenuPressed);
+            GameplayInputActionMap.OnPauseMenuPressed += GameplayInputActionMap_OnPauseMenuPressed;
         }
 
         private void OnDestroy()
@@ -40,7 +36,7 @@ namespace TD.View
             mainMenuButton.onClick.RemoveAllListeners();
             exitButton.onClick.RemoveAllListeners();
 
-            disposable.Dispose();
+            GameplayInputActionMap.OnPauseMenuPressed -= GameplayInputActionMap_OnPauseMenuPressed;
         }
 
         public void Show()
@@ -57,7 +53,7 @@ namespace TD.View
             InputManager.EnableActionMap(GameplayInputActionMap.Instance);
         }
 
-        private void GameplayInputActionMap_OnPauseMenuPressed(Unit unit)
+        private void GameplayInputActionMap_OnPauseMenuPressed()
         {
             Show();
         }

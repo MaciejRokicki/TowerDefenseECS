@@ -7,7 +7,7 @@ using UnityEngine;
 namespace TD.Logic.FlowField
 {
     [CreateAssetMenu(fileName = "DefaultFlowFieldData", menuName = "FlowField/Data")]
-    public class FlowFieldData : ScriptableObject
+    public partial class FlowFieldData : ScriptableObject
     {
         [AutoStaticsCleanup] 
         private static FlowFieldCell[] neighbourArray8;

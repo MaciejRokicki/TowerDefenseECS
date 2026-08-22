@@ -1,25 +1,31 @@
-using R3;
+using System;
+using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace TD.Common.InputManager.InputActionMaps
 {
-    public class GameplayInputActionMap : BaseInputActionMap, InputSystem_Actions.IGameplayActions
+    public partial class GameplayInputActionMap : BaseInputActionMap, InputSystem_Actions.IGameplayActions
     {
+        [AutoStaticsCleanup]
         public static GameplayInputActionMap Instance { get; private set; }
 
+        [AutoStaticsCleanup]
         public static Vector3 Movement;
+        [AutoStaticsCleanup]
         public static bool IsSwiping;
+        [AutoStaticsCleanup]
         public static Vector3 SwipeMovement;
+        [AutoStaticsCleanup]
         public static float Zoom;
 
-        public static Subject<Unit> OnPauseMenuPressed;
+        [NoAutoStaticsCleanup]
+        public static event Action OnPauseMenuPressed;
 
         private void Awake()
         {
             Instance = this;
-
-            OnPauseMenuPressed = new Subject<Unit>();
+            OnPauseMenuPressed = delegate { };
         }
 
         private void Start()
@@ -35,7 +41,7 @@ namespace TD.Common.InputManager.InputActionMaps
         {
             InputManager.InputActionAsset.Gameplay.RemoveCallbacks(this);
 
-            OnPauseMenuPressed.Dispose();
+            OnPauseMenuPressed = null;
         }
 
         public void OnMovement(InputAction.CallbackContext context)
@@ -90,7 +96,7 @@ namespace TD.Common.InputManager.InputActionMaps
         {
             if (context.performed)
             {
-                OnPauseMenuPressed.OnNext(Unit.Default);
+                OnPauseMenuPressed();
             }
         }
     }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace TD.Logic.FlowField
 {
-    public class FlowFieldSurface : MonoBehaviour
+    public partial class FlowFieldSurface : MonoBehaviour
     {
         [AutoStaticsCleanup] 
         public static FlowFieldSurface Instance { get; private set; }

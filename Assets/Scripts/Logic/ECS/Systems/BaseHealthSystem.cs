@@ -1,4 +1,4 @@
-using R3;
+using System;
 using TD.Logic.ECS.Components;
 using TD.Logic.ECS.Components.Events;
 using Unity.Entities;
@@ -8,20 +8,20 @@ namespace TD.Logic.ECS.Systems
 {
     public partial class BaseHealthSystem : SystemBase
     {
-        [AutoStaticsCleanup] 
+        [AutoStaticsCleanup]
         public static Health Health { get; private set; }
 
-        [AutoStaticsCleanup] 
-        public static Subject<(float previousValue, float currentValue)> OnHealthChanged;
-        [AutoStaticsCleanup] 
-        public static Subject<(float previousValue, float currentValue)> OnMaxHealthChanged;
+        [NoAutoStaticsCleanup]
+        public static event Action<float, float> OnHealthChanged;
+        [NoAutoStaticsCleanup]
+        public static event Action<float, float> OnMaxHealthChanged;
 
         protected override void OnCreate()
         {
             RequireForUpdate<BaseSingleton>();
 
-            OnHealthChanged = new Subject<(float previousValue, float currentValue)>();
-            OnMaxHealthChanged = new Subject<(float previousValue, float currentValue)>();
+            OnHealthChanged = delegate { };
+            OnMaxHealthChanged = delegate { };
         }
 
         protected override void OnStartRunning()
@@ -31,8 +31,8 @@ namespace TD.Logic.ECS.Systems
 
             Health = baseHealth;
 
-            OnMaxHealthChanged.OnNext((0.0f, baseHealth.MaxValue));
-            OnHealthChanged.OnNext((0.0f, baseHealth.Value));
+            OnMaxHealthChanged(0.0f, baseHealth.MaxValue);
+            OnHealthChanged(0.0f, baseHealth.Value);
         }
 
         protected override void OnUpdate()
@@ -59,7 +59,7 @@ namespace TD.Logic.ECS.Systems
             if (currentMaxHealthDelta != 0)
             {
                 float newValue = baseHealth.MaxValue + currentMaxHealthDelta;
-                OnMaxHealthChanged.OnNext((baseHealth.MaxValue, newValue));
+                OnMaxHealthChanged(baseHealth.MaxValue, newValue);
                 baseHealth.MaxValue = newValue;
 
                 Health = baseHealth;
@@ -69,7 +69,7 @@ namespace TD.Logic.ECS.Systems
             if (currentHealthDelta != 0)
             {
                 float newValue = baseHealth.Value + currentHealthDelta;
-                OnHealthChanged.OnNext((baseHealth.Value, newValue));
+                OnHealthChanged(baseHealth.Value, newValue);
                 baseHealth.Value = newValue;
 
                 Health = baseHealth;
@@ -82,8 +82,8 @@ namespace TD.Logic.ECS.Systems
 
         protected override void OnDestroy()
         {
-            OnHealthChanged.Dispose();
-            OnMaxHealthChanged.Dispose();
+            OnMaxHealthChanged = null;
+            OnHealthChanged = null;
         }
     }
 }

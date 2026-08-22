@@ -1,12 +1,16 @@
+using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 
 namespace TD.Common.InputManager
 {
     public class InputManager : MonoBehaviour
     {
+        [AutoStaticsCleanup]
         private static BaseInputActionMap currentBaseInputActionMap;
 
+        [AutoStaticsCleanup]
         public static InputSystem_Actions InputActionAsset;
+        [AutoStaticsCleanup]
         public static InputManager Instance;
 
         private void Awake()

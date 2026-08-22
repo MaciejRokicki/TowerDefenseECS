@@ -1,4 +1,4 @@
-using R3;
+using System;
 using TD.Logic.ECS.Components;
 using TD.Logic.ECS.Components.Events;
 using Unity.Entities;
@@ -8,20 +8,20 @@ namespace TD.Logic.ECS.Systems
 {
     public partial class EnemyStatisticsSystem : SystemBase
     {
-        [AutoStaticsCleanup]
-        public static Subject<(int, int)> OnKilledEnemiesCountChanged;
-        [AutoStaticsCleanup]
-        public static Subject<(int, int)> OnEnemiesCountChanged;
-        [AutoStaticsCleanup]
-        public static Subject<(int, int)> OnTotalEnemiesCountChanged;
+        [NoAutoStaticsCleanup]
+        public static event Action<int, int> OnKilledEnemiesCountChanged;
+        [NoAutoStaticsCleanup]
+        public static event Action<int, int> OnEnemiesCountChanged;
+        [NoAutoStaticsCleanup]
+        public static event Action<int, int> OnTotalEnemiesCountChanged;
 
         protected override void OnCreate()
         {
             RequireForUpdate<EnemyStatisticsSingleton>();
 
-            OnKilledEnemiesCountChanged = new Subject<(int, int)>();
-            OnEnemiesCountChanged = new Subject<(int, int)>();
-            OnTotalEnemiesCountChanged = new Subject<(int, int)>();
+            OnKilledEnemiesCountChanged = delegate { };
+            OnEnemiesCountChanged = delegate { };
+            OnTotalEnemiesCountChanged = delegate { };
         }
 
         protected override void OnUpdate()
@@ -48,12 +48,12 @@ namespace TD.Logic.ECS.Systems
             if (killedEnemies != 0)
             {
                 int newValue = enemyStatistics.KilledEnemiesCount + killedEnemies;
-                OnKilledEnemiesCountChanged.OnNext((enemyStatistics.KilledEnemiesCount, newValue));
+                OnKilledEnemiesCountChanged(enemyStatistics.KilledEnemiesCount, newValue);
                 enemyStatistics.KilledEnemiesCount = newValue;
 
                 newValue = enemyStatistics.TotalEnemiesCount - enemyStatistics.KilledEnemiesCount;
                 enemyStatistics.EnemiesCount = newValue;
-                OnEnemiesCountChanged.OnNext((enemyStatistics.EnemiesCount, newValue));
+                OnEnemiesCountChanged(enemyStatistics.EnemiesCount, newValue);
 
                 ecb.SetComponent(enemyStatisticsEntity, enemyStatistics);
             }
@@ -61,12 +61,12 @@ namespace TD.Logic.ECS.Systems
             if (totalEnemiesCount != 0)
             {
                 int newValue = enemyStatistics.TotalEnemiesCount + totalEnemiesCount;
-                OnTotalEnemiesCountChanged.OnNext((enemyStatistics.TotalEnemiesCount, newValue));
+                OnTotalEnemiesCountChanged(enemyStatistics.TotalEnemiesCount, newValue);
                 enemyStatistics.TotalEnemiesCount = newValue;
 
                 newValue = enemyStatistics.TotalEnemiesCount - enemyStatistics.KilledEnemiesCount;
                 enemyStatistics.EnemiesCount = newValue;
-                OnEnemiesCountChanged.OnNext((enemyStatistics.EnemiesCount, newValue));
+                OnEnemiesCountChanged(enemyStatistics.EnemiesCount, newValue);
 
                 ecb.SetComponent(enemyStatisticsEntity, enemyStatistics);
             }
@@ -77,9 +77,9 @@ namespace TD.Logic.ECS.Systems
 
         protected override void OnDestroy()
         {
-            OnKilledEnemiesCountChanged.Dispose();
-            OnEnemiesCountChanged.Dispose();
-            OnTotalEnemiesCountChanged.Dispose();
+            OnKilledEnemiesCountChanged = null;
+            OnEnemiesCountChanged = null;
+            OnTotalEnemiesCountChanged = null;
         }
     }
 }
