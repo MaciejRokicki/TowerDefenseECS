@@ -1,7 +1,7 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/UI%20Toolkit/Styles/GlobalStyles.uss?fileID=7433441132597879392&amp;guid=5b8553ca09f14f346b4d5e654adcf72b&amp;type=3#GlobalStyles"/>
+    <Style src="project://database/Assets/UI%20Toolkit/View/MainMenu/MainMenuStyle.uss?fileID=7433441132597879392&amp;guid=5b8553ca09f14f346b4d5e654adcf72b&amp;type=3#MainMenuStyle"/>
     <ui:VisualElement name="Container" class="main__menu__container">
-        <ui:VisualElement name="Content" class="main__menu__content" style="background-color: rgba(255, 255, 255, 0);">
+        <ui:VisualElement name="Content" class="main__menu__content">
             <ui:VisualElement name="Background" class="main__menu__background"/>
             <ui:Button text="Button" name="PlayButton" class="main__menu__button">
                 <Bindings>
