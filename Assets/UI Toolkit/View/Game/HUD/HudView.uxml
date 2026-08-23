@@ -16,42 +16,24 @@
             </ui:Label>
         </ui:VisualElement>
         <ui:VisualElement name="StatisticsContainer" class="hud__statistics__container">
-            <ui:VisualElement name="KilledEnemiesStatisticsElement" class="hud__statistics__element">
-                <ui:Label text="Label" name="StatisticsElementLabel">
-                    <Bindings>
-                        <UnityEngine.Localization.LocalizedString property="text" table="GUID:c6b733664ab89564ab48e7e9c1c1dbd5" entry="Id(719308193792)"/>
-                    </Bindings>
-                </ui:Label>
-                <ui:Label text="Label" name="StatisticsElementValue">
-                    <Bindings>
-                        <ui:DataBinding property="text" data-source-path="KilledEnemies" binding-mode="ToTarget"/>
-                    </Bindings>
-                </ui:Label>
-            </ui:VisualElement>
-            <ui:VisualElement name="EnemiesStatisticsElement" class="hud__statistics__element">
-                <ui:Label text="Label" name="StatisticsElementLabel">
-                    <Bindings>
-                        <UnityEngine.Localization.LocalizedString property="text" table="GUID:c6b733664ab89564ab48e7e9c1c1dbd5" entry="Id(809187934208)"/>
-                    </Bindings>
-                </ui:Label>
-                <ui:Label text="Label" name="StatisticsElementValue">
-                    <Bindings>
-                        <ui:DataBinding property="text" data-source-path="EnemiesCount" binding-mode="ToTarget"/>
-                    </Bindings>
-                </ui:Label>
-            </ui:VisualElement>
-            <ui:VisualElement name="TotalEnemiesStatisticsElement" class="hud__statistics__element">
-                <ui:Label text="Label" name="StatisticsElementLabel">
-                    <Bindings>
-                        <UnityEngine.Localization.LocalizedString property="text" table="GUID:c6b733664ab89564ab48e7e9c1c1dbd5" entry="Id(870940672000)"/>
-                    </Bindings>
-                </ui:Label>
-                <ui:Label text="Label" name="StatisticsElementValue">
-                    <Bindings>
-                        <ui:DataBinding property="text" data-source-path="TotalEnemies" binding-mode="ToTarget"/>
-                    </Bindings>
-                </ui:Label>
-            </ui:VisualElement>
+            <TD.View.LabeledValue name="KilledEnemiesStatisticsElement">
+                <Bindings>
+                    <UnityEngine.Localization.LocalizedString property="Label" table="GUID:c6b733664ab89564ab48e7e9c1c1dbd5" entry="Id(719308193792)"/>
+                    <ui:DataBinding property="Value" data-source-path="KilledEnemies" binding-mode="ToTarget"/>
+                </Bindings>
+            </TD.View.LabeledValue>
+            <TD.View.LabeledValue name="EnemiesStatisticsElement">
+                <Bindings>
+                    <UnityEngine.Localization.LocalizedString property="Label" table="GUID:c6b733664ab89564ab48e7e9c1c1dbd5" entry="Id(809187934208)"/>
+                    <ui:DataBinding property="Value" data-source-path="EnemiesCount" binding-mode="ToTarget"/>
+                </Bindings>
+            </TD.View.LabeledValue>
+            <TD.View.LabeledValue name="TotalEnemiesStatisticsElement">
+                <Bindings>
+                    <ui:DataBinding property="Value" data-source-path="TotalEnemies" binding-mode="ToTarget"/>
+                    <UnityEngine.Localization.LocalizedString property="Label" table="GUID:c6b733664ab89564ab48e7e9c1c1dbd5" entry="Id(870940672000)"/>
+                </Bindings>
+            </TD.View.LabeledValue>
         </ui:VisualElement>
         <ui:VisualElement name="ExperienceComponent" class="hud__experience">
             <ui:ProgressBar name="ExperienceProgressBar">

@@ -38,9 +38,9 @@ namespace TD.View
             rootElement.Q<ProgressBar>("HealthProgressBar").dataSource = model;
             rootElement.Q<Label>("HealthLabel").dataSource = model;
 
-            rootElement.Q<VisualElement>("KilledEnemiesStatisticsElement").Q<Label>("StatisticsElementValue").dataSource = model;
-            rootElement.Q<VisualElement>("EnemiesStatisticsElement").Q<Label>("StatisticsElementValue").dataSource = model;
-            rootElement.Q<VisualElement>("TotalEnemiesStatisticsElement").Q<Label>("StatisticsElementValue").dataSource = model;
+            rootElement.Q<VisualElement>("KilledEnemiesStatisticsElement").dataSource = model;
+            rootElement.Q<VisualElement>("EnemiesStatisticsElement").dataSource = model;
+            rootElement.Q<VisualElement>("TotalEnemiesStatisticsElement").dataSource = model;
 
             rootElement.Q<ProgressBar>("ExperienceProgressBar").dataSource = model;
         }
