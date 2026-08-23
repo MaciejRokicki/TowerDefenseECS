@@ -3,26 +3,24 @@ using TD.Common.InputManager;
 using TD.Common.InputManager.InputActionMaps;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 namespace TD.View
 {
-    public class PauseMenuViewManager : MonoBehaviour
+    public class PauseMenuViewModel : MonoBehaviour
     {
         [SerializeField]
-        private Canvas canvas;
-        [SerializeField]
+        private PanelRenderer panelRenderer;
+
+        private VisualElement container;
+
         private Button resumeButton;
-        [SerializeField]
         private Button mainMenuButton;
-        [SerializeField]
         private Button exitButton;
 
         private void Awake()
         {
-            resumeButton.onClick.AddListener(ResumeButton_OnClicked);
-            mainMenuButton.onClick.AddListener(MainMenuButton_OnClicked);
-            exitButton.onClick.AddListener(ExitButton_OnClicked);
+            panelRenderer.RegisterUIReloadCallback(PanelRenderer_OnUIReloaded);
         }
 
         private void Start()
@@ -32,9 +30,11 @@ namespace TD.View
 
         private void OnDestroy()
         {
-            resumeButton.onClick.RemoveAllListeners();
-            mainMenuButton.onClick.RemoveAllListeners();
-            exitButton.onClick.RemoveAllListeners();
+            panelRenderer.UnregisterUIReloadCallback(PanelRenderer_OnUIReloaded);
+
+            resumeButton.clicked -= ResumeButton_OnClicked;
+            mainMenuButton.clicked -= MainMenuButton_OnClicked;
+            exitButton.clicked -= ExitButton_OnClicked;
 
             GameplayInputActionMap.OnPauseMenuPressed -= GameplayInputActionMap_OnPauseMenuPressed;
         }
@@ -42,15 +42,28 @@ namespace TD.View
         public void Show()
         {
             Time.timeScale = 0.0f;
-            canvas.enabled = true;
+            container.style.display = DisplayStyle.Flex;
             InputManager.EnableActionMap(null);
         }
 
         public void Hide()
         {
             Time.timeScale = 1.0f;
-            canvas.enabled = false;
+            container.style.display = DisplayStyle.None;
             InputManager.EnableActionMap(GameplayInputActionMap.Instance);
+        }
+
+        private void PanelRenderer_OnUIReloaded(PanelRenderer panelRenderer, VisualElement rootElement, int version)
+        {
+            container = rootElement.Q<VisualElement>("Container");
+
+            resumeButton = rootElement.Q<Button>("ResumeButton");
+            mainMenuButton = rootElement.Q<Button>("MainMenuButton");
+            exitButton = rootElement.Q<Button>("ExitButton");
+
+            resumeButton.clicked += ResumeButton_OnClicked;
+            mainMenuButton.clicked += MainMenuButton_OnClicked;
+            exitButton.clicked += ExitButton_OnClicked;
         }
 
         private void GameplayInputActionMap_OnPauseMenuPressed()

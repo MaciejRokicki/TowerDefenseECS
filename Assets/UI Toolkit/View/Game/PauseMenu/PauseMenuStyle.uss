@@ -1,0 +1,19 @@
+.pause__menu__container { 
+	display: none;
+	width: 100%;
+	height: 100%;
+	align-items: center;
+	justify-content: flex-end;
+}
+.pause__menu__background {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0.0, 0.0, 0.0, 1.0);
+}
+.pause__menu__background-blurred {
+	filter: blur(50px);
+}
+.pause__menu__content {
+	bottom: 100px;
+}
