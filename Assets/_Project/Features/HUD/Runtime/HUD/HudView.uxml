@@ -1,0 +1,47 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Settings/UI%20Toolkit/GlobalStyles.uss?fileID=7433441132597879392&amp;guid=0bf32f9db0b7c1449885d77385e3e746&amp;type=3#GlobalStyles"/>
+    <Style src="project://database/Assets/_Project/Features/HUD/Runtime/HUD/HudStyle.uss?fileID=7433441132597879392&amp;guid=9bc16771a62a18542bdcb2e7447c08b9&amp;type=3#HudStyle"/>
+    <ui:VisualElement name="Container" class="hud__container">
+        <ui:VisualElement name="HealthComponent" class="hud__health">
+            <ui:ProgressBar name="HealthProgressBar" class="hud__health__bar">
+                <Bindings>
+                    <ui:DataBinding property="highValue" data-source-path="MaxHealth" binding-mode="ToTarget"/>
+                    <ui:DataBinding property="value" data-source-path="Health" binding-mode="ToTarget"/>
+                </Bindings>
+            </ui:ProgressBar>
+            <ui:Label text="Label" name="HealthLabel" class="hud__health__label">
+                <Bindings>
+                    <ui:DataBinding property="text" data-source-path="HealthDisplay" binding-mode="ToTarget"/>
+                </Bindings>
+            </ui:Label>
+        </ui:VisualElement>
+        <ui:VisualElement name="StatisticsContainer" class="hud__statistics__container">
+            <TD.UI.Controls.LabeledValue name="KilledEnemiesStatisticsElement">
+                <Bindings>
+                    <UnityEngine.Localization.LocalizedString property="Label" table="GUID:c6b733664ab89564ab48e7e9c1c1dbd5" entry="Id(719308193792)"/>
+                    <ui:DataBinding property="Value" data-source-path="KilledEnemies" binding-mode="ToTarget"/>
+                </Bindings>
+            </TD.UI.Controls.LabeledValue>
+            <TD.UI.Controls.LabeledValue name="EnemiesStatisticsElement">
+                <Bindings>
+                    <UnityEngine.Localization.LocalizedString property="Label" table="GUID:c6b733664ab89564ab48e7e9c1c1dbd5" entry="Id(809187934208)"/>
+                    <ui:DataBinding property="Value" data-source-path="EnemiesCount" binding-mode="ToTarget"/>
+                </Bindings>
+            </TD.UI.Controls.LabeledValue>
+            <TD.UI.Controls.LabeledValue name="TotalEnemiesStatisticsElement">
+                <Bindings>
+                    <ui:DataBinding property="Value" data-source-path="TotalEnemies" binding-mode="ToTarget"/>
+                    <UnityEngine.Localization.LocalizedString property="Label" table="GUID:c6b733664ab89564ab48e7e9c1c1dbd5" entry="Id(870940672000)"/>
+                </Bindings>
+            </TD.UI.Controls.LabeledValue>
+        </ui:VisualElement>
+        <ui:VisualElement name="ExperienceComponent" class="hud__experience">
+            <ui:ProgressBar name="ExperienceProgressBar">
+                <Bindings>
+                    <ui:DataBinding property="highValue" data-source-path="MaxExperience" binding-mode="ToTarget"/>
+                    <ui:DataBinding property="value" data-source-path="Experience" binding-mode="ToTarget"/>
+                </Bindings>
+            </ui:ProgressBar>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

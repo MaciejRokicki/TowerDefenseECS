@@ -1,0 +1,16 @@
+{
+    "name": "TD.Features.CameraController.Runtime",
+    "rootNamespace": "TD.Features.CameraController.Runtime",
+    "references": [
+        "GUID:cca561c0dbeb21646b3960e13ddd57a9"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

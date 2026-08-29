@@ -1,0 +1,26 @@
+{
+    "name": "TD.Application",
+    "rootNamespace": "TD.Application",
+    "references": [
+        "GUID:734d92eba21c94caba915361bd5ac177",
+        "GUID:e0cd26848372d4e5c891c569017e11f1",
+        "GUID:a5baed0c9693541a5bd947d336ec7659",
+        "GUID:037c42d92a6dab243af496bded7aa1e0",
+        "GUID:a325e28d3c8ecf749962a08b4de1599a",
+        "GUID:b58d87836fb29364bab9dd2da5c2ed29",
+        "GUID:4a5c21e8929c50d4ba290177b10d81d3",
+        "GUID:1f5d14bd5d6eea84f82367e802829889",
+        "GUID:f3aebb4fc313533458a36e75d1ad4d4c",
+        "GUID:b473389c3a467524e8fba367975777fa",
+        "GUID:2665a8d13d1b3f18800f46e256720795"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

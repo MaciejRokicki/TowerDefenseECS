@@ -1,0 +1,19 @@
+{
+    "name": "TD.Features.HUD.Runtime",
+    "rootNamespace": "TD.Features.HUD.Runtime",
+    "references": [
+        "GUID:b473389c3a467524e8fba367975777fa",
+        "GUID:a325e28d3c8ecf749962a08b4de1599a",
+        "GUID:f3aebb4fc313533458a36e75d1ad4d4c",
+        "GUID:037c42d92a6dab243af496bded7aa1e0"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

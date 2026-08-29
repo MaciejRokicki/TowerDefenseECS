@@ -1,0 +1,16 @@
+{
+    "name": "TD.Features.PauseMenu.Runtime",
+    "rootNamespace": "TD.Features.PauseMenu.Runtime",
+    "references": [
+        "TD.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
