@@ -1,6 +1,7 @@
 using TD.Features.Health.Runtime.Components;
 using Unity.Burst;
 using Unity.Entities;
+using Unity.Mathematics;
 
 namespace TD.Features.Health.Runtime.Systems
 {
@@ -15,6 +16,7 @@ namespace TD.Features.Health.Runtime.Systems
             {
                 var entityHealth = SystemAPI.GetComponent<HealthComponent>(increaseHealthCommand.ValueRO.Entity);
                 entityHealth.Value += increaseHealthCommand.ValueRO.Value;
+                entityHealth.Value = math.clamp(entityHealth.Value, 0, entityHealth.MaxValue);
                 ecb.SetComponent(increaseHealthCommand.ValueRO.Entity, entityHealth);
                 ecb.DestroyEntity(entity);
             }

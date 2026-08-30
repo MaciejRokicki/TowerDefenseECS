@@ -1,7 +1,8 @@
-using TD.Features.Base.Runtime.Components;
 using TD.Features.Enemy.Runtime.Components;
 using TD.Features.FlowField.Runtime.ECS.Components;
 using TD.Features.Health.Runtime.Components;
+using TD.Features.Health.Runtime.Systems;
+using TD.Features.Player.Runtime.Components;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -11,7 +12,7 @@ using Unity.Transforms;
 namespace TD.Application
 {
     [BurstCompile]
-    public partial struct BaseDamageJob : IJobEntity
+    public partial struct PlayerDamageJob : IJobEntity
     {
         public EntityCommandBuffer Ecb;
         [ReadOnly]
@@ -31,7 +32,8 @@ namespace TD.Application
         }
     }
 
-    public partial struct BaseDamageSystem : ISystem
+    [UpdateBefore(typeof(HealthSystem))]
+    public partial struct PlayerDamageSystem : ISystem
     {
         private EntityQuery enemyQuery;
 
@@ -49,12 +51,12 @@ namespace TD.Application
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            var baseEntity = SystemAPI.GetSingletonEntity<BaseSingleton>();
+            var baseEntity = SystemAPI.GetSingletonEntity<PlayerSingleton>();
             float3 basePosition = SystemAPI.GetSingleton<FlowFieldSurfaceData>().TargetWorldPosition;
             NativeReference<float> dmg = new NativeReference<float>(0.0f, Allocator.TempJob);
             var ecb = new EntityCommandBuffer(Allocator.TempJob);
 
-            var handle = new BaseDamageJob()
+            var handle = new PlayerDamageJob()
             {
                 Ecb = ecb,
                 TargetPosition = basePosition,
