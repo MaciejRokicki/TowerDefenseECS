@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.annulusgames.debug-ui": {
+      "version": "https://github.com/MaciejRokicki/DebugUI.git?path=src/DebugUI/Assets/DebugUI",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "aa59850d516d036ac1e4982171095abdfadd6ea7"
+    },
     "com.singularitygroup.hotreload": {
       "version": "file:com.singularitygroup.hotreload",
       "depth": 0,
