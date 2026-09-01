@@ -18,7 +18,7 @@ namespace TD.Features.Debug.Runtime
         }
 
         protected override void Configure(IDebugUIBuilder builder)
-        {
+        {            
             builder.ConfigureWindowOptions(options =>
             {
                 options.Title = "Debug Window";
@@ -28,7 +28,7 @@ namespace TD.Features.Debug.Runtime
             {
                 builder.AddTab("Health", builder =>
                 {
-                    builder.AddButton("Heal (100)", () =>
+                    builder.AddSubmitableFloatField("Heal", (x) =>
                     {
                         var playerSingletonQuery = entityManager.CreateEntityQuery(ComponentType.ReadOnly<PlayerSingleton>());
 
@@ -38,7 +38,7 @@ namespace TD.Features.Debug.Runtime
                             entityManager.AddComponentData(entity, new IncreaseHealthCommand()
                             {
                                 Entity = playerSingletonQuery.GetSingletonEntity(),
-                                Value = 100
+                                Value = x
                             });
                         }
 
@@ -47,12 +47,12 @@ namespace TD.Features.Debug.Runtime
                 });
                 builder.AddTab("Experience", builder =>
                 {
-                    builder.AddButton("Add XP (100)", () =>
+                    builder.AddSubmitableIntField("Add XP", (x) =>
                     {
                         var entity = entityManager.CreateEntity();
                         entityManager.AddComponentData(entity, new IncreaseExperienceCommand()
                         {
-                            Value = 100
+                            Value = x
                         });
                     });
                 });
