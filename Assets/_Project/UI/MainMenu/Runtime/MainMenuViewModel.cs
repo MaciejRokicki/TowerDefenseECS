@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
-namespace TD.MainMenu
+namespace TD.UI.MainMenu
 {
     public class MainMenuViewModel : MonoBehaviour
     {

@@ -1,6 +1,6 @@
 {
-    "name": "TD.Features.PauseMenu.Runtime",
-    "rootNamespace": "TD.Features.PauseMenu.Runtime",
+    "name": "TD.UI.PauseMenu.Runtime",
+    "rootNamespace": "TD.UI.PauseMenu.Runtime",
     "references": [
         "TD.Core"
     ],

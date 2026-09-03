@@ -4,7 +4,7 @@ using TD.Features.Statistics.Runtime.Systems;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace TD.Features.HUD.Runtime
+namespace TD.UI.HUD.Runtime
 {
     public class HudViewModel : MonoBehaviour
     {

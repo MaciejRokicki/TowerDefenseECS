@@ -9,9 +9,6 @@ EditorBuildSettings:
     path: Assets/_Project/Scenes/TD.Bootstrap.unity
     guid: 727cd9217cf468344aca9da88a27ad32
   - enabled: 1
-    path: Assets/_Project/Scenes/TD.Common.unity
-    guid: f9adf3f87024ae14f9e3fa2f13ca8b37
-  - enabled: 1
     path: Assets/_Project/Scenes/TD.MainMenu.unity
     guid: 361d77abe0d1d7b4a8877d4822222da9
   - enabled: 1

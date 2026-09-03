@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
-namespace TD.Features.PauseMenu.Runtime
+namespace TD.UI.PauseMenu.Runtime
 {
     public class PauseMenuViewModel : MonoBehaviour
     {

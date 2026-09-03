@@ -1,6 +1,6 @@
 {
-    "name": "TD.UI",
-    "rootNamespace": "TD.UI",
+    "name": "TD.Bootstrap",
+    "rootNamespace": "TD.Bootstrap",
     "references": [
         "GUID:cca561c0dbeb21646b3960e13ddd57a9"
     ],
