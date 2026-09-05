@@ -96,13 +96,14 @@ namespace TD.Core.StateMachine.Overlay
 
         public bool HandleBack()
         {
-            if (Current == null)
+            var overlay = Current;
+
+            if (overlay == null)
                 return false;
 
-            if (!Current.Policy.CloseOnBack)
-                return false;
+            if (overlay.Policy.CloseOnBack)
+                CloseTop();
 
-            CloseTop();
             return true;
         }
 

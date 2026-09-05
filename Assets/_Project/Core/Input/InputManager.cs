@@ -50,12 +50,12 @@ namespace TD.Core.InputManager
 
             map.Disable();
 
-            var lastActionMap = stack.LastActionMap;
+            activeActionMap = stack.LastActionMap;
 
-            if (lastActionMap == null)
+            if (activeActionMap == null)
                 return;
 
-            lastActionMap.Enable();
+            activeActionMap.Enable();
         }
     }
 }
