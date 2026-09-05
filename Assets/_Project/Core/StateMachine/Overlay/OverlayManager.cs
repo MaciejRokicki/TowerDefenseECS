@@ -13,7 +13,10 @@ namespace TD.Core.StateMachine.Overlay
 
         private Stack<IOverlay> activeOverlays;
 
+        public OverlayPolicy Policy { get; private set; }
         public IOverlay Current => activeOverlays.Count > 0 ? activeOverlays.Peek() : null;
+
+        public event Action<OverlayPolicy> OnOverlayPolicyChanged;
 
         private void Awake()
         {
@@ -21,6 +24,7 @@ namespace TD.Core.StateMachine.Overlay
 
             overlays = new Dictionary<Type, IOverlay>();
             activeOverlays = new Stack<IOverlay>();
+            OnOverlayPolicyChanged = delegate { };
         }
 
         private void Update()
@@ -34,6 +38,8 @@ namespace TD.Core.StateMachine.Overlay
             {
                 kvp.Value.OnUnregister();
             }
+
+            OnOverlayPolicyChanged = null;
         }
 
         public void Register<T>(T overlay) where T : IOverlay
@@ -88,12 +94,23 @@ namespace TD.Core.StateMachine.Overlay
             bool blockGameplayInput = false;
             bool pauseTime = false;
 
-            foreach (var overlay in activeOverlays)
+            foreach (IOverlay overlay in activeOverlays)
             {
                 blockGameplayInput |= overlay.Policy.BlockGameplayInput;
-                pauseTime |= overlay.Policy.Pausetime;
+                pauseTime |= overlay.Policy.PauseTime;
             }
 
+            OverlayPolicy newPolicy = new OverlayPolicy(
+                blockGameplayInput,
+                pauseTime,
+                Current?.Policy.CloseOnBack ?? false
+            );
+
+            if (Policy.Equals(newPolicy))
+                return;
+
+            Policy = newPolicy;
+            OnOverlayPolicyChanged.Invoke(Policy);
         }
     }
 }
