@@ -1,12 +1,13 @@
 using TD.Application.StateMachine.States;
 using TD.Core.StateMachine.Overlay;
+using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 
 namespace TD.Application
 {
-    public class StartGameUseCase : MonoBehaviour
+    public partial class StartGameUseCase : MonoBehaviour
     {
-        public static StartGameUseCase Instance { get; private set; }
+        [AutoStaticsCleanup] public static StartGameUseCase Instance { get; private set; }
 
         private void Awake()
         {
