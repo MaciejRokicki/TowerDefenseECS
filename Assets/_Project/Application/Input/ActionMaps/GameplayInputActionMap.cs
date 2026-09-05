@@ -43,6 +43,11 @@ namespace TD.Application.Input.ActionMaps
         {
             InputManager.InputActionAsset.Gameplay.RemoveCallbacks(this);
             base.Disable();
+
+            Movement = Vector3.zero;
+            IsSwiping = false;
+            SwipeMovement = Vector3.zero;
+            Zoom = 0.0f;
         }
 
         public void OnMovement(InputAction.CallbackContext context)
