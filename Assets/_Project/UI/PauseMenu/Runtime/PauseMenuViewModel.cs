@@ -60,7 +60,7 @@ namespace TD.UI.PauseMenu.Runtime
 
         private void ResumeButton_OnClicked()
         {
-            HandleOverlayBackUseCase.Instance.Execute();
+            CloseTopOverlayUseCase.Instance.Execute();
         }
 
         private void MainMenuButton_OnClicked()
