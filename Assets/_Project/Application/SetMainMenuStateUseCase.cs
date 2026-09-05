@@ -1,4 +1,5 @@
 using TD.Application.StateMachine.States;
+using TD.Core.StateMachine.Overlay;
 using UnityEngine;
 
 namespace TD.Application
@@ -14,6 +15,7 @@ namespace TD.Application
 
         public void Execute()
         {
+            OverlayManager.Instance.CloseAll();
             Core.StateMachine.State.StateMachine.Instance.ChangeState<MainMenuState>();
         }
     }

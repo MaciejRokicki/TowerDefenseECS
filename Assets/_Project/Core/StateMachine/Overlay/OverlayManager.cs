@@ -69,6 +69,17 @@ namespace TD.Core.StateMachine.Overlay
             RefreshPolicies();
         }
 
+        public void CloseAll()
+        {
+            while (activeOverlays.Count > 0)
+            {
+                var overlay = activeOverlays.Pop();
+                overlay.OnClose();
+            }
+
+            RefreshPolicies();
+        }
+
         public bool CloseTop()
         {
             if (activeOverlays.Count == 0)
