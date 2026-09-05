@@ -1,8 +1,7 @@
-using TD.Application;
 using TD.Application.Input.ActionMaps;
 using UnityEngine;
 
-namespace TD.UI
+namespace TD.Application
 {
     public class BackNavigationController : MonoBehaviour
     {
