@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace TD.Application
 {
-
     public class ReturnToMainMenuUseCase : MonoBehaviour
     {
         public static ReturnToMainMenuUseCase Instance { get; private set; }
@@ -16,6 +15,9 @@ namespace TD.Application
 
         public void Execute()
         {
+            if (Core.StateMachine.State.StateMachine.Instance.IsTransitioning)
+                return;
+
             OverlayManager.Instance.CloseAll();
             Core.StateMachine.State.StateMachine.Instance.TryChangeState<MainMenuState>();
         }

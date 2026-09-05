@@ -556,7 +556,7 @@ GameObject:
   - component: {fileID: 1784474630}
   - component: {fileID: 1784474629}
   m_Layer: 0
-  m_Name: SetMainMenuStateUseCase
+  m_Name: ReturnToMainMenuUseCase
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

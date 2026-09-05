@@ -15,6 +15,9 @@ namespace TD.Application
 
         public void Execute()
         {
+            if (Core.StateMachine.State.StateMachine.Instance.IsTransitioning)
+                return;
+
             OverlayManager.Instance.CloseAll();
             Core.StateMachine.State.StateMachine.Instance.TryChangeState<GameState>();
         }
