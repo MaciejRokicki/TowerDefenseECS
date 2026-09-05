@@ -46,6 +46,8 @@ namespace TD.Application
                 .QueryBuilder()
                 .WithAll<EnemyTag, LocalTransform>()
                 .Build();
+
+            state.RequireForUpdate(enemyQuery);
         }
 
         [BurstCompile]

@@ -7,19 +7,12 @@ namespace TD.Application
     {
         private void Start()
         {
-            GameplayInputActionMap.OnPauseMenuPressed += GameplayInputActionMap_OnPauseMenuPressed;
             UI_InputActionMap.OnCancelPressed += UI_InputActionMap_OnCancelPressed;
         }
 
         private void OnDestroy()
         {
-            GameplayInputActionMap.OnPauseMenuPressed -= GameplayInputActionMap_OnPauseMenuPressed;
             UI_InputActionMap.OnCancelPressed -= UI_InputActionMap_OnCancelPressed;
-        }
-
-        private void GameplayInputActionMap_OnPauseMenuPressed()
-        {
-            OpenPauseMenuOverlayUseCase.Instance.Execute();
         }
 
         private void UI_InputActionMap_OnCancelPressed()
