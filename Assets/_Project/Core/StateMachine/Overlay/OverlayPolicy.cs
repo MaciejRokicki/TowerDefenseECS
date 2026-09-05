@@ -2,9 +2,11 @@ namespace TD.Core.StateMachine.Overlay
 {
     public readonly struct OverlayPolicy
     {
-        public readonly bool BlockGameplayInput;
-        public readonly bool Pausetime;
-        public readonly bool CloseOnBack;
+        public static OverlayPolicy Default => default;
+
+        public bool BlockGameplayInput { get; }
+        public bool Pausetime { get; }
+        public bool CloseOnBack { get; }
 
         public OverlayPolicy(
             bool blockGameplayInput,
