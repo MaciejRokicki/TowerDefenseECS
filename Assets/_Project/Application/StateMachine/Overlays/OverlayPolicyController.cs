@@ -10,7 +10,7 @@ namespace TD.Application.StateMachine.Overlay
         private bool isGameplayInputBlocked;
         private bool isTimePaused;
 
-        private float timeScaleBeforePause = 1f;
+        private float timeScaleBeforePause = 1.0f;
 
         private void Start()
         {
@@ -40,7 +40,7 @@ namespace TD.Application.StateMachine.Overlay
             if (shouldPause)
             {
                 timeScaleBeforePause = Time.timeScale;
-                Time.timeScale = 0f;
+                Time.timeScale = 0.0f;
             }
             else
             {
@@ -57,8 +57,7 @@ namespace TD.Application.StateMachine.Overlay
 
             if (shouldBlock)
             {
-                InputManager.EnableActionMap(
-                    UI_InputActionMap.Instance);
+                InputManager.EnableActionMap(UI_InputActionMap.Instance);
             }
             else
             {
