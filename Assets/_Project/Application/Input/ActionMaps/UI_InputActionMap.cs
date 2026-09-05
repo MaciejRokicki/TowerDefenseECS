@@ -1,6 +1,6 @@
+using System;
 using TD.Core.InputManager;
 using Unity.Scripting.LifecycleManagement;
-using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace TD.Application.Input.ActionMaps
@@ -9,14 +9,23 @@ namespace TD.Application.Input.ActionMaps
     {
         [AutoStaticsCleanup] public static UI_InputActionMap Instance { get; private set; }
 
+        [AutoStaticsCleanup] public static event Action OnCancelPressed;
+
         private void Awake()
         {
             Instance = this;
+
+            OnCancelPressed = delegate { };
         }
 
         private void Start()
         {
             InputActionMap = InputManager.InputActionAsset.UI;
+        }
+
+        private void OnDestroy()
+        {
+            OnCancelPressed = null;
         }
 
         public override void Enable()
@@ -33,7 +42,10 @@ namespace TD.Application.Input.ActionMaps
 
         public void OnCancel(InputAction.CallbackContext context)
         {
+            if (!context.performed)
+                return;
 
+            OnCancelPressed.Invoke();
         }
 
         public void OnClick(InputAction.CallbackContext context)
