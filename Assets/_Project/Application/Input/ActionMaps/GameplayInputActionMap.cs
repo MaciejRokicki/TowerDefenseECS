@@ -1,26 +1,21 @@
 using System;
+using TD.Core.InputManager;
 using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace TD.Core.InputManager.InputActionMaps
+namespace TD.Application.Input.ActionMaps
 {
     public partial class GameplayInputActionMap : BaseInputActionMap, InputSystem_Actions.IGameplayActions
     {
-        [AutoStaticsCleanup]
-        public static GameplayInputActionMap Instance { get; private set; }
+        [AutoStaticsCleanup] public static GameplayInputActionMap Instance { get; private set; }
 
-        [AutoStaticsCleanup]
-        public static Vector3 Movement;
-        [AutoStaticsCleanup]
-        public static bool IsSwiping;
-        [AutoStaticsCleanup]
-        public static Vector3 SwipeMovement;
-        [AutoStaticsCleanup]
-        public static float Zoom;
+        [AutoStaticsCleanup] public static Vector3 Movement;
+        [AutoStaticsCleanup] public static bool IsSwiping;
+        [AutoStaticsCleanup] public static Vector3 SwipeMovement;
+        [AutoStaticsCleanup] public static float Zoom;
 
-        [NoAutoStaticsCleanup]
-        public static event Action OnPauseMenuPressed;
+        [NoAutoStaticsCleanup] public static event Action OnPauseMenuPressed;
 
         private void Awake()
         {
@@ -30,18 +25,24 @@ namespace TD.Core.InputManager.InputActionMaps
 
         private void Start()
         {
-            InputManager.InputActionAsset.Gameplay.SetCallbacks(this);
-
             InputActionMap = InputManager.InputActionAsset.Gameplay;
-
-            InputManager.EnableActionMap(this);
         }
 
         private void OnDestroy()
         {
-            InputManager.InputActionAsset.Gameplay.RemoveCallbacks(this);
-
             OnPauseMenuPressed = null;
+        }
+
+        public override void Enable()
+        {
+            InputManager.InputActionAsset.Gameplay.SetCallbacks(this);
+            base.Enable();
+        }
+
+        public override void Disable()
+        {
+            InputManager.InputActionAsset.Gameplay.RemoveCallbacks(this);
+            base.Disable();
         }
 
         public void OnMovement(InputAction.CallbackContext context)

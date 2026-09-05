@@ -1,8 +1,9 @@
 {
-    "name": "TD.UI.PauseMenu.Runtime",
-    "rootNamespace": "TD.UI.PauseMenu.Runtime",
+    "name": "TD.Application.Input",
+    "rootNamespace": "TD.Application.Input",
     "references": [
-        "TD.Application"
+        "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:cca561c0dbeb21646b3960e13ddd57a9"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -1,9 +1,7 @@
 {
-    "name": "TD.UI.PauseMenu.Runtime",
-    "rootNamespace": "TD.UI.PauseMenu.Runtime",
-    "references": [
-        "TD.Application"
-    ],
+    "name": "TD.Core.StateMachine",
+    "rootNamespace": "TD.Core.StateMachine",
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

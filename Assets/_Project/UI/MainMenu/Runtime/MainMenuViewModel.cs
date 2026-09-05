@@ -1,8 +1,6 @@
-using TD.Core;
-using TD.Core.InputManager;
-using TD.Core.InputManager.InputActionMaps;
+using TD.Application.StateMachine.States;
+using TD.Core.StateMachine.State;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 namespace TD.UI.MainMenu
@@ -37,14 +35,9 @@ namespace TD.UI.MainMenu
             exitButton.clicked += ExitButton_OnClicked;
         }
 
-        private async void PlayButton_OnClicked()
+        private void PlayButton_OnClicked()
         {
-            await SceneManager.UnloadSceneAsync(Scenes.MAIN_MENU_ID);
-            await SceneManager.LoadSceneAsync(Scenes.LOGIC_SCENE_ID, LoadSceneMode.Additive);
-            await SceneManager.LoadSceneAsync(Scenes.VIEW_ID, LoadSceneMode.Additive);
-            await SceneManager.LoadSceneAsync(Scenes.ENVIRONMENT_SCENE_ID, LoadSceneMode.Additive);
-
-            InputManager.EnableActionMap(GameplayInputActionMap.Instance);
+            StateMachine.Instance.ChangeState<GameState>();
         }
 
         private void ExitButton_OnClicked()
