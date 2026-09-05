@@ -15,7 +15,7 @@ namespace TD.Bootstrap
 
             OverlayManager.Instance.Register(new PauseMenuOverlay());
 
-            StateMachine.Instance.ChangeState<MainMenuState>();
+            StateMachine.Instance.TryChangeState<MainMenuState>();
         }
     }
 }

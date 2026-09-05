@@ -50,12 +50,12 @@ namespace TD.Core.StateMachine.State
             states[typeof(T)] = state;
         }
 
-        public void ChangeState<T>(object payload = null) where T : class, IState
+        public bool TryChangeState<T>(object payload = null) where T : class, IState
         {
             if (IsTransitioning)
             {
                 Debug.LogWarning("Can't change state during transitioing.");
-                return;
+                return false;
             }
 
             if (!states.TryGetValue(typeof(T), out var nextState))
@@ -63,12 +63,13 @@ namespace TD.Core.StateMachine.State
                 throw new InvalidOperationException(string.Concat("State: ", typeof(T).Name, " not found."));
             }
 
+            IsTransitioning = true;
             StartCoroutine(ChangeState(nextState, payload));
+            return true;
         }
 
         private IEnumerator ChangeState(IState nextState, object payload)
         {
-            IsTransitioning = true;
             if (CurrentState != null)
                 yield return CurrentState.Exit();
 

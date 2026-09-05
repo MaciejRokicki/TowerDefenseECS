@@ -16,7 +16,7 @@ namespace TD.Application
         public void Execute()
         {
             OverlayManager.Instance.CloseAll();
-            Core.StateMachine.State.StateMachine.Instance.ChangeState<GameState>();
+            Core.StateMachine.State.StateMachine.Instance.TryChangeState<GameState>();
         }
     }
 }
