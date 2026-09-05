@@ -1,5 +1,4 @@
 using TD.Application.Input.ActionMaps;
-using TD.Core.StateMachine.Overlay;
 using UnityEngine;
 
 namespace TD.Application
@@ -18,7 +17,7 @@ namespace TD.Application
 
         private void UI_InputActionMap_OnCancelPressed()
         {
-            OverlayManager.Instance.HandleBack();
+            HandleOverlayBackUseCase.Instance.Execute();
         }
     }
 }
