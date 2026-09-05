@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace TD.Application
 {
-    public class CloseOverlayUseCase : MonoBehaviour
+    public class HandleOverlayBackUseCase : MonoBehaviour
     {
-        public static CloseOverlayUseCase Instance { get; private set; }
+        public static HandleOverlayBackUseCase Instance { get; private set; }
 
         private void Awake()
         {
@@ -14,7 +14,7 @@ namespace TD.Application
 
         public void Execute()
         {
-            OverlayManager.Instance.CloseTop();
+            OverlayManager.Instance.HandleBack();
         }
     }
 }
