@@ -65,7 +65,7 @@ namespace TD.UI.PauseMenu.Runtime
 
         private void MainMenuButton_OnClicked()
         {
-            SetMainMenuStateUseCase.Instance.Execute();
+            ReturnToMainMenuUseCase.Instance.Execute();
         }
 
         private void ExitButton_OnClicked()

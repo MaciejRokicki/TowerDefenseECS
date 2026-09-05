@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace TD.Application
 {
-    public class SetMainMenuStateUseCase : MonoBehaviour
+    public class StartGameUseCase : MonoBehaviour
     {
-        public static SetMainMenuStateUseCase Instance { get; private set; }
+        public static StartGameUseCase Instance { get; private set; }
 
         private void Awake()
         {
@@ -16,7 +16,7 @@ namespace TD.Application
         public void Execute()
         {
             OverlayManager.Instance.CloseAll();
-            Core.StateMachine.State.StateMachine.Instance.ChangeState<MainMenuState>();
+            Core.StateMachine.State.StateMachine.Instance.ChangeState<GameState>();
         }
     }
 }

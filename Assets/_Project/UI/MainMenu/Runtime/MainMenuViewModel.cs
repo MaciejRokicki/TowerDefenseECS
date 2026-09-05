@@ -1,5 +1,4 @@
-using TD.Application.StateMachine.States;
-using TD.Core.StateMachine.State;
+using TD.Application;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -37,7 +36,7 @@ namespace TD.UI.MainMenu
 
         private void PlayButton_OnClicked()
         {
-            StateMachine.Instance.ChangeState<GameState>();
+            StartGameUseCase.Instance.Execute();
         }
 
         private void ExitButton_OnClicked()

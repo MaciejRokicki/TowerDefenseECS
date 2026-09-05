@@ -3,11 +3,10 @@
     "rootNamespace": "TD.UI",
     "references": [
         "GUID:cca561c0dbeb21646b3960e13ddd57a9",
-        "GUID:faf7dc4262fbed64b99e8f5eda047b43",
-        "GUID:f6e5a231da8dea44c9430aa7b6ccf282",
         "GUID:01c9e4438d2ff6749b069ca4122ed655",
         "GUID:e064b43f2f040e14fa1dbeeba7f92f3f",
-        "GUID:0a447e9c4e6d7ec46b090f073391b9d8"
+        "GUID:0a447e9c4e6d7ec46b090f073391b9d8",
+        "GUID:f6e5a231da8dea44c9430aa7b6ccf282"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
