@@ -11,9 +11,7 @@ namespace TD.Application.StateMachine.Overlay
         [AutoStaticsCleanup] public static event Action OnPauseMenuShow;
         [AutoStaticsCleanup] public static event Action OnPauseMenuHide;
 
-        private OverlayPolicy policy;
-
-        public OverlayPolicy Policy => policy;
+        public OverlayPolicy Policy { get; } = new OverlayPolicy(true, true, true);
 
         public void OnRegister()
         {
