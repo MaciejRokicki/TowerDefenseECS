@@ -35,11 +35,23 @@ namespace TD.Features.Debug
                         if (playerSingletonQuery.HasSingleton<PlayerSingleton>())
                         {
                             var entity = entityManager.CreateEntity();
-                            entityManager.AddComponentData(entity, new IncreaseHealthCommand()
+
+                            if (x > 0)
                             {
-                                Entity = playerSingletonQuery.GetSingletonEntity(),
-                                Value = x
-                            });
+                                entityManager.AddComponentData(entity, new HealCommand()
+                                {
+                                    Entity = playerSingletonQuery.GetSingletonEntity(),
+                                    Value = x
+                                });
+                            }
+                            else
+                            {
+                                entityManager.AddComponentData(entity, new DamageCommand()
+                                {
+                                    Entity = playerSingletonQuery.GetSingletonEntity(),
+                                    Value = x
+                                });
+                            }
                         }
 
                         playerSingletonQuery.Dispose();

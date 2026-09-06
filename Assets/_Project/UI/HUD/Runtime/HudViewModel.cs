@@ -1,6 +1,6 @@
 using TD.Features.Experience.Systems;
-using TD.Features.PlayerHealth.Systems;
 using TD.Features.Statistics.Systems;
+using TD.UI.HUD.ECS.Systems;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -27,8 +27,8 @@ namespace TD.UI.HUD
 
         private void Start()
         {
-            PlayerHealthSystem.OnHealthChanged += PlayerHealthSystem_OnHealthChanged;
-            PlayerHealthSystem.OnMaxHealthChanged += PlayerHealthSystem_OnMaxHealthChanged;
+            PlayerHealthPresentationSystem.OnHealthChanged += PlayerHealthPresentationSystem_OnHealthChanged;
+            PlayerHealthPresentationSystem.OnMaxHealthChanged += PlayerHealthSystem_OnMaxHealthChanged;
             EnemyStatisticsSystem.OnKilledEnemiesCountChanged += EnemyStatisticsSystem_OnKilledEnemiesCountChanged;
             EnemyStatisticsSystem.OnEnemiesCountChanged += EnemyStatisticsSystem_OnEnemiesCountChanged;
             EnemyStatisticsSystem.OnTotalEnemiesCountChanged += EnemyStatisticsSystem_OnTotalEnemiesCountChanged;
@@ -47,7 +47,7 @@ namespace TD.UI.HUD
             rootElement.Q<ProgressBar>("ExperienceProgressBar").dataSource = model;
         }
 
-        private void PlayerHealthSystem_OnHealthChanged(float previousValue, float currentValue)
+        private void PlayerHealthPresentationSystem_OnHealthChanged(float previousValue, float currentValue)
         {
             model.Health = currentValue;
         }

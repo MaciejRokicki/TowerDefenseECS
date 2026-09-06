@@ -33,7 +33,7 @@ namespace TD.Features.Combat.ECS.Systems
     }
 
     [UpdateBefore(typeof(HealthSystem))]
-    public partial struct PlayerDamageSystem : ISystem
+    public partial struct EnemyReachedBaseSystem : ISystem
     {
         private EntityQuery enemyQuery;
 
@@ -69,10 +69,10 @@ namespace TD.Features.Combat.ECS.Systems
             if (dmg.Value != 0.0f)
             {
                 var e = ecb.CreateEntity();
-                ecb.AddComponent(e, new IncreaseHealthCommand()
+                ecb.AddComponent(e, new DamageCommand()
                 {
                     Entity = baseEntity,
-                    Value = -dmg.Value
+                    Value = dmg.Value
                 });
             }
 

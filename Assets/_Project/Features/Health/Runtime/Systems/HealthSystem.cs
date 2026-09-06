@@ -12,12 +12,21 @@ namespace TD.Features.Health.Systems
         {
             var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
 
-            foreach (var (increaseHealthCommand, entity) in SystemAPI.Query<RefRO<IncreaseHealthCommand>>().WithEntityAccess())
+            foreach (var (damageCommand, entity) in SystemAPI.Query<RefRO<DamageCommand>>().WithEntityAccess())
             {
-                var entityHealth = SystemAPI.GetComponent<HealthComponent>(increaseHealthCommand.ValueRO.Entity);
-                entityHealth.Value += increaseHealthCommand.ValueRO.Value;
+                var entityHealth = SystemAPI.GetComponent<HealthComponent>(damageCommand.ValueRO.Entity);
+                entityHealth.Value -= damageCommand.ValueRO.Value;
                 entityHealth.Value = math.clamp(entityHealth.Value, 0, entityHealth.MaxValue);
-                ecb.SetComponent(increaseHealthCommand.ValueRO.Entity, entityHealth);
+                ecb.SetComponent(damageCommand.ValueRO.Entity, entityHealth);
+                ecb.DestroyEntity(entity);
+            }
+
+            foreach (var (healCommand, entity) in SystemAPI.Query<RefRO<HealCommand>>().WithEntityAccess())
+            {
+                var entityHealth = SystemAPI.GetComponent<HealthComponent>(healCommand.ValueRO.Entity);
+                entityHealth.Value += healCommand.ValueRO.Value;
+                entityHealth.Value = math.clamp(entityHealth.Value, 0, entityHealth.MaxValue);
+                ecb.SetComponent(healCommand.ValueRO.Entity, entityHealth);
                 ecb.DestroyEntity(entity);
             }
 

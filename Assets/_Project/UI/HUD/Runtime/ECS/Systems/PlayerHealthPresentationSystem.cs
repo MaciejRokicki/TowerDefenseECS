@@ -5,10 +5,10 @@ using TD.Features.Player.Components;
 using Unity.Entities;
 using Unity.Scripting.LifecycleManagement;
 
-namespace TD.Features.PlayerHealth.Systems
+namespace TD.UI.HUD.ECS.Systems
 {
     [UpdateAfter(typeof(HealthSystem))]
-    public partial class PlayerHealthSystem : SystemBase
+    public partial class PlayerHealthPresentationSystem : SystemBase
     {
         [AutoStaticsCleanup]
         public static HealthComponent Health { get; private set; }
