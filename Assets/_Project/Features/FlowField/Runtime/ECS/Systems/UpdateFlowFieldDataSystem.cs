@@ -1,9 +1,10 @@
-using TD.Features.FlowField.Runtime.ECS.Components;
+using TD.Features.FlowField.ECS.Components;
+using TD.Features.FlowField.Managed;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 
-namespace TD.Features.FlowField.Runtime.ECS.Systems
+namespace TD.Features.FlowField.ECS.Systems
 {
     public partial class UpdateFlowFieldDataSystem : SystemBase
     {

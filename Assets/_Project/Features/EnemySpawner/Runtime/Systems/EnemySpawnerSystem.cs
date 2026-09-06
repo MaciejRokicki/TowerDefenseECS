@@ -1,12 +1,12 @@
-using TD.Features.EnemySpawner.Runtime.Components;
-using TD.Features.Statistics.Runtime.Components;
+using TD.Features.EnemySpawner.Components;
+using TD.Features.Statistics.Components;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 
-namespace TD.Features.EnemySpawner.Runtime.Systems
+namespace TD.Features.EnemySpawner.Systems
 {
     public partial struct EnemySpawnerSystem : ISystem
     {

@@ -1,10 +1,10 @@
 using DebugUI;
-using TD.Features.Experience.Runtime.Components;
-using TD.Features.Health.Runtime.Components;
-using TD.Features.Player.Runtime.Components;
+using TD.Features.Experience.Components;
+using TD.Features.Health.Components;
+using TD.Features.Player.Components;
 using Unity.Entities;
 
-namespace TD.Features.Debug.Runtime
+namespace TD.Features.Debug
 {
     public class DebugViewBuilder : DebugUIBuilderBase
     {
@@ -18,7 +18,7 @@ namespace TD.Features.Debug.Runtime
         }
 
         protected override void Configure(IDebugUIBuilder builder)
-        {            
+        {
             builder.ConfigureWindowOptions(options =>
             {
                 options.Title = "Debug Window";

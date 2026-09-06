@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-namespace TD.Features.SpriteAnimation.Runtime.Components
+namespace TD.Features.SpriteAnimation.Components
 {
 	public struct SpriteAnimationClip : IBufferElementData
 	{

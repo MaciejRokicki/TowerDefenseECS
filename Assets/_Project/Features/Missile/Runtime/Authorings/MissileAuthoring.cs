@@ -1,8 +1,8 @@
-using TD.Features.Missile.Runtime.Components;
+using TD.Features.Missile.Components;
 using Unity.Entities;
 using UnityEngine;
 
-namespace TD.Features.Missile.Runtime.Authorings
+namespace TD.Features.Missile.Authorings
 {
     public class MissileAuthoring : MonoBehaviour
     {

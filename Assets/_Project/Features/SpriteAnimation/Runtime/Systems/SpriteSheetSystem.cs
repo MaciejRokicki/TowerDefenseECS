@@ -1,8 +1,8 @@
-using TD.Features.SpriteAnimation.Runtime.Components;
+using TD.Features.SpriteAnimation.Components;
 using Unity.Burst;
 using Unity.Entities;
 
-namespace TD.Features.SpriteAnimation.Runtime.Systems
+namespace TD.Features.SpriteAnimation.Systems
 {
     partial struct SpriteSheetSystem : ISystem
     {

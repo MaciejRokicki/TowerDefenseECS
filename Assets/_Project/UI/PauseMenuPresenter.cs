@@ -1,5 +1,5 @@
 using TD.Application.StateMachine.Overlay;
-using TD.UI.PauseMenu.Runtime;
+using TD.UI.PauseMenu;
 using UnityEngine;
 
 namespace TD.UI

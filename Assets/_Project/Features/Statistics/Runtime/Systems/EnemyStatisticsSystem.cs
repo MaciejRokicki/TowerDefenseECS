@@ -1,9 +1,9 @@
 using System;
-using TD.Features.Statistics.Runtime.Components;
+using TD.Features.Statistics.Components;
 using Unity.Entities;
 using Unity.Scripting.LifecycleManagement;
 
-namespace TD.Features.Statistics.Runtime.Systems
+namespace TD.Features.Statistics.Systems
 {
     public partial class EnemyStatisticsSystem : SystemBase
     {

@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-namespace TD.Features.Movement.Runtime.Components
+namespace TD.Features.Movement.Components
 {
     public struct MovementSpeed : IComponentData
     {

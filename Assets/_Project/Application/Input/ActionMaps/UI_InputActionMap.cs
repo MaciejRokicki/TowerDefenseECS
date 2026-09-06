@@ -1,5 +1,6 @@
 using System;
-using TD.Core.InputManager;
+using TD.Input;
+using TD.Input.Generated;
 using Unity.Scripting.LifecycleManagement;
 using UnityEngine.InputSystem;
 

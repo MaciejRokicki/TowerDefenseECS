@@ -1,0 +1,19 @@
+{
+    "name": "TD.Featuers.PlayerHealth",
+    "rootNamespace": "TD.Featuers.PlayerHealth",
+    "references": [
+        "GUID:734d92eba21c94caba915361bd5ac177",
+        "GUID:037c42d92a6dab243af496bded7aa1e0",
+        "GUID:a325e28d3c8ecf749962a08b4de1599a",
+        "GUID:e0cd26848372d4e5c891c569017e11f1"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

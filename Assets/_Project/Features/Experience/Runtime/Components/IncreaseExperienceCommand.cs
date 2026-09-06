@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-namespace TD.Features.Experience.Runtime.Components
+namespace TD.Features.Experience.Components
 {
     public struct IncreaseExperienceCommand : IComponentData
     {

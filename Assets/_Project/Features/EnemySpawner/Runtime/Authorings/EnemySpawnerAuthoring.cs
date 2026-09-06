@@ -1,8 +1,8 @@
-using TD.Features.EnemySpawner.Runtime.Components;
+using TD.Features.EnemySpawner.Components;
 using Unity.Entities;
 using UnityEngine;
 
-namespace TD.Features.EnemySpawner.Runtime.Authorings
+namespace TD.Features.EnemySpawner.Authorings
 {
     public class EnemySpawnerAuthoring : MonoBehaviour
     {

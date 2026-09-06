@@ -1,11 +1,11 @@
 using System;
-using TD.Features.Health.Runtime.Components;
-using TD.Features.Health.Runtime.Systems;
-using TD.Features.Player.Runtime.Components;
+using TD.Features.Health.Components;
+using TD.Features.Health.Systems;
+using TD.Features.Player.Components;
 using Unity.Entities;
 using Unity.Scripting.LifecycleManagement;
 
-namespace TD.Features.PlayerHealth.Runtime.Systems
+namespace TD.Features.PlayerHealth.Systems
 {
     [UpdateAfter(typeof(HealthSystem))]
     public partial class PlayerHealthSystem : SystemBase

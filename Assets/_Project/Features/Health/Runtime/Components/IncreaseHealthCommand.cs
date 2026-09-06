@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-namespace TD.Features.Health.Runtime.Components
+namespace TD.Features.Health.Components
 {
     public struct IncreaseHealthCommand : IComponentData
     {

@@ -1,7 +1,7 @@
 using TD.Application.Input.ActionMaps;
 using UnityEngine;
 
-namespace TD.Features.CameraController.Runtime
+namespace TD.Features.CameraController
 {
     public class CameraController : MonoBehaviour
     {

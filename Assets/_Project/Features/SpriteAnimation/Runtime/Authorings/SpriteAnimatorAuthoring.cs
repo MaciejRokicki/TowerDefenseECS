@@ -1,10 +1,10 @@
 using System;
-using TD.Features.SpriteAnimation.Runtime.Components;
+using TD.Features.SpriteAnimation.Components;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace TD.Features.SpriteAnimation.Runtime.Authorings
+namespace TD.Features.SpriteAnimation.Authorings
 {
     [Serializable]
     public struct SpriteAnimationClipFrames

@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-namespace TD.Features.EnemySpawner.Runtime.Components
+namespace TD.Features.EnemySpawner.Components
 {
     public struct UnitSpawner : IComponentData
     {

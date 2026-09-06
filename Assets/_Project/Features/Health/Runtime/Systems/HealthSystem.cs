@@ -1,9 +1,9 @@
-using TD.Features.Health.Runtime.Components;
+using TD.Features.Health.Components;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 
-namespace TD.Features.Health.Runtime.Systems
+namespace TD.Features.Health.Systems
 {
     [BurstCompile]
     public partial struct HealthSystem : ISystem

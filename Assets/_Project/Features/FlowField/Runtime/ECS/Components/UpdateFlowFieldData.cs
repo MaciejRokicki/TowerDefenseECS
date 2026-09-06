@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-namespace TD.Features.FlowField.Runtime.ECS.Components
+namespace TD.Features.FlowField.ECS.Components
 {
     public struct UpdateFlowFieldData : IComponentData
     {

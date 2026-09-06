@@ -1,0 +1,16 @@
+{
+    "name": "TD.UI.PauseMenu",
+    "rootNamespace": "TD.UI.PauseMenu",
+    "references": [
+        "TD.Application"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

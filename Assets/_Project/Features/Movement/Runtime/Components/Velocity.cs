@@ -1,7 +1,7 @@
 using Unity.Entities;
 using Unity.Mathematics;
 
-namespace TD.Features.Movement.Runtime.Components
+namespace TD.Features.Movement.Components
 {
     public struct Velocity : IComponentData
     {

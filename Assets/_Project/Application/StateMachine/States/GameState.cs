@@ -1,8 +1,8 @@
 using System.Collections;
 using TD.Application.Input.ActionMaps;
 using TD.Core;
-using TD.Core.InputManager;
 using TD.Core.StateMachine.State;
+using TD.Input;
 using UnityEngine.SceneManagement;
 
 namespace TD.Application.StateMachine.States

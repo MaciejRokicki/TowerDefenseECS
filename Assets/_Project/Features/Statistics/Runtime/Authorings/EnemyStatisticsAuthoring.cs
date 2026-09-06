@@ -1,8 +1,8 @@
-using TD.Features.Statistics.Runtime.Components;
+using TD.Features.Statistics.Components;
 using Unity.Entities;
 using UnityEngine;
 
-namespace TD.Features.Statistics.Runtime.Authorings
+namespace TD.Features.Statistics.Authorings
 {
     public class EnemyStatisticsAuthoring : MonoBehaviour
     {

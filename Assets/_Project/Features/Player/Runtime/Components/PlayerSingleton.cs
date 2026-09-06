@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-namespace TD.Features.Player.Runtime.Components
+namespace TD.Features.Player.Components
 {
     public struct PlayerSingleton : IComponentData
     {

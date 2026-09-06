@@ -1,9 +1,9 @@
-using TD.Features.Player.Runtime.Components;
-using TD.Features.Health.Runtime.Components;
+using TD.Features.Player.Components;
+using TD.Features.Health.Components;
 using Unity.Entities;
 using UnityEngine;
 
-namespace TD.Features.Player.Runtime.Authorings
+namespace TD.Features.Player.Authorings
 {
     public class PlayerAuthoring : MonoBehaviour
     {

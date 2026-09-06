@@ -1,5 +1,5 @@
 using TD.Application.Input.ActionMaps;
-using TD.Core.InputManager;
+using TD.Input;
 using TD.Core.StateMachine.Overlay;
 using UnityEngine;
 

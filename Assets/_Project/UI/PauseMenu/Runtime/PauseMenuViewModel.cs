@@ -3,7 +3,7 @@ using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace TD.UI.PauseMenu.Runtime
+namespace TD.UI.PauseMenu
 {
     public partial class PauseMenuViewModel : MonoBehaviour
     {

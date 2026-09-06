@@ -1,8 +1,8 @@
-using TD.Features.FlowField.Runtime.ECS.Components;
+using TD.Features.FlowField.ECS.Components;
 using Unity.Entities;
 using UnityEngine;
 
-namespace TD.Features.FlowField.Runtime.ECS.Authorings
+namespace TD.Features.FlowField.ECS.Authorings
 {
     public class UpdateFlowFieldDataAuthoring : MonoBehaviour
     {

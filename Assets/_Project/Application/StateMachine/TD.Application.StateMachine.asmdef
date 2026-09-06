@@ -2,6 +2,7 @@
     "name": "TD.Application.StateMachine",
     "rootNamespace": "TD.Application.StateMachine",
     "references": [
+        "GUID:e0ff4b5f42691984eba5e3856c94e55a",
         "GUID:cca561c0dbeb21646b3960e13ddd57a9",
         "GUID:faf7dc4262fbed64b99e8f5eda047b43",
         "GUID:01c9e4438d2ff6749b069ca4122ed655"

@@ -1,8 +1,8 @@
-using TD.Features.Enemy.Runtime.Components;
-using TD.Features.FlowField.Runtime.ECS.Components;
-using TD.Features.Health.Runtime.Components;
-using TD.Features.Health.Runtime.Systems;
-using TD.Features.Player.Runtime.Components;
+using TD.Features.Enemy.Components;
+using TD.Features.FlowField.ECS.Components;
+using TD.Features.Health.Components;
+using TD.Features.Health.Systems;
+using TD.Features.Player.Components;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;

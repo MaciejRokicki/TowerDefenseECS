@@ -1,7 +1,7 @@
-using TD.Features.Enemy.Runtime.Components;
-using TD.Features.Experience.Runtime.Components;
-using TD.Features.Missile.Runtime.Components;
-using TD.Features.Statistics.Runtime.Components;
+using TD.Features.Enemy.Components;
+using TD.Features.Experience.Components;
+using TD.Features.Missile.Components;
+using TD.Features.Statistics.Components;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;

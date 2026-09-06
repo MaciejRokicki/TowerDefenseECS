@@ -1,7 +1,7 @@
 using Unity.Entities;
 using Unity.Mathematics;
 
-namespace TD.Features.SpriteAnimation.Runtime.Components
+namespace TD.Features.SpriteAnimation.Components
 {
 	public struct SpriteFrameElement : IBufferElementData
 	{

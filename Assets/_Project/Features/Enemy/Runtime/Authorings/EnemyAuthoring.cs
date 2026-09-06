@@ -1,9 +1,9 @@
-using TD.Features.Enemy.Runtime.Components;
-using TD.Features.Movement.Runtime.Components;
+using TD.Features.Enemy.Components;
+using TD.Features.Movement.Components;
 using Unity.Entities;
 using UnityEngine;
 
-namespace TD.Features.Enemy.Runtime.Authorings
+namespace TD.Features.Enemy.Authorings
 {
     public class EnemyAuthoring : MonoBehaviour
     {

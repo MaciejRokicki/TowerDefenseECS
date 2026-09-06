@@ -1,12 +1,12 @@
-using TD.Features.FlowField.Runtime.ECS.Components;
-using TD.Features.Movement.Runtime.Components;
+using TD.Features.FlowField.ECS.Components;
+using TD.Features.Movement.Components;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 
-namespace TD.Features.Movement.Runtime.Systems
+namespace TD.Features.Movement.Systems
 {
     [BurstCompile]
     public partial struct MoveJob : IJobEntity

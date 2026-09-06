@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-namespace TD.Features.Statistics.Runtime.Components
+namespace TD.Features.Statistics.Components
 {
     public struct EnemyStatisticsSingleton : IComponentData
     {

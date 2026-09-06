@@ -1,10 +1,10 @@
 using System;
-using TD.Features.Experience.Runtime.Components;
+using TD.Features.Experience.Components;
 using Unity.Entities;
 using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 
-namespace TD.Features.Experience.Runtime.Systems
+namespace TD.Features.Experience.Systems
 {
     public partial class ExperienceSystem : SystemBase
     {

@@ -1,0 +1,20 @@
+{
+    "name": "TD.UI.HUD",
+    "rootNamespace": "TD.UI.HUD",
+    "references": [
+        "GUID:b473389c3a467524e8fba367975777fa",
+        "GUID:a325e28d3c8ecf749962a08b4de1599a",
+        "GUID:f3aebb4fc313533458a36e75d1ad4d4c",
+        "GUID:037c42d92a6dab243af496bded7aa1e0",
+        "GUID:ba11c6fb5437f5b4ebedebe9e05e060d"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

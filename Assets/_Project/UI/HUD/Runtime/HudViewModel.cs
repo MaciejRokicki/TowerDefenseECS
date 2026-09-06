@@ -1,10 +1,10 @@
-using TD.Features.Experience.Runtime.Systems;
-using TD.Features.PlayerHealth.Runtime.Systems;
-using TD.Features.Statistics.Runtime.Systems;
+using TD.Features.Experience.Systems;
+using TD.Features.PlayerHealth.Systems;
+using TD.Features.Statistics.Systems;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace TD.UI.HUD.Runtime
+namespace TD.UI.HUD
 {
     public class HudViewModel : MonoBehaviour
     {
