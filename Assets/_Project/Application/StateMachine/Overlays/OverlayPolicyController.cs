@@ -1,6 +1,6 @@
-using TD.Application.Input.ActionMaps;
-using TD.Input;
 using TD.Core.StateMachine.Overlay;
+using TD.Input;
+using TD.Input.ActionMaps;
 using UnityEngine;
 
 namespace TD.Application.StateMachine.Overlay
@@ -57,8 +57,7 @@ namespace TD.Application.StateMachine.Overlay
 
             if (shouldBlock)
             {
-                InputManager.EnableActionMap(
-                    UI_InputActionMap.Instance);
+                InputManager.EnableActionMap(UI_InputActionMap.Instance);
             }
             else
             {

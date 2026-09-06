@@ -3,11 +3,11 @@ using TD.Core.StateMachine.Overlay;
 using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 
-namespace TD.Application
+namespace TD.Application.GameFlow
 {
-    public partial class StartGameUseCase : MonoBehaviour
+    public partial class ReturnToMainMenuUseCase : MonoBehaviour
     {
-        [AutoStaticsCleanup] public static StartGameUseCase Instance { get; private set; }
+        [AutoStaticsCleanup] public static ReturnToMainMenuUseCase Instance { get; private set; }
 
         private void Awake()
         {
@@ -20,7 +20,7 @@ namespace TD.Application
                 return;
 
             OverlayManager.Instance.CloseAll();
-            Core.StateMachine.State.StateMachine.Instance.TryChangeState<GameState>();
+            Core.StateMachine.State.StateMachine.Instance.TryChangeState<MainMenuState>();
         }
     }
 }

@@ -1,8 +1,8 @@
-using TD.Application.Input.ActionMaps;
 using TD.Core.StateMachine.Overlay;
+using TD.Input.ActionMaps;
 using UnityEngine;
 
-namespace TD.Application
+namespace TD.Application.Navigation
 {
     public class BackNavigationController : MonoBehaviour
     {

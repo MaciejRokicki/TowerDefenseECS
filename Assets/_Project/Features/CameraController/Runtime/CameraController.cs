@@ -1,4 +1,4 @@
-using TD.Application.Input.ActionMaps;
+using TD.Input.ActionMaps;
 using UnityEngine;
 
 namespace TD.Features.CameraController

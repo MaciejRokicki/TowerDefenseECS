@@ -3,7 +3,7 @@ using TD.Core.StateMachine.Overlay;
 using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 
-namespace TD.Application
+namespace TD.Application.Navigation
 {
     public partial class OpenPauseMenuOverlayUseCase : MonoBehaviour
     {

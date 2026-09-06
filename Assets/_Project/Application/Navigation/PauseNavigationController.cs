@@ -1,7 +1,7 @@
-using TD.Application.Input.ActionMaps;
+using TD.Input.ActionMaps;
 using UnityEngine;
 
-namespace TD.Application
+namespace TD.Application.Navigation
 {
     public class PauseNavigationController : MonoBehaviour
     {

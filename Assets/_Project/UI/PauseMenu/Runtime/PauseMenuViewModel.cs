@@ -1,4 +1,5 @@
-using TD.Application;
+using TD.Application.GameFlow;
+using TD.Application.Navigation;
 using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 using UnityEngine.UIElements;

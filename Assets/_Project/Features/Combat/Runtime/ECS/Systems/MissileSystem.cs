@@ -9,7 +9,7 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 
-namespace TD.Application
+namespace TD.Features.Combat.ECS.Systems
 {
     public struct Missile
     {

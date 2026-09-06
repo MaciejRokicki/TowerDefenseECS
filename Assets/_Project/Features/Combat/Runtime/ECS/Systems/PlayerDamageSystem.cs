@@ -9,7 +9,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 
-namespace TD.Application
+namespace TD.Features.Combat.ECS.Systems
 {
     [BurstCompile]
     public partial struct PlayerDamageJob : IJobEntity

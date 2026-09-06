@@ -1,11 +1,10 @@
 using System;
-using TD.Input;
 using TD.Input.Generated;
 using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace TD.Application.Input.ActionMaps
+namespace TD.Input.ActionMaps
 {
     public partial class GameplayInputActionMap : BaseInputActionMap, InputSystem_Actions.IGameplayActions
     {
