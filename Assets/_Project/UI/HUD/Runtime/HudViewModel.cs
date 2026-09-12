@@ -20,11 +20,6 @@ namespace TD.UI.HUD
             panelRenderer.RegisterUIReloadCallback(PanelRenderer_OnUIReloaded);
         }
 
-        private void OnDestroy()
-        {
-            panelRenderer.UnregisterUIReloadCallback(PanelRenderer_OnUIReloaded);
-        }
-
         private void Start()
         {
             PlayerHealthPresentationSystem.OnHealthChanged += PlayerHealthPresentationSystem_OnHealthChanged;
@@ -33,6 +28,18 @@ namespace TD.UI.HUD
             EnemyStatisticsSystem.OnEnemiesCountChanged += EnemyStatisticsSystem_OnEnemiesCountChanged;
             EnemyStatisticsSystem.OnTotalEnemiesCountChanged += EnemyStatisticsSystem_OnTotalEnemiesCountChanged;
             ExperienceSystem.OnExperienceChanged += ExperienceSystem_OnExperienceChanged;
+        }
+
+        private void OnDestroy()
+        {
+            panelRenderer.UnregisterUIReloadCallback(PanelRenderer_OnUIReloaded);
+
+            PlayerHealthPresentationSystem.OnHealthChanged -= PlayerHealthPresentationSystem_OnHealthChanged;
+            PlayerHealthPresentationSystem.OnMaxHealthChanged -= PlayerHealthSystem_OnMaxHealthChanged;
+            EnemyStatisticsSystem.OnKilledEnemiesCountChanged -= EnemyStatisticsSystem_OnKilledEnemiesCountChanged;
+            EnemyStatisticsSystem.OnEnemiesCountChanged -= EnemyStatisticsSystem_OnEnemiesCountChanged;
+            EnemyStatisticsSystem.OnTotalEnemiesCountChanged -= EnemyStatisticsSystem_OnTotalEnemiesCountChanged;
+            ExperienceSystem.OnExperienceChanged -= ExperienceSystem_OnExperienceChanged;
         }
 
         private void PanelRenderer_OnUIReloaded(PanelRenderer panelRenderer, VisualElement rootElement, int version)
