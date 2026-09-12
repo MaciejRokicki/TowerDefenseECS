@@ -22,6 +22,21 @@ namespace TD.Features.FlowField.ECS.Systems
             RequireForUpdate<UpdateFlowFieldData>();
         }
 
+        protected override void OnDestroy()
+        {
+            var ecb = new EntityCommandBuffer(Allocator.TempJob);
+
+            if (SystemAPI.TryGetSingletonEntity<FlowFieldSurfaceData>(out var flowFieldSurfaceDataEntity))
+            {
+                var flowFieldSurfaceData = SystemAPI.GetComponent<FlowFieldSurfaceData>(flowFieldSurfaceDataEntity);
+                flowFieldSurfaceData.Directions.Dispose();
+                ecb.SetComponent(flowFieldSurfaceDataEntity, flowFieldSurfaceData);
+            }
+
+            ecb.Playback(EntityManager);
+            ecb.Dispose();
+        }
+
         protected override void OnUpdate()
         {
             var ecb = new EntityCommandBuffer(Allocator.TempJob);
