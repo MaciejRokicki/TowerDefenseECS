@@ -10,15 +10,23 @@ namespace TD.Bootstrap
     {
         private readonly StateMachine stateMachine;
         private readonly OverlayService overlayService;
+
         private readonly MainMenuState mainMenuState;
         private readonly GameState gameState;
+        private readonly PauseMenuOverlay pauseMenuOverlay;
 
-        public Bootstrap(StateMachine stateMachine, OverlayService overlayService, MainMenuState mainMenuState, GameState gameState)
+        public Bootstrap(
+            StateMachine stateMachine, 
+            OverlayService overlayService, 
+            MainMenuState mainMenuState, 
+            GameState gameState, 
+            PauseMenuOverlay pauseMenuOverlay)
         {
             this.stateMachine = stateMachine;
             this.overlayService = overlayService;
             this.mainMenuState = mainMenuState;
             this.gameState = gameState;
+            this.pauseMenuOverlay = pauseMenuOverlay;
         }
 
         public void Start()
@@ -26,7 +34,7 @@ namespace TD.Bootstrap
             stateMachine.Register(mainMenuState);
             stateMachine.Register(gameState);
 
-            overlayService.Register(new PauseMenuOverlay());
+            overlayService.Register(pauseMenuOverlay);
 
             stateMachine.TryChangeState<MainMenuState>();
         }

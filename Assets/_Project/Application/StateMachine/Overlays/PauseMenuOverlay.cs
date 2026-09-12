@@ -1,22 +1,17 @@
 using System;
 using TD.Core.StateMachine.Overlay;
-using Unity.Scripting.LifecycleManagement;
 
 namespace TD.Application.StateMachine.Overlay
 {
-    public partial class PauseMenuOverlay : IOverlay
+    public class PauseMenuOverlay : IOverlay
     {
-        [AutoStaticsCleanup] public static PauseMenuOverlay Instance { get; private set; }
-
-        [AutoStaticsCleanup] public static event Action OnPauseMenuShow;
-        [AutoStaticsCleanup] public static event Action OnPauseMenuHide;
+        public event Action OnPauseMenuShow;
+        public event Action OnPauseMenuHide;
 
         public OverlayPolicy Policy { get; } = new OverlayPolicy(true, true, true);
 
         public void OnRegister()
         {
-            Instance = this;
-
             OnPauseMenuShow = delegate { };
             OnPauseMenuHide = delegate { };
         }

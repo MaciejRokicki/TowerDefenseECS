@@ -48,6 +48,8 @@ namespace TD.Bootstrap
 
             builder.Register<MainMenuState>(Lifetime.Singleton);
             builder.Register<GameState>(Lifetime.Singleton);
+
+            builder.Register<PauseMenuOverlay>(Lifetime.Singleton);
         }
 
         private void RegisterUseCases(IContainerBuilder builder)
