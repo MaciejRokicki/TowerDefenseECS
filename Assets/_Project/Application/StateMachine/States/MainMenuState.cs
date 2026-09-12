@@ -9,10 +9,19 @@ namespace TD.Application.StateMachine.States
 {
     public class MainMenuState : IState
     {
+        private readonly InputManager inputManager;
+        private readonly UI_InputActionMap ui_InputActionMap;
+
+        public MainMenuState(InputManager inputManager, UI_InputActionMap ui_InputActionMap)
+        {
+            this.inputManager = inputManager;
+            this.ui_InputActionMap = ui_InputActionMap;
+        }
+
         public IEnumerator Enter(StateTransition transition)
         {
             yield return SceneManager.LoadSceneAsync(Scenes.MAIN_MENU_ID, LoadSceneMode.Additive);
-            InputManager.EnableActionMap(UI_InputActionMap.Instance);
+            inputManager.EnableActionMap(ui_InputActionMap);
         }
 
         public void Tick(float deltaTime) { }
@@ -21,7 +30,7 @@ namespace TD.Application.StateMachine.States
 
         public IEnumerator Exit()
         {
-            InputManager.DisableRecentActionMap();
+            inputManager.DisableRecentActionMap();
             yield return SceneManager.UnloadSceneAsync(Scenes.MAIN_MENU_ID);
         }
     }

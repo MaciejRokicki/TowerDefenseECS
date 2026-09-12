@@ -2,7 +2,8 @@
     "name": "TD.UI.PauseMenu",
     "rootNamespace": "TD.UI.PauseMenu",
     "references": [
-        "TD.Application"
+        "TD.Application",
+        "VContainer"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

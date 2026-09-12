@@ -1,27 +1,40 @@
+using System;
 using TD.Core.StateMachine.Overlay;
 using TD.Input;
 using TD.Input.ActionMaps;
 using UnityEngine;
+using VContainer.Unity;
 
 namespace TD.Application.StateMachine.Overlay
 {
-    public sealed class OverlayPolicyController : MonoBehaviour
+    public sealed class OverlayPolicyService : IStartable, IDisposable
     {
+        private readonly OverlayService overlayService;
+        private readonly InputManager inputManager;
+        private readonly UI_InputActionMap ui_InputActionMap;
+
         private bool isGameplayInputBlocked;
         private bool isTimePaused;
 
-        private float timeScaleBeforePause = 1f;
+        private float timeScaleBeforePause = 1.0f;
 
-        private void Start()
+        public OverlayPolicyService(OverlayService overlayService, InputManager inputManager, UI_InputActionMap ui_InputActionMap)
         {
-            OverlayManager.Instance.OnOverlayPolicyChanged += OverlayManager_OnOverlayPolicyChanged;
-
-            ApplyPolicy(OverlayManager.Instance.Policy);
+            this.overlayService = overlayService;
+            this.inputManager = inputManager;
+            this.ui_InputActionMap = ui_InputActionMap;
         }
 
-        private void OnDestroy()
+        public void Start()
         {
-            OverlayManager.Instance.OnOverlayPolicyChanged -= OverlayManager_OnOverlayPolicyChanged;
+            overlayService.OnOverlayPolicyChanged += OverlayManager_OnOverlayPolicyChanged;
+
+            ApplyPolicy(overlayService.Policy);
+        }
+
+        public void Dispose()
+        {
+            overlayService.OnOverlayPolicyChanged -= OverlayManager_OnOverlayPolicyChanged;
         }
 
         private void ApplyPolicy(OverlayPolicy policy)
@@ -57,11 +70,11 @@ namespace TD.Application.StateMachine.Overlay
 
             if (shouldBlock)
             {
-                InputManager.EnableActionMap(UI_InputActionMap.Instance);
+                inputManager.EnableActionMap(ui_InputActionMap);
             }
             else
             {
-                InputManager.DisableRecentActionMap();
+                inputManager.DisableRecentActionMap();
             }
         }
 

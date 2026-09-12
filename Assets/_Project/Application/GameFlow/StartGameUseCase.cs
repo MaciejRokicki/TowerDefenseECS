@@ -1,26 +1,26 @@
 using TD.Application.StateMachine.States;
 using TD.Core.StateMachine.Overlay;
-using Unity.Scripting.LifecycleManagement;
-using UnityEngine;
 
 namespace TD.Application.GameFlow
 {
-    public partial class StartGameUseCase : MonoBehaviour
+    public class StartGameUseCase
     {
-        [AutoStaticsCleanup] public static StartGameUseCase Instance { get; private set; }
+        private readonly Core.StateMachine.State.StateMachine stateMachine;
+        private readonly OverlayService overlayService;
 
-        private void Awake()
+        public StartGameUseCase(Core.StateMachine.State.StateMachine stateMachine, OverlayService overlayService)
         {
-            Instance = this;
+            this.stateMachine = stateMachine;
+            this.overlayService = overlayService;
         }
 
         public void Execute()
         {
-            if (Core.StateMachine.State.StateMachine.Instance.IsTransitioning)
+            if (stateMachine.IsTransitioning)
                 return;
 
-            OverlayManager.Instance.CloseAll();
-            Core.StateMachine.State.StateMachine.Instance.TryChangeState<GameState>();
+            overlayService.CloseAll();
+            stateMachine.TryChangeState<GameState>();
         }
     }
 }

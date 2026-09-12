@@ -1,10 +1,13 @@
 using TD.Input.ActionMaps;
 using UnityEngine;
+using VContainer;
 
 namespace TD.Features.CameraController
 {
     public class CameraController : MonoBehaviour
     {
+        private GameplayInputActionMap gameplayInputActionMap;
+
         [Header("References")]
         [SerializeField]
         private Camera camera;
@@ -36,6 +39,12 @@ namespace TD.Features.CameraController
         private Vector2 blViewport;
         private Vector2 trViewport;
 
+        [Inject]
+        private void Construct(GameplayInputActionMap gameplayInputActionMap)
+        {
+            this.gameplayInputActionMap = gameplayInputActionMap;
+        }
+
         private void Awake()
         {
             camera.orthographicSize = targetZoom = startZoom * (maxZoom - minZoom) + minZoom;
@@ -43,18 +52,18 @@ namespace TD.Features.CameraController
 
         private void Update()
         {
-            if (GameplayInputActionMap.IsSwiping)
+            if (gameplayInputActionMap.IsSwiping)
             {
-                targetPosition -= GameplayInputActionMap.SwipeMovement * swipeMovementSpeedCurve.Evaluate(zoomPercentage) * Time.deltaTime;
+                targetPosition -= gameplayInputActionMap.SwipeMovement * swipeMovementSpeedCurve.Evaluate(zoomPercentage) * Time.deltaTime;
             }
             else
             {
-                targetPosition += GameplayInputActionMap.Movement * movementSpeedCurve.Evaluate(zoomPercentage) * Time.deltaTime;
+                targetPosition += gameplayInputActionMap.Movement * movementSpeedCurve.Evaluate(zoomPercentage) * Time.deltaTime;
             }
 
             targetPosition.z = -100.0f;
 
-            targetZoom += GameplayInputActionMap.Zoom;
+            targetZoom += gameplayInputActionMap.Zoom;
             targetZoom = Mathf.Clamp(targetZoom, minZoom, maxZoom);
 
             targetPosition = ClampCamera(targetPosition);

@@ -3,11 +3,20 @@ using TD.Features.FlowField.Managed;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using VContainer;
 
 namespace TD.Features.FlowField.ECS.Systems
 {
     public partial class UpdateFlowFieldDataSystem : SystemBase
     {
+        private FlowFieldSurface flowFieldSurface;
+
+        [Inject]
+        private void Construct(FlowFieldSurface flowFieldSurface)
+        {
+            this.flowFieldSurface = flowFieldSurface;
+        }
+
         protected override void OnCreate()
         {
             RequireForUpdate<UpdateFlowFieldData>();
@@ -45,18 +54,18 @@ namespace TD.Features.FlowField.ECS.Systems
 
         private void UpdateFlowFieldSurfaceData(ref FlowFieldSurfaceData flowFieldSurfaceData)
         {
-            flowFieldSurfaceData.CellSize = FlowFieldSurface.Instance.Data.CellSize;
-            flowFieldSurfaceData.Size = FlowFieldSurface.Instance.Data.Size;
-            flowFieldSurfaceData.Position = FlowFieldSurface.Instance.Data.Position;
-            flowFieldSurfaceData.TargetWorldPosition = FlowFieldSurface.Instance.Data.TargetWorldPosition;
-            flowFieldSurfaceData.TargetPosition = FlowFieldSurface.Instance.Data.TargetPosition;
+            flowFieldSurfaceData.CellSize = flowFieldSurface.Data.CellSize;
+            flowFieldSurfaceData.Size = flowFieldSurface.Data.Size;
+            flowFieldSurfaceData.Position = flowFieldSurface.Data.Position;
+            flowFieldSurfaceData.TargetWorldPosition = flowFieldSurface.Data.TargetWorldPosition;
+            flowFieldSurfaceData.TargetPosition = flowFieldSurface.Data.TargetPosition;
 
             flowFieldSurfaceData.Directions.Dispose();
-            flowFieldSurfaceData.Directions = new NativeArray<float2>(FlowFieldSurface.Instance.Data.Cells.Count, Allocator.Persistent);
+            flowFieldSurfaceData.Directions = new NativeArray<float2>(flowFieldSurface.Data.Cells.Count, Allocator.Persistent);
 
             for (int i = 0; i < flowFieldSurfaceData.Directions.Length; i++)
             {
-                var direction = FlowFieldSurface.Instance.Data.Cells[i].Direction;
+                var direction = flowFieldSurface.Data.Cells[i].Direction;
                 flowFieldSurfaceData.Directions[i] = new float2(direction.x, direction.y);
             }
         }

@@ -1,47 +1,55 @@
 using System;
 using TD.Input.Generated;
-using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using VContainer.Unity;
 
 namespace TD.Input.ActionMaps
 {
-    public partial class GameplayInputActionMap : BaseInputActionMap, InputSystem_Actions.IGameplayActions
+    public class GameplayInputActionMap : BaseInputActionMap,
+        InputSystem_Actions.IGameplayActions,
+        IInitializable,
+        IStartable,
+        IDisposable
     {
-        [AutoStaticsCleanup] public static GameplayInputActionMap Instance { get; private set; }
+        private readonly InputManager inputManager;
 
-        [AutoStaticsCleanup] public static Vector3 Movement;
-        [AutoStaticsCleanup] public static bool IsSwiping;
-        [AutoStaticsCleanup] public static Vector3 SwipeMovement;
-        [AutoStaticsCleanup] public static float Zoom;
+        public Vector3 Movement;
+        public bool IsSwiping;
+        public Vector3 SwipeMovement;
+        public float Zoom;
 
-        [NoAutoStaticsCleanup] public static event Action OnPauseMenuPressed;
+        public event Action OnPauseMenuPressed;
 
-        private void Awake()
+        public GameplayInputActionMap(InputManager inputManager)
         {
-            Instance = this;
+            this.inputManager = inputManager;
+        }
+
+        public void Initialize()
+        {
             OnPauseMenuPressed = delegate { };
         }
 
-        private void Start()
+        public void Start()
         {
-            InputActionMap = InputManager.InputActionAsset.Gameplay;
+            InputActionMap = inputManager.InputActionAsset.Gameplay;
         }
 
-        private void OnDestroy()
+        public void Dispose()
         {
             OnPauseMenuPressed = null;
         }
 
         public override void Enable()
         {
-            InputManager.InputActionAsset.Gameplay.SetCallbacks(this);
+            inputManager.InputActionAsset.Gameplay.SetCallbacks(this);
             base.Enable();
         }
 
         public override void Disable()
         {
-            InputManager.InputActionAsset.Gameplay.RemoveCallbacks(this);
+            inputManager.InputActionAsset.Gameplay.RemoveCallbacks(this);
             base.Disable();
 
             Movement = Vector3.zero;

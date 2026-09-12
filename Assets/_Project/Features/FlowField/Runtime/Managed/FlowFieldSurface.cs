@@ -1,14 +1,10 @@
 using System;
-using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 
 namespace TD.Features.FlowField.Managed
 {
-    public partial class FlowFieldSurface : MonoBehaviour
+    public class FlowFieldSurface : MonoBehaviour
     {
-        [AutoStaticsCleanup] 
-        public static FlowFieldSurface Instance { get; private set; }
-
         [Header("Settings")]
         [SerializeField]
         private float cellSize;
@@ -41,11 +37,6 @@ namespace TD.Features.FlowField.Managed
         private GUIStyle debugStyle;
 
         public FlowFieldData Data => data;
-
-        private void Awake()
-        {
-            Instance = this;
-        }
 
         public static Vector2Int ToGridPosition(Vector3 gridPosition, float cellSize, Vector3 worldPosition)
         {
