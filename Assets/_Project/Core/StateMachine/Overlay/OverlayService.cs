@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
-using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
+using VContainer.Unity;
 
 namespace TD.Core.StateMachine.Overlay
 {
-    public sealed partial class OverlayManager : MonoBehaviour
+    public sealed class OverlayService : IInitializable, ITickable, IDisposable
     {
-        [AutoStaticsCleanup] public static OverlayManager Instance { get; private set; }
-
         private Dictionary<Type, IOverlay> overlays;
 
         private Stack<IOverlay> activeOverlays;
@@ -18,21 +16,19 @@ namespace TD.Core.StateMachine.Overlay
 
         public event Action<OverlayPolicy> OnOverlayPolicyChanged;
 
-        private void Awake()
+        public void Initialize()
         {
-            Instance = this;
-
             overlays = new Dictionary<Type, IOverlay>();
             activeOverlays = new Stack<IOverlay>();
             OnOverlayPolicyChanged = delegate { };
         }
 
-        private void Update()
+        public void Tick()
         {
             Current?.Tick(Time.unscaledDeltaTime);
         }
 
-        private void OnDestroy()
+        public void Dispose()
         {
             foreach (var kvp in overlays)
             {

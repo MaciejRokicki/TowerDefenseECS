@@ -1,42 +1,49 @@
 using System;
 using TD.Input.Generated;
-using Unity.Scripting.LifecycleManagement;
 using UnityEngine.InputSystem;
+using VContainer.Unity;
 
 namespace TD.Input.ActionMaps
 {
-    public partial class UI_InputActionMap : BaseInputActionMap, InputSystem_Actions.IUIActions
+    public class UI_InputActionMap : BaseInputActionMap,
+        InputSystem_Actions.IUIActions,
+        IInitializable,
+        IStartable,
+        IDisposable
     {
-        [AutoStaticsCleanup] public static UI_InputActionMap Instance { get; private set; }
+        private readonly InputManager inputManager;
 
-        [AutoStaticsCleanup] public static event Action OnCancelPressed;
+        public event Action OnCancelPressed;
 
-        private void Awake()
+        public UI_InputActionMap(InputManager inputManager)
         {
-            Instance = this;
+            this.inputManager = inputManager;
+        }
 
+        public void Initialize()
+        {
             OnCancelPressed = delegate { };
         }
 
-        private void Start()
+        public void Start()
         {
-            InputActionMap = InputManager.InputActionAsset.UI;
+            InputActionMap = inputManager.InputActionAsset.UI;
         }
 
-        private void OnDestroy()
+        public void Dispose()
         {
             OnCancelPressed = null;
         }
 
         public override void Enable()
         {
-            InputManager.InputActionAsset.UI.SetCallbacks(this);
+            inputManager.InputActionAsset.UI.SetCallbacks(this);
             base.Enable();
         }
 
         public override void Disable()
         {
-            InputManager.InputActionAsset.UI.RemoveCallbacks(this);
+            inputManager.InputActionAsset.UI.RemoveCallbacks(this);
             base.Disable();
         }
 

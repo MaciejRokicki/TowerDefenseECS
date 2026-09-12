@@ -1,32 +1,29 @@
+using System;
 using TD.Input.Generated;
-using Unity.Scripting.LifecycleManagement;
-using UnityEngine;
+using VContainer.Unity;
 
 namespace TD.Input
 {
-    public class InputManager : MonoBehaviour
+    public class InputManager : IInitializable, IDisposable
     {
-        [AutoStaticsCleanup] private static StackInputContext stack;
-        [AutoStaticsCleanup] private static BaseInputActionMap activeActionMap;
+        private StackInputContext stack;
+        private BaseInputActionMap activeActionMap;
 
-        [AutoStaticsCleanup] public static InputSystem_Actions InputActionAsset;
-        [AutoStaticsCleanup] public static InputManager Instance;
+        public InputSystem_Actions InputActionAsset;
 
-        private void Awake()
+        public void Initialize()
         {
-            Instance = this;
-
             stack = new StackInputContext();
             InputActionAsset = new InputSystem_Actions();
         }
 
-        private void OnDestroy()
+        public void Dispose()
         {
             activeActionMap?.InputActionMap.Disable();
             InputActionAsset?.Dispose();
         }
 
-        public static void EnableActionMap(BaseInputActionMap inputActionMap)
+        public void EnableActionMap(BaseInputActionMap inputActionMap)
         {
             if (activeActionMap != null)
             {
@@ -42,7 +39,7 @@ namespace TD.Input
             }
         }
 
-        public static void DisableRecentActionMap()
+        public void DisableRecentActionMap()
         {
             var map = stack.Pop();
 

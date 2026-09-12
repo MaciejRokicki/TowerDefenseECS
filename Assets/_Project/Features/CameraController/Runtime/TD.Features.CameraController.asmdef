@@ -2,7 +2,8 @@
     "name": "TD.Features.CameraController",
     "rootNamespace": "TD.Features.CameraController",
     "references": [
-        "GUID:e0ff4b5f42691984eba5e3856c94e55a"
+        "GUID:e0ff4b5f42691984eba5e3856c94e55a",
+        "GUID:b0214a6008ed146ff8f122a6a9c2f6cc"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

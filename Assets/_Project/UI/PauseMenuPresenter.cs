@@ -6,13 +6,16 @@ namespace TD.UI
 {
     public class PauseMenuPresenter : MonoBehaviour
     {
-        private void Start()
+        [SerializeField]
+        private PauseMenuViewModel pauseMenuViewModel;
+
+        public void Start()
         {
             PauseMenuOverlay.OnPauseMenuShow += PauseMenuOverlay_OnPauseMenuShow;
             PauseMenuOverlay.OnPauseMenuHide += PauseMenuOverlay_OnPauseMenuHide;
         }
 
-        private void OnDestroy()
+        public void OnDestroy()
         {
             PauseMenuOverlay.OnPauseMenuShow -= PauseMenuOverlay_OnPauseMenuShow;
             PauseMenuOverlay.OnPauseMenuHide -= PauseMenuOverlay_OnPauseMenuHide;
@@ -20,12 +23,12 @@ namespace TD.UI
 
         private void PauseMenuOverlay_OnPauseMenuShow()
         {
-            PauseMenuViewModel.Instance.Show();
+            pauseMenuViewModel.Show();
         }
 
         private void PauseMenuOverlay_OnPauseMenuHide()
         {
-            PauseMenuViewModel.Instance.Hide();
+            pauseMenuViewModel.Hide();
         }
     }
 }

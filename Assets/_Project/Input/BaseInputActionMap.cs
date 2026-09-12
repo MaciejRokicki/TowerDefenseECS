@@ -1,9 +1,8 @@
-using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace TD.Input
 {
-    public abstract class BaseInputActionMap : MonoBehaviour
+    public abstract class BaseInputActionMap
     {
         public InputActionMap InputActionMap { get; protected set; }
 

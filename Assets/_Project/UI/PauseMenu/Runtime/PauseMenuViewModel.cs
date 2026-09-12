@@ -1,15 +1,15 @@
 using TD.Application.GameFlow;
 using TD.Application.Navigation;
-using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 using UnityEngine.UIElements;
+using VContainer;
 
 namespace TD.UI.PauseMenu
 {
     public partial class PauseMenuViewModel : MonoBehaviour
     {
-        [AutoStaticsCleanup]
-        public static PauseMenuViewModel Instance { get; private set; }
+        private ReturnToMainMenuUseCase returnToMainMenuUseCase;
+        private CloseTopOverlayUseCase closeTopOverlayUseCase;
 
         [SerializeField]
         private PanelRenderer panelRenderer;
@@ -20,10 +20,15 @@ namespace TD.UI.PauseMenu
         private Button mainMenuButton;
         private Button exitButton;
 
+        [Inject]
+        private void Construct(ReturnToMainMenuUseCase returnToMainMenuUseCase, CloseTopOverlayUseCase closeTopOverlayUseCase)
+        {
+            this.returnToMainMenuUseCase = returnToMainMenuUseCase;
+            this.closeTopOverlayUseCase = closeTopOverlayUseCase;
+        }
+
         private void Awake()
         {
-            Instance = this;
-
             panelRenderer.RegisterUIReloadCallback(PanelRenderer_OnUIReloaded);
         }
 
@@ -61,12 +66,12 @@ namespace TD.UI.PauseMenu
 
         private void ResumeButton_OnClicked()
         {
-            CloseTopOverlayUseCase.Instance.Execute();
+            closeTopOverlayUseCase.Execute();
         }
 
         private void MainMenuButton_OnClicked()
         {
-            ReturnToMainMenuUseCase.Instance.Execute();
+            returnToMainMenuUseCase.Execute();
         }
 
         private void ExitButton_OnClicked()

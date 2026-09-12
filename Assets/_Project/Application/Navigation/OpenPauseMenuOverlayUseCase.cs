@@ -1,22 +1,20 @@
 using TD.Application.StateMachine.Overlay;
 using TD.Core.StateMachine.Overlay;
-using Unity.Scripting.LifecycleManagement;
-using UnityEngine;
 
 namespace TD.Application.Navigation
 {
-    public partial class OpenPauseMenuOverlayUseCase : MonoBehaviour
+    public class OpenPauseMenuOverlayUseCase
     {
-        [AutoStaticsCleanup] public static OpenPauseMenuOverlayUseCase Instance { get; private set; }
+        private readonly OverlayService overlayService;
 
-        private void Awake()
+        public OpenPauseMenuOverlayUseCase(OverlayService overlayService)
         {
-            Instance = this;
+            this.overlayService = overlayService;
         }
 
         public void Execute()
         {
-            OverlayManager.Instance.Open<PauseMenuOverlay>();
+            overlayService.Open<PauseMenuOverlay>();
         }
     }
 }

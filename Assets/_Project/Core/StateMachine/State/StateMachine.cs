@@ -1,29 +1,24 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
+using VContainer.Unity;
 
 namespace TD.Core.StateMachine.State
 {
-    public partial class StateMachine : MonoBehaviour
+    public sealed class StateMachine : MonoBehaviour, IInitializable, ITickable, IFixedTickable
     {
-        [AutoStaticsCleanup]
-        public static StateMachine Instance { get; private set; }
-
         private Dictionary<Type, IState> states;
 
         public IState CurrentState { get; private set; }
         public bool IsTransitioning { get; private set; }
 
-        private void Awake()
+        public void Initialize()
         {
-            Instance = this;
-
             states = new Dictionary<Type, IState>();
         }
 
-        private void Update()
+        public void Tick()
         {
             if (IsTransitioning)
                 return;
@@ -34,7 +29,7 @@ namespace TD.Core.StateMachine.State
             CurrentState.Tick(Time.deltaTime);
         }
 
-        private void FixedUpdate()
+        public void FixedTick()
         {
             if (IsTransitioning)
                 return;

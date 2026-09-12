@@ -2,20 +2,33 @@ using TD.Application.StateMachine.Overlay;
 using TD.Application.StateMachine.States;
 using TD.Core.StateMachine.Overlay;
 using TD.Core.StateMachine.State;
-using UnityEngine;
+using VContainer.Unity;
 
 namespace TD.Bootstrap
 {
-    public class Bootstrap : MonoBehaviour
+    public class Bootstrap : IStartable
     {
-        private void Start()
+        private readonly StateMachine stateMachine;
+        private readonly OverlayService overlayService;
+        private readonly MainMenuState mainMenuState;
+        private readonly GameState gameState;
+
+        public Bootstrap(StateMachine stateMachine, OverlayService overlayService, MainMenuState mainMenuState, GameState gameState)
         {
-            StateMachine.Instance.Register(new MainMenuState());
-            StateMachine.Instance.Register(new GameState());
+            this.stateMachine = stateMachine;
+            this.overlayService = overlayService;
+            this.mainMenuState = mainMenuState;
+            this.gameState = gameState;
+        }
 
-            OverlayManager.Instance.Register(new PauseMenuOverlay());
+        public void Start()
+        {
+            stateMachine.Register(mainMenuState);
+            stateMachine.Register(gameState);
 
-            StateMachine.Instance.TryChangeState<MainMenuState>();
+            overlayService.Register(new PauseMenuOverlay());
+
+            stateMachine.TryChangeState<MainMenuState>();
         }
     }
 }

@@ -1,21 +1,19 @@
 using TD.Core.StateMachine.Overlay;
-using Unity.Scripting.LifecycleManagement;
-using UnityEngine;
 
 namespace TD.Application.Navigation
 {
-    public partial class CloseTopOverlayUseCase : MonoBehaviour
+    public class CloseTopOverlayUseCase
     {
-        [AutoStaticsCleanup] public static CloseTopOverlayUseCase Instance { get; private set; }
+        private readonly OverlayService overlayService;
 
-        private void Awake()
+        public CloseTopOverlayUseCase(OverlayService overlayService)
         {
-            Instance = this;
+            this.overlayService = overlayService;
         }
 
         public void Execute()
         {
-            OverlayManager.Instance.CloseTop();
+            overlayService.CloseTop();
         }
     }
 }
