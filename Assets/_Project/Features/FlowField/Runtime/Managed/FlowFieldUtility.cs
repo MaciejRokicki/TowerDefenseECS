@@ -8,7 +8,6 @@ namespace TD.Features.FlowField.Managed
     [BurstCompile]
     public static class FlowFieldUtility
     {
-        [BurstDiscard]
         public static Vector2Int WorldToGridPosition(Vector3 worldPosition, Vector3 gridWorldPosition, float cellSize)
         {
             var res = new Vector2Int(
