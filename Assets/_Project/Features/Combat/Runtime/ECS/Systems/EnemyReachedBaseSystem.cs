@@ -6,9 +6,46 @@ using TD.Features.SpatialHash;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
+using Unity.Mathematics;
 
 namespace TD.Features.Combat.ECS.Systems
 {
+    [BurstCompile]
+    public struct EnemyReachedBaseJob : IJob
+    {
+        [ReadOnly]
+        public NativeParallelMultiHashMap<int2, SpatialHashUnit>.ReadOnly SpatialHash;
+
+        public Entity Player;
+        public int2 TargetPosition;
+        public EntityCommandBuffer Ecb;
+
+        public void Execute()
+        {
+            int totalDamage = 0;
+
+            if (SpatialHash.TryGetFirstValue(TargetPosition, out var item, out var iterator))
+            {
+                do
+                {
+                    totalDamage++;
+                    Ecb.DestroyEntity(item.Entity);
+                } while (SpatialHash.TryGetNextValue(out item, ref iterator));
+            }
+
+            if (totalDamage > 0)
+            {
+                Entity command = Ecb.CreateEntity();
+                Ecb.AddComponent(command, new DamageCommand
+                {
+                    Entity = Player,
+                    Value = totalDamage
+                });
+            }
+        }
+    }
+
     [UpdateAfter(typeof(SpatialHashSystem))]
     [UpdateBefore(typeof(HealthSystem))]
     public partial struct EnemyReachedBaseSystem : ISystem
@@ -19,6 +56,8 @@ namespace TD.Features.Combat.ECS.Systems
             state.RequireForUpdate<FlowFieldSurfaceData>();
             state.RequireForUpdate<SpatialHash.SpatialHash>();
             state.RequireForUpdate<PlayerSingleton>();
+
+            state.RequireForUpdate<CombatEntityCommandBufferSystem.Singleton>();
         }
 
         [BurstCompile]
@@ -28,32 +67,15 @@ namespace TD.Features.Combat.ECS.Systems
 
             var basePosition = SystemAPI.GetSingleton<FlowFieldSurfaceData>().TargetPosition;
             var spatialHash = SystemAPI.GetSingleton<SpatialHash.SpatialHash>().SpatialHashMap.AsReadOnly();
-            var ecb = new EntityCommandBuffer(Allocator.Temp);
-            float totalDamage = 0.0f;
+            var ecb = SystemAPI.GetSingleton<CombatEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
 
-            if (spatialHash.TryGetFirstValue(basePosition, out var item, out var iterator))
+            state.Dependency = new EnemyReachedBaseJob()
             {
-                do
-                {
-                    totalDamage++;
-                    ecb.DestroyEntity(item.Entity);
-                } while (spatialHash.TryGetNextValue(out item, ref iterator));
-            }
-
-            if (totalDamage != 0.0f)
-            {
-                var baseEntity = SystemAPI.GetSingletonEntity<PlayerSingleton>();
-
-                var e = ecb.CreateEntity();
-                ecb.AddComponent(e, new DamageCommand()
-                {
-                    Entity = baseEntity,
-                    Value = totalDamage
-                });
-            }
-
-            ecb.Playback(state.EntityManager);
-            ecb.Dispose();
+                SpatialHash = spatialHash,
+                Player = SystemAPI.GetSingletonEntity<PlayerSingleton>(),
+                TargetPosition = basePosition,
+                Ecb = ecb
+            }.Schedule(state.Dependency);
         }
     }
 }

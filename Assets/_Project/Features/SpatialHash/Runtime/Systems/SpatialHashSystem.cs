@@ -1,6 +1,7 @@
 using TD.Features.Enemy.Components;
 using TD.Features.FlowField.ECS.Components;
 using TD.Features.FlowField.ECS.Systems;
+using TD.Features.FlowField.Managed;
 using TD.Features.Movement.Systems;
 using Unity.Burst;
 using Unity.Collections;
@@ -26,13 +27,13 @@ namespace TD.Features.SpatialHash
     public partial struct BuildSpatialHashJob : IJobEntity
     {
         public float CellSize;
-        public int2 TargetPosition;
+        public float2 GridWorldPosition;
         public NativeParallelMultiHashMap<int2, SpatialHashUnit>.ParallelWriter SpatialHash;
 
         private void Execute(Entity entity, in LocalTransform transform)
         {
             float2 pos = transform.Position.xy;
-            int2 gridPos = (int2)math.floor(pos / CellSize) + TargetPosition;
+            FlowFieldUtility.WorldToGridPosition(pos, GridWorldPosition, CellSize, out int2 gridPos);
             SpatialHash.Add(gridPos, new SpatialHashUnit()
             {
                 Entity = entity,
@@ -77,9 +78,18 @@ namespace TD.Features.SpatialHash
             state.Dependency = new BuildSpatialHashJob()
             {
                 CellSize = flowFieldData.CellSize,
-                TargetPosition = flowFieldData.TargetPosition,
+                GridWorldPosition = new float2(flowFieldData.Position.x, flowFieldData.Position.y),
                 SpatialHash = spatialHash.ValueRW.SpatialHashMap.AsParallelWriter()
             }.ScheduleParallel(enemyQuery, clearHandle);
+        }
+
+        [BurstCompile]
+        public void OnDestroy(ref SystemState state)
+        {
+            if (SystemAPI.TryGetSingleton(out SpatialHash spatialHash))
+            {
+                spatialHash.SpatialHashMap.Dispose();
+            }
         }
     }
 }

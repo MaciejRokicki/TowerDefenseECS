@@ -75,7 +75,7 @@ namespace TD.Features.FlowField.Managed
             for (int i = 0; i < modifiers.Length; i++)
             {
                 var modifier = modifiers[i];
-                var gridPosition = FlowFieldSurface.ToGridPosition(position, cellSize, modifier.Position);
+                var gridPosition = FlowFieldUtility.WorldToGridPosition(modifier.Position, position, cellSize);
 
                 for (int j = 0; j < modifier.Size.x; j++)
                 {
