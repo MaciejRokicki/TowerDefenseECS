@@ -63,8 +63,6 @@ namespace TD.Features.Combat.ECS.Systems
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            state.Dependency.Complete();
-
             var basePosition = SystemAPI.GetSingleton<FlowFieldSurfaceData>().TargetPosition;
             var spatialHash = SystemAPI.GetSingleton<SpatialHash.SpatialHash>().SpatialHashMap.AsReadOnly();
             var ecb = SystemAPI.GetSingleton<CombatEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
