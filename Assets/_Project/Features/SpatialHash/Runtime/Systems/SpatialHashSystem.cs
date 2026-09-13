@@ -1,20 +1,31 @@
 using TD.Features.Enemy.Components;
 using TD.Features.FlowField.ECS.Components;
 using TD.Features.FlowField.ECS.Systems;
+using TD.Features.Movement.Systems;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 
 namespace TD.Features.SpatialHash
 {
     [BurstCompile]
+    public struct ClearSpatialHashJob : IJob
+    {
+        public NativeParallelMultiHashMap<int2, SpatialHashUnit> SpatialHash;
+
+        public void Execute()
+        {
+            SpatialHash.Clear();
+        }
+    }
+
+    [BurstCompile]
     public partial struct BuildSpatialHashJob : IJobEntity
     {
-        [ReadOnly]
         public float CellSize;
-        [ReadOnly]
         public int2 TargetPosition;
         public NativeParallelMultiHashMap<int2, SpatialHashUnit>.ParallelWriter SpatialHash;
 
@@ -31,7 +42,8 @@ namespace TD.Features.SpatialHash
     }
 
     [CreateAfter(typeof(UpdateFlowFieldDataSystem))]
-    partial struct SpatialHashSystem : ISystem
+    [UpdateAfter(typeof(EnemyMovementSystem))]
+    public partial struct SpatialHashSystem : ISystem
     {
         private EntityQuery enemyQuery;
 
@@ -43,38 +55,31 @@ namespace TD.Features.SpatialHash
             enemyQuery = SystemAPI.QueryBuilder()
                 .WithAll<EnemyTag, LocalTransform>()
                 .Build();
+
+            var entity = state.EntityManager.CreateEntity();
+            state.EntityManager.AddComponentData(entity, new SpatialHash()
+            {
+                SpatialHashMap = new NativeParallelMultiHashMap<int2, SpatialHashUnit>(1_000_000, Allocator.Persistent)
+            });
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             var flowFieldData = SystemAPI.GetSingleton<FlowFieldSurfaceData>();
+            var spatialHash = SystemAPI.GetSingletonRW<SpatialHash>();
 
-            if (!SystemAPI.TryGetSingleton(out SpatialHash spatialHash))
+            var clearHandle = new ClearSpatialHashJob()
             {
-                var entity = state.EntityManager.CreateEntity();
-                state.EntityManager.AddComponentData(entity, new SpatialHash());
-            }
+                SpatialHash = spatialHash.ValueRW.SpatialHashMap
+            }.Schedule(state.Dependency);
 
-            spatialHash.SpatialHashMap = new NativeParallelMultiHashMap<int2, SpatialHashUnit>(1_000_000, Allocator.TempJob);
-
-            new BuildSpatialHashJob()
+            state.Dependency = new BuildSpatialHashJob()
             {
                 CellSize = flowFieldData.CellSize,
                 TargetPosition = flowFieldData.TargetPosition,
-                SpatialHash = spatialHash.SpatialHashMap.AsParallelWriter()
-            }.ScheduleParallel(enemyQuery, state.Dependency).Complete();
-
-            spatialHash.SpatialHashMap.Dispose();
-        }
-
-        [BurstCompile]
-        public void OnDestroy(ref SystemState state)
-        {
-            if (SystemAPI.TryGetSingleton(out SpatialHash spatialHash))
-            {
-                spatialHash.SpatialHashMap.Dispose();
-            }
+                SpatialHash = spatialHash.ValueRW.SpatialHashMap.AsParallelWriter()
+            }.ScheduleParallel(enemyQuery, clearHandle);
         }
     }
 }

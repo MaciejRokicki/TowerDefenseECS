@@ -1,84 +1,59 @@
-using TD.Features.Enemy.Components;
 using TD.Features.FlowField.ECS.Components;
 using TD.Features.Health.Components;
 using TD.Features.Health.Systems;
 using TD.Features.Player.Components;
+using TD.Features.SpatialHash;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Transforms;
 
 namespace TD.Features.Combat.ECS.Systems
 {
-    [BurstCompile]
-    public partial struct PlayerDamageJob : IJobEntity
-    {
-        public EntityCommandBuffer Ecb;
-        [ReadOnly]
-        public float3 TargetPosition;
-        public NativeReference<float> Damage;
-
-        void Execute(
-            in LocalTransform transform, Entity entity)
-        {
-            var distance = math.lengthsq(transform.Position - TargetPosition);
-
-            if (distance < 5.0f)
-            {
-                Damage.Value++;
-                Ecb.DestroyEntity(entity);
-            }
-        }
-    }
-
+    [UpdateAfter(typeof(SpatialHashSystem))]
     [UpdateBefore(typeof(HealthSystem))]
     public partial struct EnemyReachedBaseSystem : ISystem
     {
-        private EntityQuery enemyQuery;
-
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<FlowFieldSurfaceData>();
-
-            enemyQuery = SystemAPI
-                .QueryBuilder()
-                .WithAll<EnemyTag, LocalTransform>()
-                .Build();
-
-            state.RequireForUpdate(enemyQuery);
+            state.RequireForUpdate<SpatialHash.SpatialHash>();
+            state.RequireForUpdate<PlayerSingleton>();
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            var baseEntity = SystemAPI.GetSingletonEntity<PlayerSingleton>();
-            float3 basePosition = SystemAPI.GetSingleton<FlowFieldSurfaceData>().TargetWorldPosition;
-            NativeReference<float> dmg = new NativeReference<float>(0.0f, Allocator.TempJob);
-            var ecb = new EntityCommandBuffer(Allocator.TempJob);
+            state.Dependency.Complete();
 
-            var handle = new PlayerDamageJob()
-            {
-                Ecb = ecb,
-                TargetPosition = basePosition,
-                Damage = dmg
-            }.Schedule(enemyQuery, state.Dependency);
-            handle.Complete();
+            var basePosition = SystemAPI.GetSingleton<FlowFieldSurfaceData>().TargetPosition;
+            var spatialHash = SystemAPI.GetSingleton<SpatialHash.SpatialHash>().SpatialHashMap.AsReadOnly();
+            var ecb = new EntityCommandBuffer(Allocator.Temp);
+            float totalDamage = 0.0f;
 
-            if (dmg.Value != 0.0f)
+            if (spatialHash.TryGetFirstValue(basePosition, out var item, out var iterator))
             {
+                do
+                {
+                    totalDamage++;
+                    ecb.DestroyEntity(item.Entity);
+                } while (spatialHash.TryGetNextValue(out item, ref iterator));
+            }
+
+            if (totalDamage != 0.0f)
+            {
+                var baseEntity = SystemAPI.GetSingletonEntity<PlayerSingleton>();
+
                 var e = ecb.CreateEntity();
                 ecb.AddComponent(e, new DamageCommand()
                 {
                     Entity = baseEntity,
-                    Value = dmg.Value
+                    Value = totalDamage
                 });
             }
 
             ecb.Playback(state.EntityManager);
             ecb.Dispose();
-            dmg.Dispose();
         }
     }
 }
