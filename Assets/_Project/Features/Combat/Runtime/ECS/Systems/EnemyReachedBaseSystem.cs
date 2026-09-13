@@ -1,84 +1,79 @@
-using TD.Features.Enemy.Components;
 using TD.Features.FlowField.ECS.Components;
 using TD.Features.Health.Components;
 using TD.Features.Health.Systems;
 using TD.Features.Player.Components;
+using TD.Features.SpatialHash;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Mathematics;
-using Unity.Transforms;
 
 namespace TD.Features.Combat.ECS.Systems
 {
     [BurstCompile]
-    public partial struct PlayerDamageJob : IJobEntity
+    public struct EnemyReachedBaseJob : IJob
     {
-        public EntityCommandBuffer Ecb;
         [ReadOnly]
-        public float3 TargetPosition;
-        public NativeReference<float> Damage;
+        public NativeParallelMultiHashMap<int2, SpatialHashUnit>.ReadOnly SpatialHash;
 
-        void Execute(
-            in LocalTransform transform, Entity entity)
+        public Entity Player;
+        public int2 TargetPosition;
+        public EntityCommandBuffer Ecb;
+
+        public void Execute()
         {
-            var distance = math.lengthsq(transform.Position - TargetPosition);
+            int totalDamage = 0;
 
-            if (distance < 5.0f)
+            if (SpatialHash.TryGetFirstValue(TargetPosition, out var item, out var iterator))
             {
-                Damage.Value++;
-                Ecb.DestroyEntity(entity);
+                do
+                {
+                    totalDamage++;
+                    Ecb.DestroyEntity(item.Entity);
+                } while (SpatialHash.TryGetNextValue(out item, ref iterator));
+            }
+
+            if (totalDamage > 0)
+            {
+                Entity command = Ecb.CreateEntity();
+                Ecb.AddComponent(command, new DamageCommand
+                {
+                    Entity = Player,
+                    Value = totalDamage
+                });
             }
         }
     }
 
+    [UpdateAfter(typeof(SpatialHashSystem))]
     [UpdateBefore(typeof(HealthSystem))]
     public partial struct EnemyReachedBaseSystem : ISystem
     {
-        private EntityQuery enemyQuery;
-
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<FlowFieldSurfaceData>();
+            state.RequireForUpdate<SpatialHash.SpatialHash>();
+            state.RequireForUpdate<PlayerSingleton>();
 
-            enemyQuery = SystemAPI
-                .QueryBuilder()
-                .WithAll<EnemyTag, LocalTransform>()
-                .Build();
-
-            state.RequireForUpdate(enemyQuery);
+            state.RequireForUpdate<CombatEntityCommandBufferSystem.Singleton>();
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            var baseEntity = SystemAPI.GetSingletonEntity<PlayerSingleton>();
-            float3 basePosition = SystemAPI.GetSingleton<FlowFieldSurfaceData>().TargetWorldPosition;
-            NativeReference<float> dmg = new NativeReference<float>(0.0f, Allocator.TempJob);
-            var ecb = new EntityCommandBuffer(Allocator.TempJob);
+            var basePosition = SystemAPI.GetSingleton<FlowFieldSurfaceData>().TargetPosition;
+            var spatialHash = SystemAPI.GetSingleton<SpatialHash.SpatialHash>().SpatialHashMap.AsReadOnly();
+            var ecb = SystemAPI.GetSingleton<CombatEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
 
-            var handle = new PlayerDamageJob()
+            state.Dependency = new EnemyReachedBaseJob()
             {
-                Ecb = ecb,
+                SpatialHash = spatialHash,
+                Player = SystemAPI.GetSingletonEntity<PlayerSingleton>(),
                 TargetPosition = basePosition,
-                Damage = dmg
-            }.Schedule(enemyQuery, state.Dependency);
-            handle.Complete();
-
-            if (dmg.Value != 0.0f)
-            {
-                var e = ecb.CreateEntity();
-                ecb.AddComponent(e, new DamageCommand()
-                {
-                    Entity = baseEntity,
-                    Value = dmg.Value
-                });
-            }
-
-            ecb.Playback(state.EntityManager);
-            ecb.Dispose();
-            dmg.Dispose();
+                Ecb = ecb
+            }.Schedule(state.Dependency);
         }
     }
 }

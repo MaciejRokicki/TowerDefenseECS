@@ -38,19 +38,6 @@ namespace TD.Features.FlowField.Managed
 
         public FlowFieldData Data => data;
 
-        public static Vector2Int ToGridPosition(Vector3 gridPosition, float cellSize, Vector3 worldPosition)
-        {
-            var res = new Vector2Int(
-                (int)Math.Round((worldPosition.x - gridPosition.x - cellSize / 2.0f) / cellSize, MidpointRounding.AwayFromZero),
-                (int)Math.Round((worldPosition.y - gridPosition.y - cellSize / 2.0f) / cellSize, MidpointRounding.AwayFromZero)
-            );
-
-            res.x = Mathf.Clamp(res.x, 0, res.x);
-            res.y = Mathf.Clamp(res.y, 0, res.y);
-
-            return res;
-        }
-
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
@@ -136,7 +123,7 @@ namespace TD.Features.FlowField.Managed
                     return;
 
                 Gizmos.DrawCube(tester.position, Vector3.one * cellSize);
-                testerPos = ToGridPosition(position, cellSize, tester.position);
+                testerPos = FlowFieldUtility.WorldToGridPosition(tester.position, position, cellSize);
             }
 
             if (!debug)
@@ -206,7 +193,7 @@ namespace TD.Features.FlowField.Managed
             so.FindProperty("min").vector3Value = transform.position - new Vector3(size.x, 0.0f, size.y) * cellSize / 2.0f;
             so.FindProperty("max").vector3Value = transform.position + new Vector3(size.x, 0.0f, size.y) * cellSize / 2.0f;
             so.FindProperty("targetWorldPosition").vector3Value = targetPosition;
-            so.FindProperty("targetPosition").vector2IntValue = ToGridPosition(transform.position, cellSize, targetPosition);
+            so.FindProperty("targetPosition").vector2IntValue = FlowFieldUtility.WorldToGridPosition(targetPosition, transform.position, cellSize);
             so.FindProperty("modifiers").arraySize = modifiers.Length;
 
             for (int i = 0; i < modifiers.Length; i++)
