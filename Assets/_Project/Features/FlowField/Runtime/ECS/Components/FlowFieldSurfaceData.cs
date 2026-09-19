@@ -12,5 +12,6 @@ namespace TD.Features.FlowField.ECS.Components
         public float3 TargetWorldPosition;
         public int2 TargetPosition;
         public NativeArray<float2> Directions;
+        public NativeHashSet<int2> ObstacleCells;
     }
 }

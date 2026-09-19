@@ -12,8 +12,9 @@ namespace TD.Features.Movement.Systems
     [BurstCompile]
     public partial struct MoveJob : IJobEntity
     {
-        public float3 TargetPosition;
+        public float Response;
         public float Time;
+        public float3 TargetPosition;
         [ReadOnly]
         public FlowFieldSurfaceData FlowFieldSurfaceData;
 
@@ -22,8 +23,6 @@ namespace TD.Features.Movement.Systems
             ref Velocity velocity,
             ref LocalTransform transform)
         {
-            float response = 10.0f;
-
             var position = transform.Position;
             FlowFieldUtility.WorldToGridPosition(
                 new float2(position.x, position.y),
@@ -33,7 +32,7 @@ namespace TD.Features.Movement.Systems
             var direction = FlowFieldSurfaceData.Directions[gridPosition.x * FlowFieldSurfaceData.Size.y + gridPosition.y];
             direction = math.normalizesafe(direction);
             velocity.Target = new float3(direction * movementSpeed.Speed, 0.0f);
-            float alpha = 1.0f - math.exp(-response * Time);
+            float alpha = 1.0f - math.exp(-Response * Time);
             velocity.Current = math.lerp(velocity.Current, velocity.Target, alpha);
             transform.Position += velocity.Current * Time;
         }
@@ -70,8 +69,9 @@ namespace TD.Features.Movement.Systems
 
             new MoveJob()
             {
-                TargetPosition = basePosition,
+                Response = 10.0f,
                 Time = SystemAPI.Time.DeltaTime,
+                TargetPosition = basePosition,
                 FlowFieldSurfaceData = flowFieldSurfaceData
             }.ScheduleParallel(enemyQuery);
         }

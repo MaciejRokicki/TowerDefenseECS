@@ -2,9 +2,8 @@ using UnityEngine;
 
 namespace TD.Features.FlowField.Managed
 {
-    public class FlowFieldModifier : MonoBehaviour
+    public class FlowFieldObstacle : MonoBehaviour
     {
-        public uint Cost;
         public Vector2Int Size;
 
         private void OnDrawGizmos()

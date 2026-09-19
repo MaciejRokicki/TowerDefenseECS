@@ -172,7 +172,7 @@ namespace TD.Features.FlowField.Managed
         [ContextMenu("Bake")]
         private void BakeData()
         {
-            var modifiers = GameObject.FindObjectsByType<FlowFieldModifier>(FindObjectsInactive.Exclude);
+            var obstacles = GameObject.FindObjectsByType<FlowFieldObstacle>(FindObjectsInactive.Exclude);
             var currentPath = UnityEditor.AssetDatabase.GetAssetPath(this.data);
 
             bool isDataNull = string.IsNullOrEmpty(currentPath);
@@ -194,14 +194,13 @@ namespace TD.Features.FlowField.Managed
             so.FindProperty("max").vector3Value = transform.position + new Vector3(size.x, 0.0f, size.y) * cellSize / 2.0f;
             so.FindProperty("targetWorldPosition").vector3Value = targetPosition;
             so.FindProperty("targetPosition").vector2IntValue = FlowFieldUtility.WorldToGridPosition(targetPosition, transform.position, cellSize);
-            so.FindProperty("modifiers").arraySize = modifiers.Length;
+            so.FindProperty("obstacles").arraySize = obstacles.Length;
 
-            for (int i = 0; i < modifiers.Length; i++)
+            for (int i = 0; i < obstacles.Length; i++)
             {
-                var modifier = so.FindProperty("modifiers").GetArrayElementAtIndex(i);
-                modifier.FindPropertyRelative("Cost").floatValue = modifiers[i].Cost;
-                modifier.FindPropertyRelative("Position").vector3Value = modifiers[i].transform.position;
-                modifier.FindPropertyRelative("Size").vector2IntValue = modifiers[i].Size;
+                var obstacle = so.FindProperty("obstacles").GetArrayElementAtIndex(i);
+                obstacle.FindPropertyRelative("Position").vector3Value = obstacles[i].transform.position;
+                obstacle.FindPropertyRelative("Size").vector2IntValue = obstacles[i].Size;
             }
 
             so.ApplyModifiedProperties();
