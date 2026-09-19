@@ -1,4 +1,5 @@
 using TD.Features.FlowField.ECS.Components;
+using TD.Features.FlowField.Managed;
 using TD.Features.Movement.Components;
 using Unity.Burst;
 using Unity.Collections;
@@ -11,8 +12,9 @@ namespace TD.Features.Movement.Systems
     [BurstCompile]
     public partial struct MoveJob : IJobEntity
     {
-        public float3 TargetPosition;
+        public float Response;
         public float Time;
+        public float3 TargetPosition;
         [ReadOnly]
         public FlowFieldSurfaceData FlowFieldSurfaceData;
 
@@ -22,26 +24,17 @@ namespace TD.Features.Movement.Systems
             ref LocalTransform transform)
         {
             var position = transform.Position;
-            //position.z = 0.0f;
-
-            var gridPosition = ToGridPosition(FlowFieldSurfaceData.Position, FlowFieldSurfaceData.CellSize, transform.Position);
-
-            //position += new float3(FlowFieldSurfaceData.Directions[gridPosition.x * FlowFieldSurfaceData.Size.y + gridPosition.y] * movementSpeed.Speed * Time, 0.0f);
-
-            velocity.Target = new float3(FlowFieldSurfaceData.Directions[gridPosition.x * FlowFieldSurfaceData.Size.y + gridPosition.y] * movementSpeed.Speed * Time, 0.0f);
-            velocity.Current = math.lerp(velocity.Current, velocity.Target, Time / 2.0f);
-            position += velocity.Current;
-
-            position.z = position.y;
-            transform.Position = position;
-        }
-
-        private int2 ToGridPosition(float3 gridPosition, float cellSize, float3 worldPosition)
-        {
-            return new int2(
-                (int)math.round((worldPosition.x - gridPosition.x - cellSize / 2.0f) / cellSize),
-                (int)math.round((worldPosition.y - gridPosition.y - cellSize / 2.0f) / cellSize)
-            );
+            FlowFieldUtility.WorldToGridPosition(
+                new float2(position.x, position.y),
+                new float2(FlowFieldSurfaceData.Position.x, FlowFieldSurfaceData.Position.y),
+                FlowFieldSurfaceData.CellSize,
+                out int2 gridPosition);
+            var direction = FlowFieldSurfaceData.Directions[gridPosition.x * FlowFieldSurfaceData.Size.y + gridPosition.y];
+            direction = math.normalizesafe(direction);
+            velocity.Target = new float3(direction * movementSpeed.Speed, 0.0f);
+            float alpha = 1.0f - math.exp(-Response * Time);
+            velocity.Current = math.lerp(velocity.Current, velocity.Target, alpha);
+            transform.Position += velocity.Current * Time;
         }
     }
 
@@ -76,8 +69,9 @@ namespace TD.Features.Movement.Systems
 
             new MoveJob()
             {
-                TargetPosition = basePosition,
+                Response = 10.0f,
                 Time = SystemAPI.Time.DeltaTime,
+                TargetPosition = basePosition,
                 FlowFieldSurfaceData = flowFieldSurfaceData
             }.ScheduleParallel(enemyQuery);
         }

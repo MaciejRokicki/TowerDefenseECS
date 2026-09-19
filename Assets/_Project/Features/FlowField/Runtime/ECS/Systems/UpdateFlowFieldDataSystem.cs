@@ -30,6 +30,7 @@ namespace TD.Features.FlowField.ECS.Systems
             {
                 var flowFieldSurfaceData = SystemAPI.GetComponent<FlowFieldSurfaceData>(flowFieldSurfaceDataEntity);
                 flowFieldSurfaceData.Directions.Dispose();
+                flowFieldSurfaceData.ObstacleCells.Dispose();
                 ecb.SetComponent(flowFieldSurfaceDataEntity, flowFieldSurfaceData);
             }
 
@@ -82,6 +83,14 @@ namespace TD.Features.FlowField.ECS.Systems
             {
                 var direction = flowFieldSurface.Data.Cells[i].Direction;
                 flowFieldSurfaceData.Directions[i] = new float2(direction.x, direction.y);
+            }
+
+            flowFieldSurfaceData.ObstacleCells.Dispose();
+            flowFieldSurfaceData.ObstacleCells = new NativeHashSet<int2>(flowFieldSurface.Data.ObstacleCells.Count, Allocator.Persistent);
+
+            for (int i = 0; i < flowFieldSurfaceData.ObstacleCells.Count; i++)
+            {
+                flowFieldSurfaceData.ObstacleCells.Add(new int2(flowFieldSurface.Data.ObstacleCells[i]));
             }
         }
     }

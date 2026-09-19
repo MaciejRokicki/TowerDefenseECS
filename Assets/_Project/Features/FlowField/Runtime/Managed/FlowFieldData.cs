@@ -9,11 +9,11 @@ namespace TD.Features.FlowField.Managed
     [CreateAssetMenu(fileName = "DefaultFlowFieldData", menuName = "FlowField/Data")]
     public partial class FlowFieldData : ScriptableObject
     {
-        [AutoStaticsCleanup] 
+        [AutoStaticsCleanup]
         private static FlowFieldCell[] neighbourArray8;
-        [AutoStaticsCleanup] 
+        [AutoStaticsCleanup]
         private static FlowFieldCell[] neighbourArray4;
-        [AutoStaticsCleanup] 
+        [AutoStaticsCleanup]
         private static float sqrtOfTwo = Mathf.Sqrt(2);
 
         [SerializeField]
@@ -35,7 +35,9 @@ namespace TD.Features.FlowField.Managed
         [SerializeField]
         private FlowFieldCell[] cells;
         [SerializeField]
-        private FlowFieldModifierData[] modifiers;
+        private FlowFieldObstacleData[] obstacles;
+        [SerializeField]
+        private List<Vector2Int> obstacleCells;
 
         public float CellSize => cellSize;
         public Vector2Int Size => size;
@@ -44,6 +46,7 @@ namespace TD.Features.FlowField.Managed
         public Vector2Int TargetPosition => targetPosition;
         public float MaxCostValue => maxCostValue;
         public IReadOnlyList<FlowFieldCell> Cells => cells;
+        public IReadOnlyList<Vector2Int> ObstacleCells => obstacleCells;
 
         public FlowFieldCell GetValue(int x, int y)
         {
@@ -62,30 +65,40 @@ namespace TD.Features.FlowField.Managed
 
         public void Calculate()
         {
+            maxCostValue = 0.0f;
+
             int index = 0;
             for (int i = 0; i < size.x; i++)
             {
                 for (int j = 0; j < size.y; j++)
                 {
                     index = i * size.y + j;
-                    cells[index].GridPosition = new Vector2Int(i, j);
+                    var cell = cells[index];
+                    cell.GridPosition = new Vector2Int(i, j);
+                    cell.IsObstacle = false;
+                    cell.Cost = 0f;
+                    cell.Eikonal = float.PositiveInfinity;
+                    cell.Direction = Vector3.zero;
                 }
             }
 
-            for (int i = 0; i < modifiers.Length; i++)
-            {
-                var modifier = modifiers[i];
-                var gridPosition = FlowFieldUtility.WorldToGridPosition(modifier.Position, position, cellSize);
+            obstacleCells = new List<Vector2Int>();
 
-                for (int j = 0; j < modifier.Size.x; j++)
+            for (int i = 0; i < obstacles.Length; i++)
+            {
+                var obstacle = obstacles[i];
+                var gridPosition = FlowFieldUtility.WorldToGridPosition(obstacle.Position, position, cellSize);
+
+                for (int j = 0; j < obstacle.Size.x; j++)
                 {
-                    for (int k = 0; k < modifier.Size.y; k++)
+                    for (int k = 0; k < obstacle.Size.y; k++)
                     {
                         var cell = GetValue(gridPosition.x + j, gridPosition.y + k);
-                        cell.Cost = modifier.Cost;
+                        cell.Cost = float.PositiveInfinity;
                         cell.Eikonal = float.PositiveInfinity;
-                        cell.Direction = Vector2.Normalize(targetPosition - cell.GridPosition);
-                        cell.Modified = true;
+                        cell.Direction = Vector2.zero;
+                        cell.IsObstacle = true;
+                        obstacleCells.Add(cell.GridPosition);
                     }
                 }
             }
@@ -104,7 +117,7 @@ namespace TD.Features.FlowField.Managed
                 if (maxCostValue < current.Cost)
                     maxCostValue = current.Cost;
 
-                if (current.Modified)
+                if (current.IsObstacle)
                     continue;
 
                 GetNeighbours8(current.GridPosition.x, current.GridPosition.y, ref neighbourArray8);
@@ -116,7 +129,7 @@ namespace TD.Features.FlowField.Managed
                     if (neighbour == null)
                         continue;
 
-                    if (neighbour.Modified)
+                    if (neighbour.IsObstacle)
                         continue;
 
                     float cost = sqrtOfTwo;
@@ -169,7 +182,7 @@ namespace TD.Features.FlowField.Managed
                     break;
                 }
 
-                if (current.Modified)
+                if (current.IsObstacle)
                     continue;
 
                 if (current.GridPosition == targetPosition)
@@ -198,7 +211,7 @@ namespace TD.Features.FlowField.Managed
                     if (visited.Contains(neighbour))
                         continue;
 
-                    if (neighbour.Modified)
+                    if (neighbour.IsObstacle)
                         continue;
 
                     visited.Add(neighbour);
@@ -218,11 +231,14 @@ namespace TD.Features.FlowField.Managed
                 {
                     var cell = GetValue(i, j);
 
-                    if (cell.Modified)
+                    if (cell.IsObstacle ||
+                        cell.GridPosition == targetPosition ||
+                        float.IsInfinity(cell.Eikonal) ||
+                        float.IsNaN(cell.Eikonal))
+                    {
+                        cell.Direction = Vector2.zero;
                         continue;
-
-                    if (cell.GridPosition == targetPosition)
-                        continue;
+                    }
 
                     var x1 = GetValue(i - 1, j);
                     var x2 = GetValue(i + 1, j);
