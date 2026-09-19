@@ -43,7 +43,8 @@ namespace TD.Features.SpatialHash
     }
 
     [CreateAfter(typeof(UpdateFlowFieldDataSystem))]
-    [UpdateAfter(typeof(EnemyMovementSystem))]
+    [UpdateAfter(typeof(UpdateFlowFieldDataSystem))]
+    [UpdateBefore(typeof(EnemyMovementSystem))]
     public partial struct SpatialHashSystem : ISystem
     {
         private EntityQuery enemyQuery;
