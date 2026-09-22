@@ -1,4 +1,4 @@
-using TD.Application.GameFlow;
+using TD.Features.GameFlow;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
@@ -7,7 +7,7 @@ namespace TD.UI.MainMenu
 {
     public class MainMenuViewModel : MonoBehaviour
     {
-        private StartGameUseCase startGameUseCase;
+        private GameFlowService gameFlowService;
 
         [SerializeField]
         private PanelRenderer panelRenderer;
@@ -16,9 +16,9 @@ namespace TD.UI.MainMenu
         private Button exitButton;
 
         [Inject]
-        private void Construct(StartGameUseCase startGameUseCase)
+        private void Construct(GameFlowService gameFlowService)
         {
-            this.startGameUseCase = startGameUseCase;
+            this.gameFlowService = gameFlowService;
         }
 
         private void Awake()
@@ -45,12 +45,12 @@ namespace TD.UI.MainMenu
 
         private void PlayButton_OnClicked()
         {
-            startGameUseCase.Execute();
+            gameFlowService.StartGame();
         }
 
         private void ExitButton_OnClicked()
         {
-            UnityEngine.Application.Quit();
+            Application.Quit();
         }
     }
 }

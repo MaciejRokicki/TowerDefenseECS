@@ -1,10 +1,11 @@
 {
-    "name": "TD.UI.PauseMenu",
-    "rootNamespace": "TD.UI.PauseMenu",
+    "name": "TD.Features.StateMachine",
+    "rootNamespace": "TD.Features.StateMachine",
     "references": [
-        "VContainer",
-        "TD.Features.GameFlow",
-        "TD.Core.StateMachine"
+        "GUID:e0ff4b5f42691984eba5e3856c94e55a",
+        "GUID:cca561c0dbeb21646b3960e13ddd57a9",
+        "GUID:faf7dc4262fbed64b99e8f5eda047b43",
+        "GUID:b0214a6008ed146ff8f122a6a9c2f6cc"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

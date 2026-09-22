@@ -1,0 +1,19 @@
+using UnityEngine.InputSystem;
+
+namespace TD.Core.Input
+{
+    public abstract class BaseInputActionMap
+    {
+        public InputActionMap InputActionMap { get; protected set; }
+
+        public virtual void Enable()
+        {
+            InputActionMap.Enable();
+        }
+
+        public virtual void Disable()
+        {
+            InputActionMap.Disable();
+        }
+    }
+}

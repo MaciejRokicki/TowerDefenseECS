@@ -1,11 +1,11 @@
-using TD.Application.GameFlow;
-using TD.Application.Navigation;
-using TD.Application.StateMachine.Overlay;
-using TD.Application.StateMachine.States;
+using TD.Core.Input;
+using TD.Core.Input.ActionMaps;
 using TD.Core.StateMachine.Overlay;
 using TD.Core.StateMachine.State;
-using TD.Input;
-using TD.Input.ActionMaps;
+using TD.Features.GameFlow;
+using TD.Features.Navigation;
+using TD.Features.StateMachine.Overlay;
+using TD.Features.StateMachine.States;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -22,7 +22,6 @@ namespace TD.Bootstrap
             RegisterInput(builder);
             RegisterNavigation(builder);
             RegisterStateMachineAndOverlay(builder);
-            RegisterUseCases(builder);
 
             builder.RegisterEntryPoint<Bootstrap>();
         }
@@ -36,8 +35,8 @@ namespace TD.Bootstrap
 
         private void RegisterNavigation(IContainerBuilder builder)
         {
-            builder.RegisterEntryPoint<BackNavigationService>();
-            builder.Register<CloseTopOverlayUseCase>(Lifetime.Singleton);
+            builder.RegisterEntryPoint<OverlayBackNavigationService>();
+            builder.Register<GameFlowService>(Lifetime.Singleton);
         }
 
         private void RegisterStateMachineAndOverlay(IContainerBuilder builder)
@@ -50,11 +49,6 @@ namespace TD.Bootstrap
             builder.Register<GameState>(Lifetime.Singleton);
 
             builder.Register<PauseMenuOverlay>(Lifetime.Singleton);
-        }
-
-        private void RegisterUseCases(IContainerBuilder builder)
-        {
-            builder.Register<StartGameUseCase>(Lifetime.Singleton);
         }
     }
 }

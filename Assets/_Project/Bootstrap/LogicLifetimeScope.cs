@@ -1,7 +1,6 @@
-using TD.Application.GameFlow;
-using TD.Application.Navigation;
 using TD.Features.FlowField.ECS.Systems;
 using TD.Features.FlowField.Managed;
+using TD.Features.Navigation;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -24,8 +23,6 @@ namespace TD.Bootstrap
         private void RegisterUseCases(IContainerBuilder builder)
         {
             builder.RegisterEntryPoint<PauseNavigationService>();
-            builder.Register<OpenPauseMenuOverlayUseCase>(Lifetime.Singleton);
-            builder.Register<ReturnToMainMenuUseCase>(Lifetime.Singleton);
         }
     }
 }

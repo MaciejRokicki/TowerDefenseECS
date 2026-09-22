@@ -1,5 +1,5 @@
-using TD.Application.GameFlow;
-using TD.Application.Navigation;
+using TD.Core.StateMachine.Overlay;
+using TD.Features.GameFlow;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
@@ -8,8 +8,8 @@ namespace TD.UI.PauseMenu
 {
     public partial class PauseMenuViewModel : MonoBehaviour
     {
-        private ReturnToMainMenuUseCase returnToMainMenuUseCase;
-        private CloseTopOverlayUseCase closeTopOverlayUseCase;
+        private GameFlowService gameFlowService;
+        private OverlayService overlayService;
 
         [SerializeField]
         private PanelRenderer panelRenderer;
@@ -21,10 +21,10 @@ namespace TD.UI.PauseMenu
         private Button exitButton;
 
         [Inject]
-        private void Construct(ReturnToMainMenuUseCase returnToMainMenuUseCase, CloseTopOverlayUseCase closeTopOverlayUseCase)
+        private void Construct(GameFlowService gameFlowService, OverlayService overlayService)
         {
-            this.returnToMainMenuUseCase = returnToMainMenuUseCase;
-            this.closeTopOverlayUseCase = closeTopOverlayUseCase;
+            this.gameFlowService = gameFlowService;
+            this.overlayService = overlayService;
         }
 
         private void Awake()
@@ -66,17 +66,17 @@ namespace TD.UI.PauseMenu
 
         private void ResumeButton_OnClicked()
         {
-            closeTopOverlayUseCase.Execute();
+            overlayService.CloseTop();
         }
 
         private void MainMenuButton_OnClicked()
         {
-            returnToMainMenuUseCase.Execute();
+            gameFlowService.ReturnToMainMenu();
         }
 
         private void ExitButton_OnClicked()
         {
-            UnityEngine.Application.Quit();
+            Application.Quit();
         }
     }
 }
