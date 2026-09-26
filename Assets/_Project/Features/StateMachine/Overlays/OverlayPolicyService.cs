@@ -67,15 +67,7 @@ namespace TD.Features.StateMachine.Overlay
                 return;
 
             isGameplayInputBlocked = shouldBlock;
-
-            if (shouldBlock)
-            {
-                inputManager.EnableActionMap(ui_InputActionMap);
-            }
-            else
-            {
-                inputManager.DisableRecentActionMap();
-            }
+            inputManager.SetActiveMaps(!shouldBlock);
         }
 
         private void OverlayManager_OnOverlayPolicyChanged(OverlayPolicy policy)

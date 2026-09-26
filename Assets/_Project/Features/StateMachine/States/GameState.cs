@@ -11,11 +11,13 @@ namespace TD.Features.StateMachine.States
     {
         private readonly InputManager inputManager;
         private readonly GameplayInputActionMap gameplayInputActionMap;
+        private readonly StartWaveInputActionMap startWaveInputActionMap;
 
-        public GameState(InputManager inputManager, GameplayInputActionMap gameplayInputActionMap)
+        public GameState(InputManager inputManager, GameplayInputActionMap gameplayInputActionMap, StartWaveInputActionMap startWaveInputActionMap)
         {
             this.inputManager = inputManager;
             this.gameplayInputActionMap = gameplayInputActionMap;
+            this.startWaveInputActionMap = startWaveInputActionMap;
         }
 
         public IEnumerator Enter(StateTransition transition)
@@ -23,7 +25,8 @@ namespace TD.Features.StateMachine.States
             yield return SceneManager.LoadSceneAsync(Scenes.LOGIC_SCENE_ID, LoadSceneMode.Additive);
             yield return SceneManager.LoadSceneAsync(Scenes.VIEW_ID, LoadSceneMode.Additive);
             yield return SceneManager.LoadSceneAsync(Scenes.ENVIRONMENT_SCENE_ID, LoadSceneMode.Additive);
-            inputManager.EnableActionMap(gameplayInputActionMap);
+            inputManager.EnableActionMap(this, gameplayInputActionMap);
+            inputManager.EnableActionMap(this, startWaveInputActionMap);
         }
 
         public void Tick(float deltaTime) { }
@@ -32,7 +35,8 @@ namespace TD.Features.StateMachine.States
 
         public IEnumerator Exit()
         {
-            inputManager.DisableRecentActionMap();
+            inputManager.DisableActionMap(this, startWaveInputActionMap);
+            inputManager.DisableActionMap(this, gameplayInputActionMap);
             yield return SceneManager.UnloadSceneAsync(Scenes.VIEW_ID);
             yield return SceneManager.UnloadSceneAsync(Scenes.ENVIRONMENT_SCENE_ID);
             yield return SceneManager.UnloadSceneAsync(Scenes.LOGIC_SCENE_ID);

@@ -1,59 +1,100 @@
 using System;
+using System.Collections.Generic;
 using TD.Core.Input.Generated;
+using UnityEngine;
 using VContainer.Unity;
 
 namespace TD.Core.Input
 {
     public class InputManager : IInitializable, IDisposable
     {
-        private StackInputContext stack;
-        private BaseInputActionMap activeActionMap;
+        private Dictionary<object, List<BaseInputActionMap>> activeMaps;
 
-        public InputSystem_Actions InputActionAsset;
+        private HashSet<BaseInputActionMap> uniqueActiveMaps;
+
+        public InputSystem_Actions InputActionAsset { get; private set; }
 
         public void Initialize()
         {
-            stack = new StackInputContext();
+            activeMaps = new Dictionary<object, List<BaseInputActionMap>>();
+            uniqueActiveMaps = new HashSet<BaseInputActionMap>();
+
             InputActionAsset = new InputSystem_Actions();
         }
 
         public void Dispose()
         {
-            activeActionMap?.InputActionMap.Disable();
+            foreach (var kvp in activeMaps)
+            {
+                foreach (var map in kvp.Value)
+                {
+                    map.Disable();
+                }
+
+                kvp.Value.Clear();
+            }
+
+            activeMaps.Clear();
             InputActionAsset?.Dispose();
         }
 
-        public void EnableActionMap(BaseInputActionMap inputActionMap)
+        public void SetActiveMaps(bool isActive)
         {
-            if (activeActionMap != null)
+            if (isActive)
             {
-                activeActionMap.Disable();
+                foreach (var map in uniqueActiveMaps)
+                {
+                    map.Enable();
+                }
             }
-
-            activeActionMap = inputActionMap;
-            stack.Push(inputActionMap);
-
-            if (activeActionMap != null)
+            else
             {
-                activeActionMap.Enable();
+                foreach (var map in uniqueActiveMaps)
+                {
+                    map.Disable();
+                }
             }
         }
 
-        public void DisableRecentActionMap()
+        public void EnableActionMap(object caller, BaseInputActionMap inputActionMap)
         {
-            var map = stack.Pop();
+            if (!activeMaps.ContainsKey(caller))
+                activeMaps[caller] = new List<BaseInputActionMap>();
 
-            if (map == null)
-                return;
+            activeMaps[caller].Add(inputActionMap);
+            RefreshMaps();
+        }
 
-            map.Disable();
+        public void DisableActionMap(object caller, BaseInputActionMap inputActionMap)
+        {
+            if (activeMaps.TryGetValue(caller, out var maps))
+            {
+                maps.Remove(inputActionMap);
+                RefreshMaps();
+            }
+        }
 
-            activeActionMap = stack.LastActionMap;
+        private void RefreshMaps()
+        {
+            foreach (var map in uniqueActiveMaps)
+            {
+                map.Disable();
+            }
 
-            if (activeActionMap == null)
-                return;
+            uniqueActiveMaps.Clear();
 
-            activeActionMap.Enable();
+            foreach (var kvp in activeMaps)
+            {
+                foreach (var map in kvp.Value)
+                {
+                    uniqueActiveMaps.Add(map);
+                }
+            }
+
+            foreach (var map in uniqueActiveMaps)
+            {
+                map.Enable();
+            }
         }
     }
 }

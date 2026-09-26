@@ -893,6 +893,35 @@ namespace TD.Core.Input.Generated
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""StartWave"",
+            ""id"": ""c0d91686-8653-447b-bb87-1723fcb7b902"",
+            ""actions"": [
+                {
+                    ""name"": ""StartWave"",
+                    ""type"": ""Button"",
+                    ""id"": ""231092ca-b347-4cea-9335-9e17d9577525"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""f62e3cc3-4e91-44c1-82c7-15780b03bbeb"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""StartWave"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -977,12 +1006,16 @@ namespace TD.Core.Input.Generated
             m_UI_ScrollWheel = m_UI.FindAction("ScrollWheel", throwIfNotFound: true);
             m_UI_TrackedDevicePosition = m_UI.FindAction("TrackedDevicePosition", throwIfNotFound: true);
             m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
+            // StartWave
+            m_StartWave = asset.FindActionMap("StartWave", throwIfNotFound: true);
+            m_StartWave_StartWave = m_StartWave.FindAction("StartWave", throwIfNotFound: true);
         }
 
         ~@InputSystem_Actions()
         {
             UnityEngine.Debug.Assert(!m_Gameplay.enabled, "This will cause a leak and performance issues, InputSystem_Actions.Gameplay.Disable() has not been called.");
             UnityEngine.Debug.Assert(!m_UI.enabled, "This will cause a leak and performance issues, InputSystem_Actions.UI.Disable() has not been called.");
+            UnityEngine.Debug.Assert(!m_StartWave.enabled, "This will cause a leak and performance issues, InputSystem_Actions.StartWave.Disable() has not been called.");
         }
 
         /// <summary>
@@ -1389,6 +1422,102 @@ namespace TD.Core.Input.Generated
         /// Provides a new <see cref="UIActions" /> instance referencing this action map.
         /// </summary>
         public UIActions @UI => new UIActions(this);
+
+        // StartWave
+        private readonly InputActionMap m_StartWave;
+        private List<IStartWaveActions> m_StartWaveActionsCallbackInterfaces = new List<IStartWaveActions>();
+        private readonly InputAction m_StartWave_StartWave;
+        /// <summary>
+        /// Provides access to input actions defined in input action map "StartWave".
+        /// </summary>
+        public struct StartWaveActions
+        {
+            private @InputSystem_Actions m_Wrapper;
+
+            /// <summary>
+            /// Construct a new instance of the input action map wrapper class.
+            /// </summary>
+            public StartWaveActions(@InputSystem_Actions wrapper) { m_Wrapper = wrapper; }
+            /// <summary>
+            /// Provides access to the underlying input action "StartWave/StartWave".
+            /// </summary>
+            public InputAction @StartWave => m_Wrapper.m_StartWave_StartWave;
+            /// <summary>
+            /// Provides access to the underlying input action map instance.
+            /// </summary>
+            public InputActionMap Get() { return m_Wrapper.m_StartWave; }
+            /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+            public void Enable() { Get().Enable(); }
+            /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+            public void Disable() { Get().Disable(); }
+            /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+            public bool enabled => Get().enabled;
+            /// <summary>
+            /// Implicitly converts an <see ref="StartWaveActions" /> to an <see ref="InputActionMap" /> instance.
+            /// </summary>
+            public static implicit operator InputActionMap(StartWaveActions set) { return set.Get(); }
+            /// <summary>
+            /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+            /// </summary>
+            /// <param name="instance">Callback instance.</param>
+            /// <remarks>
+            /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+            /// </remarks>
+            /// <seealso cref="StartWaveActions" />
+            public void AddCallbacks(IStartWaveActions instance)
+            {
+                if (instance == null || m_Wrapper.m_StartWaveActionsCallbackInterfaces.Contains(instance)) return;
+                m_Wrapper.m_StartWaveActionsCallbackInterfaces.Add(instance);
+                @StartWave.started += instance.OnStartWave;
+                @StartWave.performed += instance.OnStartWave;
+                @StartWave.canceled += instance.OnStartWave;
+            }
+
+            /// <summary>
+            /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+            /// </summary>
+            /// <remarks>
+            /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+            /// </remarks>
+            /// <seealso cref="StartWaveActions" />
+            private void UnregisterCallbacks(IStartWaveActions instance)
+            {
+                @StartWave.started -= instance.OnStartWave;
+                @StartWave.performed -= instance.OnStartWave;
+                @StartWave.canceled -= instance.OnStartWave;
+            }
+
+            /// <summary>
+            /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="StartWaveActions.UnregisterCallbacks(IStartWaveActions)" />.
+            /// </summary>
+            /// <seealso cref="StartWaveActions.UnregisterCallbacks(IStartWaveActions)" />
+            public void RemoveCallbacks(IStartWaveActions instance)
+            {
+                if (m_Wrapper.m_StartWaveActionsCallbackInterfaces.Remove(instance))
+                    UnregisterCallbacks(instance);
+            }
+
+            /// <summary>
+            /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+            /// </summary>
+            /// <remarks>
+            /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+            /// </remarks>
+            /// <seealso cref="StartWaveActions.AddCallbacks(IStartWaveActions)" />
+            /// <seealso cref="StartWaveActions.RemoveCallbacks(IStartWaveActions)" />
+            /// <seealso cref="StartWaveActions.UnregisterCallbacks(IStartWaveActions)" />
+            public void SetCallbacks(IStartWaveActions instance)
+            {
+                foreach (var item in m_Wrapper.m_StartWaveActionsCallbackInterfaces)
+                    UnregisterCallbacks(item);
+                m_Wrapper.m_StartWaveActionsCallbackInterfaces.Clear();
+                AddCallbacks(instance);
+            }
+        }
+        /// <summary>
+        /// Provides a new <see cref="StartWaveActions" /> instance referencing this action map.
+        /// </summary>
+        public StartWaveActions @StartWave => new StartWaveActions(this);
         private int m_KeyboardMouseSchemeIndex = -1;
         /// <summary>
         /// Provides access to the input control scheme.
@@ -1574,6 +1703,21 @@ namespace TD.Core.Input.Generated
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
+        }
+        /// <summary>
+        /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "StartWave" which allows adding and removing callbacks.
+        /// </summary>
+        /// <seealso cref="StartWaveActions.AddCallbacks(IStartWaveActions)" />
+        /// <seealso cref="StartWaveActions.RemoveCallbacks(IStartWaveActions)" />
+        public interface IStartWaveActions
+        {
+            /// <summary>
+            /// Method invoked when associated input action "StartWave" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnStartWave(InputAction.CallbackContext context);
         }
     }
 }

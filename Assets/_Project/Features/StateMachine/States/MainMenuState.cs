@@ -21,7 +21,7 @@ namespace TD.Features.StateMachine.States
         public IEnumerator Enter(StateTransition transition)
         {
             yield return SceneManager.LoadSceneAsync(Scenes.MAIN_MENU_ID, LoadSceneMode.Additive);
-            inputManager.EnableActionMap(ui_InputActionMap);
+            inputManager.EnableActionMap(this, ui_InputActionMap);
         }
 
         public void Tick(float deltaTime) { }
@@ -30,7 +30,7 @@ namespace TD.Features.StateMachine.States
 
         public IEnumerator Exit()
         {
-            inputManager.DisableRecentActionMap();
+            inputManager.DisableActionMap(this, ui_InputActionMap);
             yield return SceneManager.UnloadSceneAsync(Scenes.MAIN_MENU_ID);
         }
     }
