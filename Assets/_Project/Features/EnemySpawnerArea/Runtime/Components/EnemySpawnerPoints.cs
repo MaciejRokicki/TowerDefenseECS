@@ -6,6 +6,6 @@ namespace TD.Features.EnemySpawnerArea.Components
 {
     public struct EnemySpawnerPoints : IComponentData
     {
-        public NativeList<int2> Positions;
+        public NativeList<float3> Positions;
     }
 }

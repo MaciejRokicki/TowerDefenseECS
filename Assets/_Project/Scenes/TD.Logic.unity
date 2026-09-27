@@ -2218,7 +2218,7 @@ MonoBehaviour:
   drawCost: 0
   drawEikonal: 0
   drawHeatmap: 0
-  drawDirection: 1
+  drawDirection: 0
   tester: {fileID: 1685612534}
   testerPos: {x: 81, y: 67}
 --- !u!4 &1184441549

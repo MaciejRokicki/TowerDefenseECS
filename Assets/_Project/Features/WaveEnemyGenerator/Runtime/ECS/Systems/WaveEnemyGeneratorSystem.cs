@@ -100,7 +100,7 @@ namespace TD.Features.WaveEnemyGenerator.ECS.Systems
             var waveEnemyPreparedEventEntity = ecb.CreateEntity();
             ecb.AddComponent(waveEnemyPreparedEventEntity, new WaveEnemyPreparedEvent()
             {
-                Enemies = new NativeArray<Entity>(enemies.AsArray(), Allocator.Temp)
+                Enemies = new NativeArray<Entity>(enemies.AsArray(), Allocator.TempJob)
             });
 
             validEnemies.Dispose();
