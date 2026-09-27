@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: -3656806216569617439}
   - component: {fileID: 9164278781343519240}
   m_Layer: 0
-  m_Name: BlueArcher
+  m_Name: BigBlueArcher
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f6d71de5d1905d4692580bcafac04fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: TD.Logic::TD.Logic.ECS.Authorings.EnemyAuthoring
-  MovementSpeed: 3
+  MovementSpeed: 1
 --- !u!114 &7796194639302553024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -97,9 +97,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b7bf5435c0e7504eaf1d8f4d6c9be90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: TD.Features.Wave::TD.Features.Wave.ECS.Authorings.WaveEnemyDataAuthoring
-  Power: 1
-  Weight: 10
-  MinWave: 0
+  Power: 2
+  Weight: 5
+  MinWave: 1
 --- !u!23 &-3656806216569617439
 MeshRenderer:
   m_ObjectHideFlags: 0
