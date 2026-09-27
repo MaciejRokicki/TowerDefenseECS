@@ -26,9 +26,10 @@ namespace TD.Features.WaveSpawner
 
             foreach (var (waveEnemyPreparedEvent, entity) in SystemAPI.Query<RefRO<WaveEnemyPreparedEvent>>().WithEntityAccess())
             {
-                for (int i = 0; i < waveEnemyPreparedEvent.ValueRO.Enemies.Length; i++)
+                var buffer = state.EntityManager.GetBuffer<WaveEnemyPreparedBufferElement>(entity);
+                for (int i = 0; i < buffer.Length; i++)
                 {
-                    var prefab = waveEnemyPreparedEvent.ValueRO.Enemies[i];
+                    var prefab = buffer[i].EnemyEntity;
                     var point = enemySpawnerPoints.Positions[i % enemySpawnerPoints.Positions.Length];
 
                     var pos = new float3(point.x, point.y, 0.0f);

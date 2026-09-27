@@ -98,10 +98,14 @@ namespace TD.Features.WaveEnemyGenerator.ECS.Systems
             }
 
             var waveEnemyPreparedEventEntity = ecb.CreateEntity();
-            ecb.AddComponent(waveEnemyPreparedEventEntity, new WaveEnemyPreparedEvent()
+            ecb.AddComponent<WaveEnemyPreparedEvent>(waveEnemyPreparedEventEntity);
+            var buffer = ecb.AddBuffer<WaveEnemyPreparedBufferElement>(waveEnemyPreparedEventEntity);
+
+            buffer.Capacity = enemies.Length;
+            for (int i = 0; i < enemies.Length; i++)
             {
-                Enemies = new NativeArray<Entity>(enemies.AsArray(), Allocator.TempJob)
-            });
+                buffer.Add(new WaveEnemyPreparedBufferElement() { EnemyEntity = enemies[i] });
+            }
 
             validEnemies.Dispose();
             enemies.Dispose();
