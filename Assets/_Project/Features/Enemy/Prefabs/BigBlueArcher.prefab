@@ -99,7 +99,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: TD.Features.Wave::TD.Features.Wave.ECS.Authorings.WaveEnemyDataAuthoring
   Power: 2
   Weight: 5
-  MinWave: 1
+  MinWave: 2
 --- !u!23 &-3656806216569617439
 MeshRenderer:
   m_ObjectHideFlags: 0

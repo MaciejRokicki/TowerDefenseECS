@@ -28,7 +28,7 @@ namespace TD.Features.Wave.Managed.Logic
             Data = new WaveData()
             {
                 Wave = 0,
-                Power = 10,
+                Power = 100,
                 State = WaveState.WaitingForStart,
                 WaveTime = 0.0f,
                 WaveDuration = 20.0f,
@@ -101,8 +101,6 @@ namespace TD.Features.Wave.Managed.Logic
 
         private void StartWave()
         {
-            Data.Wave++;
-            Data.Power += 1;
             Data.State = WaveState.Running;
             Data.WaveTime = 0.0f;
             Data.BreakTime = 0.0f;
@@ -134,6 +132,8 @@ namespace TD.Features.Wave.Managed.Logic
 
             if (Data.BreakTime >= Data.BreakDuration)
             {
+                Data.Wave++;
+                Data.Power += 25;
                 StartWave();
             }
         }

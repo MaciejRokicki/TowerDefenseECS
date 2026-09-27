@@ -4,6 +4,7 @@ using TD.Features.WaveEnemyGenerator.ECS.Components;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using UnityEngine;
 
 namespace TD.Features.WaveEnemyGenerator.ECS.Systems
 {
