@@ -27,17 +27,16 @@ namespace TD.Features.SpatialHash
     public partial struct BuildSpatialHashJob : IJobEntity
     {
         public float CellSize;
-        public float2 GridWorldPosition;
+        public float3 GridWorldPosition;
         public NativeParallelMultiHashMap<int2, SpatialHashUnit>.ParallelWriter SpatialHash;
 
         private void Execute(Entity entity, in LocalTransform transform)
         {
-            float2 pos = transform.Position.xy;
-            FlowFieldUtility.WorldToGridPosition(pos, GridWorldPosition, CellSize, out int2 gridPos);
+            FlowFieldUtility.WorldToGridPosition(transform.Position, GridWorldPosition, CellSize, out int2 gridPos);
             SpatialHash.Add(gridPos, new SpatialHashUnit()
             {
                 Entity = entity,
-                Position = pos
+                Position = transform.Position
             });
         }
     }
@@ -79,7 +78,7 @@ namespace TD.Features.SpatialHash
             state.Dependency = new BuildSpatialHashJob()
             {
                 CellSize = flowFieldData.CellSize,
-                GridWorldPosition = new float2(flowFieldData.Position.x, flowFieldData.Position.y),
+                GridWorldPosition = new float3(flowFieldData.WorldPosition.x, flowFieldData.WorldPosition.y, 0.0f),
                 SpatialHash = spatialHash.ValueRW.SpatialHashMap.AsParallelWriter()
             }.ScheduleParallel(enemyQuery, clearHandle);
         }

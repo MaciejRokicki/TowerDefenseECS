@@ -25,13 +25,13 @@ namespace TD.Features.Movement.Systems
         {
             var position = transform.Position;
             FlowFieldUtility.WorldToGridPosition(
-                new float2(position.x, position.y),
-                new float2(FlowFieldSurfaceData.Position.x, FlowFieldSurfaceData.Position.y),
+                new float3(position.x, position.y, 0.0f),
+                new float3(FlowFieldSurfaceData.WorldPosition.x, FlowFieldSurfaceData.WorldPosition.y, 0.0f),
                 FlowFieldSurfaceData.CellSize,
                 out int2 gridPosition);
-            var direction = FlowFieldSurfaceData.Directions[gridPosition.x * FlowFieldSurfaceData.Size.y + gridPosition.y];
+            var direction = FlowFieldSurfaceData.Cells[gridPosition.x * FlowFieldSurfaceData.Size.y + gridPosition.y].Direction;
             direction = math.normalizesafe(direction);
-            velocity.Target = new float3(direction * movementSpeed.Speed, 0.0f);
+            velocity.Target = new float3(direction * movementSpeed.Speed);
             float alpha = 1.0f - math.exp(-Response * Time);
             velocity.Current = math.lerp(velocity.Current, velocity.Target, alpha);
             var pos = transform.Position;

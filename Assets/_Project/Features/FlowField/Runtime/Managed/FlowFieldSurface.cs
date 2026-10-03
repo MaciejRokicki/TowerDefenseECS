@@ -205,7 +205,7 @@ namespace TD.Features.FlowField.Managed
 
             so.ApplyModifiedProperties();
 
-            data.Calculate();
+            data.Bake();
 
             var newPath = string.Concat("Assets/Settings/", gameObject.scene.name, ".asset");
             UnityEditor.AssetDatabase.CreateAsset(data, UnityEditor.AssetDatabase.GenerateUniqueAssetPath(newPath));

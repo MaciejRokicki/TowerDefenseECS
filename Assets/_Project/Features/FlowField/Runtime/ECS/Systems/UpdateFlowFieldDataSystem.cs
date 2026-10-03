@@ -22,22 +22,6 @@ namespace TD.Features.FlowField.ECS.Systems
             RequireForUpdate<UpdateFlowFieldData>();
         }
 
-        protected override void OnDestroy()
-        {
-            var ecb = new EntityCommandBuffer(Allocator.TempJob);
-
-            if (SystemAPI.TryGetSingletonEntity<FlowFieldSurfaceData>(out var flowFieldSurfaceDataEntity))
-            {
-                var flowFieldSurfaceData = SystemAPI.GetComponent<FlowFieldSurfaceData>(flowFieldSurfaceDataEntity);
-                flowFieldSurfaceData.Directions.Dispose();
-                flowFieldSurfaceData.ObstacleCells.Dispose();
-                ecb.SetComponent(flowFieldSurfaceDataEntity, flowFieldSurfaceData);
-            }
-
-            ecb.Playback(EntityManager);
-            ecb.Dispose();
-        }
-
         protected override void OnUpdate()
         {
             var ecb = new EntityCommandBuffer(Allocator.TempJob);
@@ -68,21 +52,44 @@ namespace TD.Features.FlowField.ECS.Systems
             ecb.Dispose();
         }
 
+        protected override void OnDestroy()
+        {
+            var ecb = new EntityCommandBuffer(Allocator.TempJob);
+
+            if (SystemAPI.TryGetSingletonEntity<FlowFieldSurfaceData>(out var flowFieldSurfaceDataEntity))
+            {
+                var flowFieldSurfaceData = SystemAPI.GetComponent<FlowFieldSurfaceData>(flowFieldSurfaceDataEntity);
+                flowFieldSurfaceData.Cells.Dispose();
+                flowFieldSurfaceData.ObstacleCells.Dispose();
+                ecb.SetComponent(flowFieldSurfaceDataEntity, flowFieldSurfaceData);
+            }
+
+            ecb.Playback(EntityManager);
+            ecb.Dispose();
+        }
+
         private void UpdateFlowFieldSurfaceData(ref FlowFieldSurfaceData flowFieldSurfaceData)
         {
             flowFieldSurfaceData.CellSize = flowFieldSurface.Data.CellSize;
             flowFieldSurfaceData.Size = flowFieldSurface.Data.Size;
-            flowFieldSurfaceData.Position = flowFieldSurface.Data.Position;
+            flowFieldSurfaceData.WorldPosition = flowFieldSurface.Data.Position;
             flowFieldSurfaceData.TargetWorldPosition = flowFieldSurface.Data.TargetWorldPosition;
-            flowFieldSurfaceData.TargetPosition = flowFieldSurface.Data.TargetPosition;
+            flowFieldSurfaceData.TargetGridPosition = flowFieldSurface.Data.TargetPosition;
 
-            flowFieldSurfaceData.Directions.Dispose();
-            flowFieldSurfaceData.Directions = new NativeArray<float2>(flowFieldSurface.Data.Cells.Count, Allocator.Persistent);
+            flowFieldSurfaceData.Cells.Dispose();
+            flowFieldSurfaceData.Cells = new NativeArray<FlowFieldCellData>(flowFieldSurface.Data.Cells.Count, Allocator.Persistent);
 
-            for (int i = 0; i < flowFieldSurfaceData.Directions.Length; i++)
+            for (int i = 0; i < flowFieldSurfaceData.Cells.Length; i++)
             {
-                var direction = flowFieldSurface.Data.Cells[i].Direction;
-                flowFieldSurfaceData.Directions[i] = new float2(direction.x, direction.y);
+                var cell = flowFieldSurface.Data.Cells[i];
+                flowFieldSurfaceData.Cells[i] = new FlowFieldCellData()
+                {
+                    GridPosition = cell.GridPosition,
+                    IsObstacle = cell.IsObstacle,
+                    Cost = cell.Cost,
+                    Eikonal = cell.Eikonal,
+                    Direction = cell.Direction
+                };
             }
 
             flowFieldSurfaceData.ObstacleCells.Dispose();

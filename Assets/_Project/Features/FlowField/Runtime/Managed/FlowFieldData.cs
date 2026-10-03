@@ -1,7 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.Scripting.LifecycleManagement;
+using System.Diagnostics;
+using TD.Features.FlowField.ECS.Components;
+using Unity.Collections;
 using UnityEngine;
 
 namespace TD.Features.FlowField.Managed
@@ -9,13 +9,6 @@ namespace TD.Features.FlowField.Managed
     [CreateAssetMenu(fileName = "DefaultFlowFieldData", menuName = "FlowField/Data")]
     public partial class FlowFieldData : ScriptableObject
     {
-        [AutoStaticsCleanup]
-        private static FlowFieldCell[] neighbourArray8;
-        [AutoStaticsCleanup]
-        private static FlowFieldCell[] neighbourArray4;
-        [AutoStaticsCleanup]
-        private static float sqrtOfTwo = Mathf.Sqrt(2);
-
         [SerializeField]
         private float cellSize;
         [SerializeField]
@@ -37,7 +30,7 @@ namespace TD.Features.FlowField.Managed
         [SerializeField]
         private FlowFieldObstacleData[] obstacles;
         [SerializeField]
-        private List<Vector2Int> obstacleCells;
+        private Vector2Int[] obstacleCells;
 
         public float CellSize => cellSize;
         public Vector2Int Size => size;
@@ -63,295 +56,46 @@ namespace TD.Features.FlowField.Managed
             return cells[x * size.y + y];
         }
 
-        public void Calculate()
+        public void Bake()
         {
-            maxCostValue = 0.0f;
-
-            int index = 0;
-            for (int i = 0; i < size.x; i++)
-            {
-                for (int j = 0; j < size.y; j++)
-                {
-                    index = i * size.y + j;
-                    var cell = cells[index];
-                    cell.GridPosition = new Vector2Int(i, j);
-                    cell.IsObstacle = false;
-                    cell.Cost = 0f;
-                    cell.Eikonal = float.PositiveInfinity;
-                    cell.Direction = Vector3.zero;
-                }
-            }
-
-            obstacleCells = new List<Vector2Int>();
+            NativeArray<FlowFieldObstalceData> obstacles = new NativeArray<FlowFieldObstalceData>(this.obstacles.Length, Allocator.TempJob);
 
             for (int i = 0; i < obstacles.Length; i++)
             {
-                var obstacle = obstacles[i];
-                var gridPosition = FlowFieldUtility.WorldToGridPosition(obstacle.Position, position, cellSize);
-
-                for (int j = 0; j < obstacle.Size.x; j++)
+                var obstacle = this.obstacles[i];
+                obstacles[i] = new FlowFieldObstalceData()
                 {
-                    for (int k = 0; k < obstacle.Size.y; k++)
-                    {
-                        var cell = GetValue(gridPosition.x + j, gridPosition.y + k);
-                        cell.Cost = float.PositiveInfinity;
-                        cell.Eikonal = float.PositiveInfinity;
-                        cell.Direction = Vector2.zero;
-                        cell.IsObstacle = true;
-                        obstacleCells.Add(cell.GridPosition);
-                    }
-                }
+                    Position = obstacle.Position,
+                    Size = obstacle.Size,
+                };
             }
 
-            Queue<FlowFieldCell> queue = new Queue<FlowFieldCell>(cells.Length);
-            HashSet<FlowFieldCell> visited = new HashSet<FlowFieldCell>(cells.Length);
-            var current = GetValue(targetPosition.x, targetPosition.y);
-            queue.Enqueue(current);
-            visited.Add(current);
+            var sw = new Stopwatch();
+            sw.Start();
+            FlowFieldDataBaker.Calculate(position, cellSize, size, targetWorldPosition, obstacles, out var cells, out var obstacleCells, out maxCostValue);
+            sw.Stop();
+            UnityEngine.Debug.Log(sw.Elapsed.TotalMilliseconds);
+            this.cells = new FlowFieldCell[cells.Length];
 
-            while (queue.Count > 0)
+            for (int i = 0; i < cells.Length; i++)
             {
-                current = queue.Dequeue();
-                current.Eikonal = float.PositiveInfinity;
-
-                if (maxCostValue < current.Cost)
-                    maxCostValue = current.Cost;
-
-                if (current.IsObstacle)
-                    continue;
-
-                GetNeighbours8(current.GridPosition.x, current.GridPosition.y, ref neighbourArray8);
-
-                for (int i = 0; i < neighbourArray8.Length; i++)
-                {
-                    var neighbour = neighbourArray8[i];
-
-                    if (neighbour == null)
-                        continue;
-
-                    if (neighbour.IsObstacle)
-                        continue;
-
-                    float cost = sqrtOfTwo;
-
-                    Vector2Int dir = current.GridPosition - neighbour.GridPosition;
-
-                    if (dir.x == 0 || dir.y == 0)
-                    {
-                        cost = 1.0f;
-                    }
-
-                    if (neighbour.GridPosition == targetPosition)
-                    {
-                        neighbour.Cost = 0.0f;
-                    }
-                    else
-                    {
-                        float newCost = current.Cost + cost;
-
-                        if (neighbour.Cost == 0.0f || neighbour.Cost > newCost)
-                        {
-                            neighbour.Cost = newCost;
-                            queue.Enqueue(neighbour);
-                        }
-                    }
-                }
+                this.cells[i] = new FlowFieldCell(cells[i]);
             }
 
-            queue.Clear();
-            visited.Clear();
+            this.obstacleCells = new Vector2Int[obstacleCells.Length];
 
-            var sortedList = new List<FlowFieldCell>();
-            current = GetValue(targetPosition.x, targetPosition.y);
-            sortedList.Add(current);
-            visited.Add(current);
-            int c = 0;
-
-            current.Eikonal = 0.0f;
-
-            while (sortedList.Count > 0)
+            for (int i = 0; i < obstacleCells.Length; i++)
             {
-                c++;
-                sortedList = sortedList.OrderBy(x => x.Cost).ToList();
-                current = sortedList[0];
-                sortedList.RemoveAt(0);
-
-                if (c == 300_000)
-                {
-                    Debug.Log("C");
-                    break;
-                }
-
-                if (current.IsObstacle)
-                    continue;
-
-                if (current.GridPosition == targetPosition)
-                {
-                    current.Eikonal = 0.0f;
-                }
-                else
-                {
-                    var x1 = GetNeighbourForEikonalCalculation(current.GridPosition.x - 1, current.GridPosition.y);
-                    var x2 = GetNeighbourForEikonalCalculation(current.GridPosition.x + 1, current.GridPosition.y);
-                    var y1 = GetNeighbourForEikonalCalculation(current.GridPosition.x, current.GridPosition.y - 1);
-                    var y2 = GetNeighbourForEikonalCalculation(current.GridPosition.x, current.GridPosition.y + 1);
-
-                    current.Eikonal = SolveEikonal(Mathf.Min(x1, x2), Mathf.Min(y1, y2), 1.0f);
-                }
-
-                GetNeighbours4(current.GridPosition.x, current.GridPosition.y, ref neighbourArray4);
-
-                for (int i = 0; i < neighbourArray4.Length; i++)
-                {
-                    var neighbour = neighbourArray4[i];
-
-                    if (neighbour == null)
-                        continue;
-
-                    if (visited.Contains(neighbour))
-                        continue;
-
-                    if (neighbour.IsObstacle)
-                        continue;
-
-                    visited.Add(neighbour);
-                    sortedList.Add(neighbour);
-                }
+                this.obstacleCells[i] = obstacleCells[i];
             }
 
-            queue.Clear();
-            queue = null;
-            visited.Clear();
-            visited = null;
-            current = null;
+            obstacles.Dispose();
+            cells.Dispose();
+            obstacleCells.Dispose();
 
-            for (int i = 0; i < size.x; i++)
-            {
-                for (int j = 0; j < size.y; j++)
-                {
-                    var cell = GetValue(i, j);
-
-                    if (cell.IsObstacle ||
-                        cell.GridPosition == targetPosition ||
-                        float.IsInfinity(cell.Eikonal) ||
-                        float.IsNaN(cell.Eikonal))
-                    {
-                        cell.Direction = Vector2.zero;
-                        continue;
-                    }
-
-                    var x1 = GetValue(i - 1, j);
-                    var x2 = GetValue(i + 1, j);
-                    var y1 = GetValue(i, j - 1);
-                    var y2 = GetValue(i, j + 1);
-
-                    var x = Mathf.Min(x1 != null ? x1.Eikonal : float.PositiveInfinity, x2 != null ? x2.Eikonal : float.PositiveInfinity);
-                    var y = Mathf.Min(y1 != null ? y1.Eikonal : float.PositiveInfinity, y2 != null ? y2.Eikonal : float.PositiveInfinity);
-
-                    cell.Direction = new Vector3(
-                        CalculateDirectionField(cell.Eikonal, x1 == null ? cell.Eikonal : x1.Eikonal, x2 == null ? cell.Eikonal : x2.Eikonal),
-                        CalculateDirectionField(cell.Eikonal, y1 == null ? cell.Eikonal : y1.Eikonal, y2 == null ? cell.Eikonal : y2.Eikonal)
-                    );
-                }
-            }
-        }
-
-        private bool ValidatePosition(Vector2Int position)
-        {
-            if (position.x < 0 || position.x >= size.x ||
-                position.y < 0 || position.y >= size.y)
-                return false;
-
-            return true;
-        }
-
-        private void GetNeighbours4(int x, int y, ref FlowFieldCell[] neighbourArray)
-        {
-            if (neighbourArray == null)
-                neighbourArray = new FlowFieldCell[4];
-
-            Vector2Int neighbourPosition = new Vector2Int(x, y + 1);
-            neighbourArray[0] = ValidatePosition(neighbourPosition) ? GetValue(neighbourPosition.x, neighbourPosition.y) : null;
-
-            neighbourPosition = new Vector2Int(x + 1, y);
-            neighbourArray[1] = ValidatePosition(neighbourPosition) ? GetValue(neighbourPosition.x, neighbourPosition.y) : null;
-
-            neighbourPosition = new Vector2Int(x, y - 1);
-            neighbourArray[2] = ValidatePosition(neighbourPosition) ? GetValue(neighbourPosition.x, neighbourPosition.y) : null;
-
-            neighbourPosition = new Vector2Int(x - 1, y);
-            neighbourArray[3] = ValidatePosition(neighbourPosition) ? GetValue(neighbourPosition.x, neighbourPosition.y) : null;
-        }
-
-        private void GetNeighbours8(int x, int y, ref FlowFieldCell[] neighbourArray)
-        {
-            if (neighbourArray == null)
-                neighbourArray = new FlowFieldCell[8];
-
-            Vector2Int neighbourPosition = new Vector2Int(x, y + 1);
-            neighbourArray[0] = ValidatePosition(neighbourPosition) ? GetValue(neighbourPosition.x, neighbourPosition.y) : null;
-
-            neighbourPosition = new Vector2Int(x + 1, y + 1);
-            neighbourArray[1] = ValidatePosition(neighbourPosition) ? GetValue(neighbourPosition.x, neighbourPosition.y) : null;
-
-            neighbourPosition = new Vector2Int(x + 1, y);
-            neighbourArray[2] = ValidatePosition(neighbourPosition) ? GetValue(neighbourPosition.x, neighbourPosition.y) : null;
-
-            neighbourPosition = new Vector2Int(x + 1, y - 1);
-            neighbourArray[3] = ValidatePosition(neighbourPosition) ? GetValue(neighbourPosition.x, neighbourPosition.y) : null;
-
-            neighbourPosition = new Vector2Int(x, y - 1);
-            neighbourArray[4] = ValidatePosition(neighbourPosition) ? GetValue(neighbourPosition.x, neighbourPosition.y) : null;
-
-            neighbourPosition = new Vector2Int(x - 1, y - 1);
-            neighbourArray[5] = ValidatePosition(neighbourPosition) ? GetValue(neighbourPosition.x, neighbourPosition.y) : null;
-
-            neighbourPosition = new Vector2Int(x - 1, y);
-            neighbourArray[6] = ValidatePosition(neighbourPosition) ? GetValue(neighbourPosition.x, neighbourPosition.y) : null;
-
-            neighbourPosition = new Vector2Int(x - 1, y + 1);
-            neighbourArray[7] = ValidatePosition(neighbourPosition) ? GetValue(neighbourPosition.x, neighbourPosition.y) : null;
-        }
-
-        private float GetNeighbourForEikonalCalculation(int x, int y)
-        {
-            var res = GetValue(x, y);
-
-            if (res == null)
-                return float.PositiveInfinity;
-
-            return res.Eikonal;
-        }
-
-        private float SolveEikonal(float tx, float ty, float cost)
-        {
-            if (float.IsPositiveInfinity(tx) || tx == float.MaxValue) return ty + cost;
-            if (float.IsPositiveInfinity(ty) || ty == float.MaxValue) return tx + cost;
-
-            float delta = 2f * (cost * cost) - (tx - ty) * (tx - ty);
-
-            if (delta >= 0f)
-            {
-                float t = (tx + ty + (float)Math.Sqrt(delta)) / 2f;
-
-                if (t > tx && t > ty)
-                {
-                    return t;
-                }
-            }
-
-            return Math.Min(tx, ty) + cost;
-        }
-
-        private float CalculateDirectionField(float current, float left, float right)
-        {
-            if (right < current)
-                return current - right;
-
-            if (left < current)
-                return -(current - left);
-
-            return 0.0f;
+#if UNITY_EDITOR
+            UnityEditor.EditorUtility.SetDirty(this);
+#endif
         }
     }
 }
