@@ -1,6 +1,7 @@
 using TD.Features.FlowField.ECS.Systems;
 using TD.Features.FlowField.Managed;
 using TD.Features.Navigation;
+using TD.Features.Wave.Managed.Logic;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -23,6 +24,7 @@ namespace TD.Bootstrap
         private void RegisterUseCases(IContainerBuilder builder)
         {
             builder.RegisterEntryPoint<PauseNavigationService>();
+            builder.RegisterEntryPoint<WaveService>();
         }
     }
 }

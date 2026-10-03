@@ -30,6 +30,7 @@ namespace TD.Bootstrap
         {
             builder.RegisterEntryPoint<InputManager>().AsSelf();
             builder.RegisterEntryPoint<UI_InputActionMap>().AsSelf();
+            builder.RegisterEntryPoint<StartWaveInputActionMap>().AsSelf();
             builder.RegisterEntryPoint<GameplayInputActionMap>().AsSelf();
         }
 

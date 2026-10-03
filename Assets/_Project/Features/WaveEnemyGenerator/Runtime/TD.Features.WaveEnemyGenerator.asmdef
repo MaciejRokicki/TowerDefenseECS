@@ -1,0 +1,19 @@
+{
+    "name": "TD.Features.WaveEnemyGenerator",
+    "rootNamespace": "TD.Features.WaveEnemyGenerator",
+    "references": [
+        "GUID:734d92eba21c94caba915361bd5ac177",
+        "GUID:2a6cd95af453caf4ebb01f6b9476d0eb",
+        "GUID:8819f35a0fc84499b990e90a4ca1911f",
+        "GUID:b3e87c9177d3d9842b8db719dedb604c"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

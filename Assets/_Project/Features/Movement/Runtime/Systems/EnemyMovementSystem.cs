@@ -34,7 +34,10 @@ namespace TD.Features.Movement.Systems
             velocity.Target = new float3(direction * movementSpeed.Speed, 0.0f);
             float alpha = 1.0f - math.exp(-Response * Time);
             velocity.Current = math.lerp(velocity.Current, velocity.Target, alpha);
-            transform.Position += velocity.Current * Time;
+            var pos = transform.Position;
+            pos += velocity.Current * Time;
+            pos.z = transform.Position.y;
+            transform.Position = pos;
         }
     }
 
