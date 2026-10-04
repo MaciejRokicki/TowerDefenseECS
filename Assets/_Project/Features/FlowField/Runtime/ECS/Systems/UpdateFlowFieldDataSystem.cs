@@ -86,8 +86,9 @@ namespace TD.Features.FlowField.ECS.Systems
                 {
                     GridPosition = cell.GridPosition,
                     IsObstacle = cell.IsObstacle,
+                    State = cell.State,
                     Cost = cell.Cost,
-                    Eikonal = cell.Eikonal,
+                    Time = cell.Time,
                     Direction = cell.Direction
                 };
             }

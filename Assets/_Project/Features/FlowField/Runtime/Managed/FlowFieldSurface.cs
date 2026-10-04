@@ -23,7 +23,7 @@ namespace TD.Features.FlowField.Managed
         [SerializeField]
         private bool drawCost;
         [SerializeField]
-        private bool drawEikonal;
+        private bool drawTime;
         [SerializeField]
         private bool drawHeatmap;
         [SerializeField]
@@ -76,7 +76,7 @@ namespace TD.Features.FlowField.Managed
                 }
             }
 
-            void DrawEikonal(FlowFieldData data)
+            void DrawTime(FlowFieldData data)
             {
                 for (int i = 0; i < data.Size.x; i++)
                 {
@@ -84,7 +84,7 @@ namespace TD.Features.FlowField.Managed
                     {
                         var pos = data.Position + new Vector3(i * data.CellSize, j * data.CellSize, 0.0f) + new Vector3(data.CellSize / 2.0f, data.CellSize / 2.0f, 0.0f);
                         pos.y -= 0.25f;
-                        UnityEditor.Handles.Label(pos, data.GetValue(i, j).Eikonal.ToString("0.00"), debugStyle);
+                        UnityEditor.Handles.Label(pos, data.GetValue(i, j).Time.ToString("0.00"), debugStyle);
                     }
                 }
             }
@@ -96,7 +96,7 @@ namespace TD.Features.FlowField.Managed
                     for (int j = 0; j < data.Size.y; j++)
                     {
                         var pos = data.Position + new Vector3(i * data.CellSize, j * data.CellSize, 0.0f) + new Vector3(data.CellSize / 2.0f, data.CellSize / 2.0f, 0.0f);
-                        Gizmos.color = Color.Lerp(Color.green, Color.red, data.GetValue(i, j).Cost / data.MaxCostValue);
+                        Gizmos.color = Color.Lerp(Color.green, Color.red, data.GetValue(i, j).Time / data.MaxTime);
                         var c = Gizmos.color;
                         c.a = 0.75f;
                         Gizmos.color = c;
@@ -149,8 +149,8 @@ namespace TD.Features.FlowField.Managed
                 if (drawCost)
                     DrawCosts(data);
 
-                if (drawEikonal)
-                    DrawEikonal(data);
+                if (drawTime)
+                    DrawTime(data);
 
                 if (drawHeatmap)
                     DrawHeatmap(data);

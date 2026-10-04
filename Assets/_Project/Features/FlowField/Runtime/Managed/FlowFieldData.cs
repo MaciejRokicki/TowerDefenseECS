@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Diagnostics;
 using TD.Features.FlowField.ECS.Components;
 using Unity.Collections;
 using UnityEngine;
@@ -37,7 +36,7 @@ namespace TD.Features.FlowField.Managed
         public Vector3 Position => position;
         public Vector3 TargetWorldPosition => targetWorldPosition;
         public Vector2Int TargetPosition => targetPosition;
-        public float MaxCostValue => maxCostValue;
+        public float MaxTime => maxCostValue;
         public IReadOnlyList<FlowFieldCell> Cells => cells;
         public IReadOnlyList<Vector2Int> ObstacleCells => obstacleCells;
 
@@ -70,11 +69,8 @@ namespace TD.Features.FlowField.Managed
                 };
             }
 
-            var sw = new Stopwatch();
-            sw.Start();
             FlowFieldDataBaker.Calculate(position, cellSize, size, targetWorldPosition, obstacles, out var cells, out var obstacleCells, out maxCostValue);
-            sw.Stop();
-            UnityEngine.Debug.Log(sw.Elapsed.TotalMilliseconds);
+
             this.cells = new FlowFieldCell[cells.Length];
 
             for (int i = 0; i < cells.Length; i++)

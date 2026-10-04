@@ -1,262 +1,254 @@
 using TD.Features.FlowField.ECS.Components;
+using TD.Shared;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
-using UnityEngine;
 
 namespace TD.Features.FlowField.Managed
 {
     [BurstCompile]
     public static class FlowFieldDataBaker
     {
-        const float diagonalCost = 1.41421356237f;
-
         [BurstCompile]
-        private struct BakeJob : IJob
+        private struct FlowFieldDataBakeJob : IJob
         {
-            public float3 position;
-            public float cellSize;
-            public int2 size;
-            public float3 targetWorldPosition;
+            public float3 Position;
+            public float CellSize;
+            public int2 Size;
+            public float3 TargetWorldPosition;
             [ReadOnly]
-            public NativeArray<FlowFieldObstalceData> obstacles;
-            public NativeArray<FlowFieldCellData> cells;
-            public NativeList<int2> obstacleCells;
-            public NativeReference<float> maxCostValue;
+            public NativeArray<FlowFieldObstalceData> Obstacles;
+            public NativeArray<FlowFieldCellData> Cells;
+            public NativeList<int2> ObstacleCells;
+            public NativeReference<float> MaxTimeValue;
 
             public void Execute()
             {
-                FlowFieldUtility.WorldToGridPosition(targetWorldPosition, position, cellSize, out int2 targetPosition);
+                FillCellsWithDefaultValues();
+                FillObstacles();
+                SetupTargetCell();
+                FastMarching();
+                CalculateDirections();
+            }
 
+            private void FillCellsWithDefaultValues()
+            {
                 int index = 0;
-                for (int i = 0; i < size.x; i++)
+
+                for (int i = 0; i < Size.x; i++)
                 {
-                    for (int j = 0; j < size.y; j++)
+                    for (int j = 0; j < Size.y; j++)
                     {
-                        index = i * size.y + j;
+                        index = i * Size.y + j;
                         var cell = new FlowFieldCellData()
                         {
-                            GridPosition = new Vector2Int(i, j),
+                            GridPosition = new int2(i, j),
                             IsObstacle = false,
-                            Cost = 0.0f,
-                            Eikonal = float.PositiveInfinity,
-                            Direction = Vector3.zero
+                            State = 0,
+                            Cost = 1.0f,
+                            Time = float.PositiveInfinity,
+                            Direction = float3.zero
                         };
-                        cells[index] = cell;
+                        Cells[index] = cell;
                     }
                 }
+            }
 
-                for (int i = 0; i < obstacles.Length; i++)
+            private void FillObstacles()
+            {
+                for (int i = 0; i < Obstacles.Length; i++)
                 {
-                    var obstacle = obstacles[i];
-                    var gridPosition = FlowFieldUtility.WorldToGridPosition(obstacle.Position, position, cellSize);
+                    var obstacle = Obstacles[i];
+                    var gridPosition = FlowFieldUtility.WorldToGridPosition(obstacle.Position, Position, CellSize);
 
                     for (int j = 0; j < obstacle.Size.x; j++)
                     {
                         for (int k = 0; k < obstacle.Size.y; k++)
                         {
-                            GetValue(gridPosition.x + j, gridPosition.y + k, size, cells, out var cell);
-                            cell.Cost = float.PositiveInfinity;
-                            cell.Eikonal = float.PositiveInfinity;
-                            cell.Direction = float3.zero;
+                            var cell = GetValue(gridPosition.x + j, gridPosition.y + k, Size, Cells);
                             cell.IsObstacle = true;
-                            ToIndex(gridPosition.x + j, gridPosition.y + k, size, out index);
-                            cells[index] = cell;
-                            obstacleCells.Add(cell.GridPosition);
-                        }
-                    }
-                }
-
-                NativeQueue<FlowFieldCellData> queue = new NativeQueue<FlowFieldCellData>(Allocator.Temp);
-                NativeHashSet<FlowFieldCellData> visited = new NativeHashSet<FlowFieldCellData>(cells.Length, Allocator.Temp);
-                GetValue(targetPosition.x, targetPosition.y, size, cells, out var current);
-                queue.Enqueue(current);
-                visited.Add(current);
-
-                while (queue.Count > 0)
-                {
-                    current = queue.Dequeue();
-                    current.Eikonal = float.PositiveInfinity;
-
-                    if (maxCostValue.Value < current.Cost)
-                        maxCostValue.Value = current.Cost;
-
-                    if (current.IsObstacle)
-                        continue;
-
-                    for (int dx = -1; dx < 2; dx++)
-                    {
-                        int nx = current.GridPosition.x + dx;
-
-                        if (nx < 0 || nx >= size.x)
-                            continue;
-
-                        int columnStart = nx * size.y;
-
-                        for (int dy = -1; dy < 2; dy++)
-                        {
-                            if (dx == 0 && dy == 0)
-                                continue;
-
-                            int ny = current.GridPosition.y + dy;
-
-                            if (ny < 0 || ny >= size.y)
-                                continue;
-
-                            var neighbour = cells[columnStart + ny];
-
-                            if (neighbour.IsObstacle)
-                                continue;
-
-                            float cost = diagonalCost;
-                            int2 dir = current.GridPosition - neighbour.GridPosition;
-
-                            if (dir.x == 0 || dir.y == 0)
-                            {
-                                cost = 1.0f;
-                            }
-
-                            if (math.all(neighbour.GridPosition == targetPosition))
-                            {
-                                neighbour.Cost = 0.0f;
-                                ToIndex(neighbour.GridPosition.x, neighbour.GridPosition.y, size, out index);
-                                cells[index] = neighbour;
-                            }
-                            else
-                            {
-                                float newCost = current.Cost + cost;
-
-                                if (neighbour.Cost == 0.0f || neighbour.Cost > newCost)
-                                {
-                                    neighbour.Cost = newCost;
-                                    ToIndex(neighbour.GridPosition.x, neighbour.GridPosition.y, size, out index);
-                                    cells[index] = neighbour;
-                                    queue.Enqueue(neighbour);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                queue.Clear();
-                visited.Clear();
-
-                var sortedList = new NativeList<FlowFieldCellData>(Allocator.Temp);
-                GetValue(targetPosition.x, targetPosition.y, size, cells, out current);
-                sortedList.Add(current);
-                visited.Add(current);
-
-                current.Eikonal = 0.0f;
-
-                while (sortedList.Length > 0)
-                {
-                    sortedList.Sort(new FlowFieldCellDataCostComparer());
-                    current = sortedList[0];
-                    sortedList.RemoveAt(0);
-
-                    if (current.IsObstacle)
-                        continue;
-
-                    if (math.all(current.GridPosition == targetPosition))
-                    {
-                        current.Eikonal = 0.0f;
-                        ToIndex(current.GridPosition.x, current.GridPosition.y, size, out index);
-                        cells[index] = current;
-                    }
-                    else
-                    {
-                        GetNeighbourForEikonalCalculation(current.GridPosition.x - 1, current.GridPosition.y, size, cells, out var x1);
-                        GetNeighbourForEikonalCalculation(current.GridPosition.x + 1, current.GridPosition.y, size, cells, out var x2);
-                        GetNeighbourForEikonalCalculation(current.GridPosition.x, current.GridPosition.y - 1, size, cells, out var y1);
-                        GetNeighbourForEikonalCalculation(current.GridPosition.x, current.GridPosition.y + 1, size, cells, out var y2);
-
-                        SolveEikonal(Mathf.Min(x1, x2), Mathf.Min(y1, y2), 1.0f, out current.Eikonal);
-                        ToIndex(current.GridPosition.x, current.GridPosition.y, size, out index);
-                        cells[index] = current;
-                    }
-
-                    for (int dx = -1; dx < 2; dx++)
-                    {
-                        int nx = current.GridPosition.x + dx;
-
-                        if (nx < 0 || nx >= size.x)
-                            continue;
-
-                        int columnStart = nx * size.y;
-
-                        for (int dy = -1; dy < 2; dy++)
-                        {
-                            if (math.abs(dx) + math.abs(dy) != 1)
-                                continue;
-
-                            if (dx == 0 && dy == 0)
-                                continue;
-
-                            int ny = current.GridPosition.y + dy;
-
-                            if (ny < 0 || ny >= size.y)
-                                continue;
-
-                            var neighbour = cells[columnStart + ny];
-
-                            if (neighbour.IsObstacle)
-                                continue;
-
-                            if (visited.Contains(neighbour))
-                                continue;
-
-                            if (neighbour.IsObstacle)
-                                continue;
-
-                            visited.Add(neighbour);
-                            sortedList.Add(neighbour);
-                        }
-                    }
-                }
-
-                queue.Dispose();
-                visited.Dispose();
-                sortedList.Dispose();
-
-                for (int i = 0; i < size.x; i++)
-                {
-                    for (int j = 0; j < size.y; j++)
-                    {
-                        GetValue(i, j, size, cells, out var cell);
-
-                        if (cell.IsObstacle || math.all(cell.GridPosition == targetPosition) || float.IsInfinity(cell.Eikonal) || float.IsNaN(cell.Eikonal))
-                        {
+                            cell.Cost = float.PositiveInfinity;
+                            cell.Time = float.PositiveInfinity;
                             cell.Direction = float3.zero;
-                            ToIndex(cell.GridPosition.x, cell.GridPosition.y, size, out index);
-                            cells[index] = cell;
-                            continue;
+                            Cells[ToIndex(gridPosition.x + j, gridPosition.y + k, Size)] = cell;
+                            ObstacleCells.Add(cell.GridPosition);
                         }
-
-                        GetValue(i - 1, j, size, cells, out var x1);
-                        GetValue(i + 1, j, size, cells, out var x2);
-                        GetValue(i, j - 1, size, cells, out var y1);
-                        GetValue(i, j + 1, size, cells, out var y2);
-
-                        var x = Mathf.Min(!x1.Equals(default) ? x1.Eikonal : float.PositiveInfinity, !x2.Equals(default) ? x2.Eikonal : float.PositiveInfinity);
-                        var y = Mathf.Min(!y1.Equals(default) ? y1.Eikonal : float.PositiveInfinity, !y2.Equals(default) ? y2.Eikonal : float.PositiveInfinity);
-
-                        CalculateDirectionField(
-                            cell.Eikonal,
-                            x1.Equals(default) ? cell.Eikonal : x1.Eikonal,
-                            x2.Equals(default) ? cell.Eikonal : x2.Eikonal,
-                            out var directionX);
-                        CalculateDirectionField(
-                            cell.Eikonal,
-                            y1.Equals(default) ? cell.Eikonal : y1.Eikonal,
-                            y2.Equals(default) ? cell.Eikonal : y2.Eikonal,
-                            out var directionY);
-
-                        cell.Direction = new float3(directionX, directionY, 0.0f);
-                        ToIndex(cell.GridPosition.x, cell.GridPosition.y, size, out index);
-                        cells[index] = cell;
                     }
                 }
+            }
+
+            private void SetupTargetCell()
+            {
+                FlowFieldUtility.WorldToGridPosition(TargetWorldPosition, Position, CellSize, out int2 targetPosition);
+                int index = ToIndex(targetPosition.x, targetPosition.y, Size);
+                var targetCell = Cells[index];
+                targetCell.Time = 0.0f;
+                targetCell.State = 2;
+                Cells[index] = targetCell;
+            }
+
+            private void FastMarching()
+            {
+                var minHeap = new NativeMinHeap<FlowFieldCellData>(4 * Cells.Length, Allocator.Temp);
+                FlowFieldUtility.WorldToGridPosition(TargetWorldPosition, Position, CellSize, out int2 targetPosition);
+                UpdateNeighbours(targetPosition, ref minHeap);
+
+                while (minHeap.TryPop(out var queuedCell))
+                {
+                    int index = ToIndex(queuedCell.GridPosition.x, queuedCell.GridPosition.y, Size);
+                    var currentCell = Cells[index];
+
+                    if (currentCell.State == 2)
+                        continue;
+
+                    if (queuedCell.Time > currentCell.Time)
+                        continue;
+
+                    currentCell.State = 2;
+                    Cells[index] = currentCell;
+                    UpdateNeighbours(currentCell.GridPosition, ref minHeap);
+                }
+
+                minHeap.Dispose();
+            }
+
+            private void CalculateDirections()
+            {
+                for (int i = 0; i < Cells.Length; i++)
+                {
+                    var cell = Cells[i];
+                    cell.Direction = float3.zero;
+
+                    if (cell.IsObstacle || !math.isfinite(cell.Time) || cell.Time == 0.0f)
+                    {
+                        Cells[i] = cell;
+                        continue;
+                    }
+
+                    int x = cell.GridPosition.x;
+                    int y = cell.GridPosition.y;
+
+                    float leftTime = GetAcceptedTime(x - 1, y);
+                    float rightTime = GetAcceptedTime(x + 1, y);
+                    float downTime = GetAcceptedTime(x, y - 1);
+                    float upTime = GetAcceptedTime(x, y + 1);
+
+                    float dx = GetDownhillComponent(cell.Time, leftTime, rightTime);
+                    float dz = GetDownhillComponent(cell.Time, downTime, upTime);
+                    cell.Direction = math.normalizesafe(new float3(dx, dz, 0.0f));
+                    Cells[i] = cell;
+                }
+            }
+
+            private void UpdateNeighbours(int2 gridPosition, ref NativeMinHeap<FlowFieldCellData> minHeap)
+            {
+                for (int dx = -1; dx <= 1; dx++)
+                {
+                    for (int dy = -1; dy <= 1; dy++)
+                    {
+                        if (math.abs(dx) + math.abs(dy) != 1)
+                            continue;
+
+                        int nx = gridPosition.x + dx;
+                        int ny = gridPosition.y + dy;
+
+                        if (nx < 0 || nx >= Size.x || ny < 0 || ny >= Size.y)
+                            continue;
+
+                        int neighbourIndex = ToIndex(nx, ny, Size);
+                        var neighbour = Cells[neighbourIndex];
+
+                        if (neighbour.IsObstacle || neighbour.State == 2)
+                            continue;
+
+                        float newTime = SolveEikonal(neighbour);
+
+                        if (newTime < neighbour.Time)
+                        {
+                            neighbour.Time = newTime;
+                            neighbour.State = 1;
+                            Cells[neighbourIndex] = neighbour;
+                            minHeap.Push(neighbour);
+
+                            if (MaxTimeValue.Value < newTime)
+                                MaxTimeValue.Value = newTime;
+                        }
+                    }
+                }
+            }
+
+            private float GetAcceptedTime(int x, int y)
+            {
+                if (x < 0 || x >= Size.x || y < 0 || y >= Size.y)
+                    return float.PositiveInfinity;
+
+                var neighbour = Cells[ToIndex(x, y, Size)];
+
+                if (neighbour.IsObstacle || neighbour.State != 2)
+                    return float.PositiveInfinity;
+
+                return neighbour.Time;
+            }
+
+            private float SolveEikonal(FlowFieldCellData cell)
+            {
+                int x = cell.GridPosition.x;
+                int y = cell.GridPosition.y;
+
+                float a = math.min(GetAcceptedTime(x - 1, y), GetAcceptedTime(x + 1, y));
+                float b = math.min(GetAcceptedTime(x, y - 1), GetAcceptedTime(x, y + 1));
+                float q = CellSize * cell.Cost;
+
+                if (float.IsPositiveInfinity(a))
+                {
+                    return b + q;
+                }
+
+                if (float.IsPositiveInfinity(b))
+                {
+                    return a + q;
+                }
+
+                float low = math.min(a, b);
+                float high = math.max(a, b);
+
+                if (high - low >= q)
+                {
+                    return low + q;
+                }
+
+                float difference = high - low;
+                float delta = 2.0f * q * q - difference * difference;
+                return (low + high + math.sqrt(math.max(0.0f, delta))) * 0.5f;
+            }
+
+            private float GetDownhillComponent(float currentTime, float negativeSideTime, float positiveSideTime)
+            {
+                if (negativeSideTime <= positiveSideTime && negativeSideTime < currentTime)
+                {
+                    return -(currentTime - negativeSideTime) / CellSize;
+                }
+
+                if (positiveSideTime < currentTime)
+                {
+                    return (currentTime - positiveSideTime) / CellSize;
+                }
+
+                return 0.0f;
+            }
+
+            private int ToIndex(int x, int y, int2 size) => x * size.y + y;
+
+            private FlowFieldCellData GetValue(int x, int y, int2 size, NativeArray<FlowFieldCellData> cells)
+            {
+                if (x < 0 || x >= size.x)
+                    return default;
+
+                if (y < 0 || y >= size.y)
+                    return default;
+
+                return cells[ToIndex(x, y, size)];
             }
         }
 
@@ -269,108 +261,28 @@ namespace TD.Features.FlowField.Managed
             in NativeArray<FlowFieldObstalceData> obstacles,
             out NativeArray<FlowFieldCellData> cells,
             out NativeList<int2> obstacleCells,
-            out float maxCostValue)
+            out float maxTimeValue)
         {
             cells = new NativeArray<FlowFieldCellData>(size.x * size.y, Allocator.TempJob);
             obstacleCells = new NativeList<int2>(Allocator.TempJob);
-            var maxCost = new NativeReference<float>(0.0f, Allocator.TempJob);
+            var maxTime = new NativeReference<float>(0.0f, Allocator.TempJob);
 
-            var job = new BakeJob()
+            var job = new FlowFieldDataBakeJob()
             {
-                position = position,
-                cellSize = cellSize,
-                size = size,
-                targetWorldPosition = targetWorldPosition,
-                obstacles = obstacles,
-                cells = cells,
-                obstacleCells = obstacleCells,
-                maxCostValue = maxCost
+                Position = position,
+                CellSize = cellSize,
+                Size = size,
+                TargetWorldPosition = targetWorldPosition,
+                Obstacles = obstacles,
+                Cells = cells,
+                ObstacleCells = obstacleCells,
+                MaxTimeValue = maxTime
             }.Schedule();
 
             job.Complete();
 
-            maxCostValue = maxCost.Value;
-            maxCost.Dispose();
-        }
-
-        [BurstCompile]
-        private static void ToIndex(in int x, in int y, in int2 size, out int result) => result = x * size.y + y;
-
-        [BurstCompile]
-        private static void GetValue(in int x, in int y, in int2 size, in NativeArray<FlowFieldCellData> cells, out FlowFieldCellData cell)
-        {
-            cell = new FlowFieldCellData();
-            if (x < 0 || x >= size.x)
-                return;
-
-            if (y < 0 || y >= size.y)
-                return;
-
-            ToIndex(x, y, size, out int index);
-            cell = cells[index];
-        }
-
-        [BurstCompile]
-        private static void GetNeighbourForEikonalCalculation(in int x, in int y, in int2 size, in NativeArray<FlowFieldCellData> cells, out float result)
-        {
-            GetValue(x, y, size, cells, out var cell);
-
-            if (cell.Equals(default))
-            {
-                result = float.PositiveInfinity;
-                return;
-            }
-
-            result = cell.Eikonal;
-        }
-
-        [BurstCompile]
-        private static void SolveEikonal(in float tx, in float ty, in float cost, out float result)
-        {
-            if (float.IsPositiveInfinity(tx) || tx == float.MaxValue)
-            {
-                result = ty + cost;
-                return;
-            }
-
-            if (float.IsPositiveInfinity(ty) || ty == float.MaxValue)
-            {
-                result = tx + cost;
-                return;
-            }
-
-            float delta = 2.0f * (cost * cost) - (tx - ty) * (tx - ty);
-
-            if (delta >= 0.0f)
-            {
-                float t = (tx + ty + (float)math.sqrt(delta)) / 2.0f;
-
-                if (t > tx && t > ty)
-                {
-                    result = t;
-                    return;
-                }
-            }
-
-            result = math.min(tx, ty) + cost;
-        }
-
-        [BurstCompile]
-        private static void CalculateDirectionField(in float current, in float left, in float right, out float result)
-        {
-            if (right < current)
-            {
-                result = current - right;
-                return;
-            }
-
-            if (left < current)
-            {
-                result = -(current - left);
-                return;
-            }
-
-            result = 0.0f;
+            maxTimeValue = maxTime.Value;
+            maxTime.Dispose();
         }
     }
 }
