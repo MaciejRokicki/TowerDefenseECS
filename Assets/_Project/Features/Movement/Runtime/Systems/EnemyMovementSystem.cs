@@ -1,5 +1,5 @@
 using TD.Features.FlowField.ECS.Components;
-using TD.Features.FlowField.Managed;
+using TD.Features.FlowField.Shared;
 using TD.Features.Movement.Components;
 using Unity.Burst;
 using Unity.Collections;

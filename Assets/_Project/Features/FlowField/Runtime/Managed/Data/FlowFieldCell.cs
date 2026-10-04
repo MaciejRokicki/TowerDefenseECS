@@ -2,7 +2,7 @@ using System;
 using TD.Features.FlowField.ECS.Components;
 using UnityEngine;
 
-namespace TD.Features.FlowField.Managed
+namespace TD.Features.FlowField.Managed.Data
 {
     [Serializable]
     public class FlowFieldCell

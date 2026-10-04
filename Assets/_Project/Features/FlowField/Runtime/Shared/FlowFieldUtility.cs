@@ -3,7 +3,7 @@ using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace TD.Features.FlowField.Managed
+namespace TD.Features.FlowField.Shared
 {
     [BurstCompile]
     public static class FlowFieldUtility

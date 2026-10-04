@@ -1,11 +1,12 @@
 using TD.Features.FlowField.ECS.Components;
+using TD.Features.FlowField.Shared;
 using TD.Shared;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 
-namespace TD.Features.FlowField.Managed
+namespace TD.Features.FlowField.Managed.Logic
 {
     [BurstCompile]
     public static class FlowFieldDataBaker
@@ -13,14 +14,13 @@ namespace TD.Features.FlowField.Managed
         [BurstCompile]
         private struct FlowFieldDataBakeJob : IJob
         {
-            public float3 Position;
-            public float CellSize;
+            public float3 WorldPosition;
             public int2 Size;
+            public float CellSize;
             public float3 TargetWorldPosition;
             [ReadOnly]
-            public NativeArray<FlowFieldObstalceData> Obstacles;
+            public NativeArray<FlowFieldModifierData> Modifiers;
             public NativeArray<FlowFieldCellData> Cells;
-            public NativeList<int2> ObstacleCells;
             public NativeReference<float> MaxTimeValue;
 
             public void Execute()
@@ -57,22 +57,29 @@ namespace TD.Features.FlowField.Managed
 
             private void FillObstacles()
             {
-                for (int i = 0; i < Obstacles.Length; i++)
+                for (int i = 0; i < Modifiers.Length; i++)
                 {
-                    var obstacle = Obstacles[i];
-                    var gridPosition = FlowFieldUtility.WorldToGridPosition(obstacle.Position, Position, CellSize);
+                    var modifier = Modifiers[i];
+                    var gridPosition = FlowFieldUtility.WorldToGridPosition(modifier.WorldPosition, WorldPosition, CellSize);
 
-                    for (int j = 0; j < obstacle.Size.x; j++)
+                    for (int j = 0; j < modifier.Size.x; j++)
                     {
-                        for (int k = 0; k < obstacle.Size.y; k++)
+                        for (int k = 0; k < modifier.Size.y; k++)
                         {
                             var cell = GetValue(gridPosition.x + j, gridPosition.y + k, Size, Cells);
-                            cell.IsObstacle = true;
-                            cell.Cost = float.PositiveInfinity;
+                            if (modifier.IsObstacle)
+                            {
+                                cell.IsObstacle = true;
+                                cell.Cost = float.PositiveInfinity;
+                            }
+                            else
+                            {
+                                cell.IsObstacle = false;
+                                cell.Cost = modifier.Cost;
+                            }
                             cell.Time = float.PositiveInfinity;
                             cell.Direction = float3.zero;
                             Cells[ToIndex(gridPosition.x + j, gridPosition.y + k, Size)] = cell;
-                            ObstacleCells.Add(cell.GridPosition);
                         }
                     }
                 }
@@ -80,7 +87,7 @@ namespace TD.Features.FlowField.Managed
 
             private void SetupTargetCell()
             {
-                FlowFieldUtility.WorldToGridPosition(TargetWorldPosition, Position, CellSize, out int2 targetPosition);
+                FlowFieldUtility.WorldToGridPosition(TargetWorldPosition, WorldPosition, CellSize, out int2 targetPosition);
                 int index = ToIndex(targetPosition.x, targetPosition.y, Size);
                 var targetCell = Cells[index];
                 targetCell.Time = 0.0f;
@@ -91,7 +98,7 @@ namespace TD.Features.FlowField.Managed
             private void FastMarching()
             {
                 var minHeap = new NativeMinHeap<FlowFieldCellData>(4 * Cells.Length, Allocator.Temp);
-                FlowFieldUtility.WorldToGridPosition(TargetWorldPosition, Position, CellSize, out int2 targetPosition);
+                FlowFieldUtility.WorldToGridPosition(TargetWorldPosition, WorldPosition, CellSize, out int2 targetPosition);
                 UpdateNeighbours(targetPosition, ref minHeap);
 
                 while (minHeap.TryPop(out var queuedCell))
@@ -258,24 +265,21 @@ namespace TD.Features.FlowField.Managed
             in float cellSize,
             in int2 size,
             in float3 targetWorldPosition,
-            in NativeArray<FlowFieldObstalceData> obstacles,
+            in NativeArray<FlowFieldModifierData> modifiers,
             out NativeArray<FlowFieldCellData> cells,
-            out NativeList<int2> obstacleCells,
             out float maxTimeValue)
         {
             cells = new NativeArray<FlowFieldCellData>(size.x * size.y, Allocator.TempJob);
-            obstacleCells = new NativeList<int2>(Allocator.TempJob);
             var maxTime = new NativeReference<float>(0.0f, Allocator.TempJob);
 
             var job = new FlowFieldDataBakeJob()
             {
-                Position = position,
+                WorldPosition = position,
                 CellSize = cellSize,
                 Size = size,
                 TargetWorldPosition = targetWorldPosition,
-                Obstacles = obstacles,
+                Modifiers = modifiers,
                 Cells = cells,
-                ObstacleCells = obstacleCells,
                 MaxTimeValue = maxTime
             }.Schedule();
 

@@ -1,5 +1,6 @@
 using DebugUI;
 using TD.Features.Experience.Components;
+using TD.Features.FlowField.ECS.Components;
 using TD.Features.Health.Components;
 using TD.Features.Player.Components;
 using Unity.Entities;
@@ -65,6 +66,17 @@ namespace TD.Features.Debug
                         entityManager.AddComponentData(entity, new IncreaseExperienceCommand()
                         {
                             Value = x
+                        });
+                    });
+                });
+                builder.AddTab("Flow Field", builder =>
+                {
+                    builder.AddButton("Bake and update", () =>
+                    {
+                        var entity = entityManager.CreateEntity();
+                        entityManager.AddComponentData(entity, new UpdateFlowFieldData()
+                        {
+                            Bake = true
                         });
                     });
                 });

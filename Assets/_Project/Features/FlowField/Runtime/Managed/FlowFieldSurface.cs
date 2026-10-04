@@ -1,4 +1,9 @@
 using System;
+using TD.Features.FlowField.ECS.Authorings;
+using TD.Features.FlowField.ECS.Components;
+using TD.Features.FlowField.Managed.Config;
+using TD.Features.FlowField.Shared;
+using Unity.Entities;
 using UnityEngine;
 
 namespace TD.Features.FlowField.Managed
@@ -14,6 +19,9 @@ namespace TD.Features.FlowField.Managed
         private Vector3 targetPosition;
         [SerializeField]
         private FlowFieldData data;
+
+        [SerializeField]
+        private bool updateEcsFlowFieldDataOnAwake;
 
         [Header("Debug")]
         [SerializeField]
@@ -37,6 +45,16 @@ namespace TD.Features.FlowField.Managed
         private GUIStyle debugStyle;
 
         public FlowFieldData Data => data;
+
+        private void Awake()
+        {
+            if (updateEcsFlowFieldDataOnAwake)
+            {
+                var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+                var eventEntity = entityManager.CreateEntity();
+                entityManager.AddComponentData(eventEntity, new UpdateFlowFieldData());
+            }
+        }
 
 #if UNITY_EDITOR
         private void OnDrawGizmos()
@@ -69,7 +87,7 @@ namespace TD.Features.FlowField.Managed
                 {
                     for (int j = 0; j < data.Size.y; j++)
                     {
-                        var pos = data.Position + new Vector3(i * data.CellSize, j * data.CellSize, 0.0f) + new Vector3(data.CellSize / 2.0f, data.CellSize / 2.0f, 0.0f);
+                        var pos = data.WorldPosition + new Vector3(i * data.CellSize, j * data.CellSize, 0.0f) + new Vector3(data.CellSize / 2.0f, data.CellSize / 2.0f, 0.0f);
                         pos.y += 0.25f;
                         UnityEditor.Handles.Label(pos, string.Concat(data.GetValue(i, j).Cost.ToString("0.00"), " (", i, ", ", j, ")"), debugStyle);
                     }
@@ -82,7 +100,7 @@ namespace TD.Features.FlowField.Managed
                 {
                     for (int j = 0; j < data.Size.y; j++)
                     {
-                        var pos = data.Position + new Vector3(i * data.CellSize, j * data.CellSize, 0.0f) + new Vector3(data.CellSize / 2.0f, data.CellSize / 2.0f, 0.0f);
+                        var pos = data.WorldPosition + new Vector3(i * data.CellSize, j * data.CellSize, 0.0f) + new Vector3(data.CellSize / 2.0f, data.CellSize / 2.0f, 0.0f);
                         pos.y -= 0.25f;
                         UnityEditor.Handles.Label(pos, data.GetValue(i, j).Time.ToString("0.00"), debugStyle);
                     }
@@ -95,7 +113,7 @@ namespace TD.Features.FlowField.Managed
                 {
                     for (int j = 0; j < data.Size.y; j++)
                     {
-                        var pos = data.Position + new Vector3(i * data.CellSize, j * data.CellSize, 0.0f) + new Vector3(data.CellSize / 2.0f, data.CellSize / 2.0f, 0.0f);
+                        var pos = data.WorldPosition + new Vector3(i * data.CellSize, j * data.CellSize, 0.0f) + new Vector3(data.CellSize / 2.0f, data.CellSize / 2.0f, 0.0f);
                         Gizmos.color = Color.Lerp(Color.green, Color.red, data.GetValue(i, j).Time / data.MaxTime);
                         var c = Gizmos.color;
                         c.a = 0.75f;
@@ -111,7 +129,7 @@ namespace TD.Features.FlowField.Managed
                 {
                     for (int j = 0; j < data.Size.y; j++)
                     {
-                        var pos = data.Position + new Vector3(i * data.CellSize, j * data.CellSize, 0.0f) + new Vector3(data.CellSize / 2.0f, data.CellSize / 2.0f, 0.0f);
+                        var pos = data.WorldPosition + new Vector3(i * data.CellSize, j * data.CellSize, 0.0f) + new Vector3(data.CellSize / 2.0f, data.CellSize / 2.0f, 0.0f);
                         UnityEditor.Handles.DrawLine(pos, pos + data.GetValue(i, j).Direction / 2.0f, 2.0f);
                     }
                 }
@@ -144,7 +162,7 @@ namespace TD.Features.FlowField.Managed
 
                 Gizmos.color = new Color(1.0f, 1.0f, 0.0f, 0.5f);
 
-                DrawGrid(data.Position, data.CellSize, data.Size);
+                DrawGrid(data.WorldPosition, data.CellSize, data.Size);
 
                 if (drawCost)
                     DrawCosts(data);
@@ -158,7 +176,7 @@ namespace TD.Features.FlowField.Managed
                 if (drawDirection)
                     DrawDirections(data);
 
-                DrawTester(data.Position, data.CellSize, data.Size);
+                DrawTester(data.WorldPosition, data.CellSize, data.Size);
             }
             else
             {
@@ -172,7 +190,7 @@ namespace TD.Features.FlowField.Managed
         [ContextMenu("Bake")]
         private void BakeData()
         {
-            var obstacles = GameObject.FindObjectsByType<FlowFieldObstacle>(FindObjectsInactive.Exclude);
+            var modifiers = GameObject.FindObjectsByType<FlowFieldModifierAuthoring>(FindObjectsInactive.Exclude);
             var currentPath = UnityEditor.AssetDatabase.GetAssetPath(this.data);
 
             bool isDataNull = string.IsNullOrEmpty(currentPath);
@@ -186,21 +204,21 @@ namespace TD.Features.FlowField.Managed
 
             UnityEditor.SerializedObject so = new UnityEditor.SerializedObject(data);
             so.Update();
-            so.FindProperty("cellSize").floatValue = cellSize;
+            so.FindProperty("worldPosition").vector3Value = transform.position;
             so.FindProperty("size").vector2IntValue = size;
-            so.FindProperty("position").vector3Value = transform.position;
+            so.FindProperty("cellSize").floatValue = cellSize;
             so.FindProperty("cells").arraySize = size.x * size.y;
-            so.FindProperty("min").vector3Value = transform.position - new Vector3(size.x, 0.0f, size.y) * cellSize / 2.0f;
-            so.FindProperty("max").vector3Value = transform.position + new Vector3(size.x, 0.0f, size.y) * cellSize / 2.0f;
             so.FindProperty("targetWorldPosition").vector3Value = targetPosition;
-            so.FindProperty("targetPosition").vector2IntValue = FlowFieldUtility.WorldToGridPosition(targetPosition, transform.position, cellSize);
-            so.FindProperty("obstacles").arraySize = obstacles.Length;
+            so.FindProperty("targetGridPosition").vector2IntValue = FlowFieldUtility.WorldToGridPosition(targetPosition, transform.position, cellSize);
+            so.FindProperty("modifiers").arraySize = modifiers.Length;
 
-            for (int i = 0; i < obstacles.Length; i++)
+            for (int i = 0; i < modifiers.Length; i++)
             {
-                var obstacle = so.FindProperty("obstacles").GetArrayElementAtIndex(i);
-                obstacle.FindPropertyRelative("Position").vector3Value = obstacles[i].transform.position;
-                obstacle.FindPropertyRelative("Size").vector2IntValue = obstacles[i].Size;
+                var obstacle = so.FindProperty("modifiers").GetArrayElementAtIndex(i);
+                obstacle.FindPropertyRelative("WorldPosition").vector3Value = modifiers[i].transform.position;
+                obstacle.FindPropertyRelative("Size").vector2IntValue = modifiers[i].Size;
+                obstacle.FindPropertyRelative("Cost").floatValue = modifiers[i].Cost;
+                obstacle.FindPropertyRelative("IsObstacle").boolValue = modifiers[i].IsObstacle;
             }
 
             so.ApplyModifiedProperties();

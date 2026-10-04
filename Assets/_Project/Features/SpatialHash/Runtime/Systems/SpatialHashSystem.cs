@@ -1,7 +1,7 @@
 using TD.Features.Enemy.Components;
 using TD.Features.FlowField.ECS.Components;
 using TD.Features.FlowField.ECS.Systems;
-using TD.Features.FlowField.Managed;
+using TD.Features.FlowField.Shared;
 using TD.Features.Movement.Systems;
 using Unity.Burst;
 using Unity.Collections;
