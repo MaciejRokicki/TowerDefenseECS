@@ -6,6 +6,6 @@ namespace TD.Features.SpatialHash
     public struct SpatialHashUnit : IComponentData
     {
         public Entity Entity;
-        public float2 Position;
+        public float3 Position;
     }
 }
